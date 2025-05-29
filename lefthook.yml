@@ -1,0 +1,12 @@
+pre-commit:
+  commands:
+    lint:
+      glob: "*.go"
+      run: golangci-lint run --fix
+      stage_fixed: true
+    test:
+      glob: "*.go"
+      run: go test ./...
+    tidy:
+      glob: "{*.go,go.mod}"
+      run: go mod tidy
