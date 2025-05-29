@@ -3,15 +3,12 @@ package cmd
 import (
 	"os"
 
-	"fmt"
-
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
 	api "github.com/urlscan/urlscan-cli/api"
-
-	"github.com/urlscan/urlscan-cli/pkg/utils"
+	"github.com/urlscan/urlscan-cli/cmd/scan"
 )
 
 func addHostFlag(flags *pflag.FlagSet) {
@@ -26,10 +23,6 @@ func addProxyFlag(flags *pflag.FlagSet) {
 		"proxy", "",
 		"HTTP proxy")
 	flags.MarkHidden("proxy") //nolint:errcheck
-}
-
-func NewAPIClient() (*utils.APIClient, error) {
-	return utils.NewAPIClient(fmt.Sprintf("urlscan-cli %s", Version))
 }
 
 var rootCmd = &cobra.Command{
@@ -63,4 +56,6 @@ func Execute() {
 func init() {
 	addHostFlag(rootCmd.PersistentFlags())
 	addProxyFlag(rootCmd.PersistentFlags())
+
+	rootCmd.AddCommand(scan.RootCmd)
 }

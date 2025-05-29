@@ -5,6 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/urlscan/urlscan-cli/api"
+	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
 var quotasCmd = &cobra.Command{
@@ -12,7 +13,7 @@ var quotasCmd = &cobra.Command{
 	Short: "Get API quotas",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client, err := NewAPIClient()
+		client, err := utils.NewAPIClient()
 		if err != nil {
 			return err
 		}

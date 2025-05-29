@@ -1,10 +1,11 @@
-package cmd
+package scan
 
 import (
 	"fmt"
 
 	"github.com/spf13/cobra"
 	api "github.com/urlscan/urlscan-cli/api"
+
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
@@ -26,7 +27,7 @@ var domCmd = &cobra.Command{
 			return err
 		}
 
-		client, err := NewAPIClient()
+		client, err := utils.NewAPIClient()
 		if err != nil {
 			return err
 		}
@@ -46,6 +47,6 @@ var domCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(domCmd)
+	RootCmd.AddCommand(domCmd)
 	domCmd.Flags().StringP("output", "o", "", "Output file name. Defaults to <uuid>.html.")
 }

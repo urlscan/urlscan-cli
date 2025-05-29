@@ -8,13 +8,14 @@ import (
 
 	"github.com/briandowns/spinner"
 	api "github.com/urlscan/urlscan-cli/api"
+	"github.com/urlscan/urlscan-cli/pkg/version"
 )
 
 type APIClient struct {
 	*api.Client
 }
 
-func NewAPIClient(agent string) (*APIClient, error) {
+func NewAPIClient() (*APIClient, error) {
 	// api key loading precedence:
 	// 1. Environment variable (URLSCAN_API_KEY)
 	// 2. Keyring
@@ -28,7 +29,8 @@ func NewAPIClient(agent string) (*APIClient, error) {
 	}
 
 	c := api.NewClient(key)
-	c.Agent = agent
+	c.Agent = fmt.Sprintf("urlscan-cli %s", version.Version)
+
 	return &APIClient{c}, nil
 }
 

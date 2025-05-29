@@ -7,7 +7,7 @@ env:
 
 vars:
   BINARY: ./build/urlscan
-  LDFLAGS: -ldflags "-X github.com/urlscan/urlscan-cli/cmd.Version={{.VERSION}}"
+  LDFLAGS: -ldflags "-X github.com/urlscan/urlscan-cli/pkg/version.Version={{.VERSION}}"
 
 tasks:
   update:

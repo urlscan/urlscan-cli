@@ -1,10 +1,11 @@
-package cmd
+package scan
 
 import (
 	"fmt"
 
 	"github.com/spf13/cobra"
 	api "github.com/urlscan/urlscan-cli/api"
+
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
@@ -23,7 +24,7 @@ var resultCmd = &cobra.Command{
 			return err
 		}
 
-		client, err := NewAPIClient()
+		client, err := utils.NewAPIClient()
 		if err != nil {
 			return err
 		}
@@ -41,5 +42,5 @@ var resultCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(resultCmd)
+	RootCmd.AddCommand(resultCmd)
 }

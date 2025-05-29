@@ -1,4 +1,4 @@
-package cmd
+package scan
 
 import (
 	"fmt"
@@ -26,7 +26,7 @@ var screenshotCmd = &cobra.Command{
 			return err
 		}
 
-		client, err := NewAPIClient()
+		client, err := utils.NewAPIClient()
 		if err != nil {
 			return err
 		}
@@ -50,5 +50,5 @@ func init() {
 	screenshotCmd.Flags().StringP("output", "o", "", "Output file name. Defaults to <uuid>.png.")
 	screenshotCmd.Flags().BoolP("force", "f", false, "Enable to force overwriting an existing file.")
 
-	rootCmd.AddCommand(screenshotCmd)
+	RootCmd.AddCommand(screenshotCmd)
 }

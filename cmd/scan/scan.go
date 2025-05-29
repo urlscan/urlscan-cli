@@ -1,4 +1,4 @@
-package cmd
+package scan
 
 import (
 	"fmt"
@@ -33,7 +33,7 @@ var scanCmd = &cobra.Command{
 			return err
 		}
 
-		client, err := NewAPIClient()
+		client, err := utils.NewAPIClient()
 		if err != nil {
 			return err
 		}
@@ -77,5 +77,5 @@ func init() {
 	scanCmd.Flags().BoolP("wait", "w", false, "Wait for the scan to finish")
 	scanCmd.Flags().IntP("wait-deadline", "d", 60, "Maximum waiting timeout in seconds")
 
-	rootCmd.AddCommand(scanCmd)
+	RootCmd.AddCommand(scanCmd)
 }

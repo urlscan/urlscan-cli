@@ -15,7 +15,7 @@ builds:
       - windows
       - darwin
     ldflags:
-      - -X github.com/urlscan/urlscan-cli/cmd.Version={{.Version}}"
+      - -X github.com/urlscan/urlscan-cli/pkg/version.Version={{.Version}}"
     binary: urlscan
 
 archives:

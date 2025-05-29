@@ -43,7 +43,7 @@ var searchCmd = &cobra.Command{
 			return err
 		}
 
-		client, err := NewAPIClient()
+		client, err := utils.NewAPIClient()
 		if err != nil {
 			return err
 		}
