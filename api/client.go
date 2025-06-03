@@ -85,11 +85,25 @@ func (t *RetryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	res, err := t.Transport.RoundTrip(req)
 
 	if res.StatusCode == http.StatusTooManyRequests {
+		// rate limit headers: https://urlscan.io/docs/api/#ratelimit
+		limitAction := res.Header.Get("X-Rate-Limit-Action")
+		limitLimit := res.Header.Get("X-Rate-Limit-Limit")
+		limitReset := res.Header.Get("X-Rate-Limit-Reset")
+		limitScope := res.Header.Get("X-Rate-Limit-Scope")
+		limitWindow := res.Header.Get("X-Rate-Limit-Window")
 		retryAfter := res.Header.Get("X-Rate-Limit-Reset-After")
+
 		if retryAfter != "" {
 			retryAfterInt, err := strconv.Atoi(retryAfter)
 			if err == nil {
-				log.Info("Rate limit exceeded", "X-Rate-Limit-Reset-After", retryAfter)
+				log.Info(fmt.Sprintf("Sleeping for %s seconds", retryAfter),
+					"X-Rate-Limit-Action", limitAction,
+					"X-Rate-Limit-Limit", limitLimit,
+					"X-Rate-Limit-Reset-After", retryAfter,
+					"X-Rate-Limit-Reset", limitReset,
+					"X-Rate-Limit-Scope", limitScope,
+					"X-Rate-Limit-Window", limitWindow,
+				)
 				time.Sleep(time.Duration(retryAfterInt) * time.Second)
 			}
 		}
