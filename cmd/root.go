@@ -26,8 +26,9 @@ func addProxyFlag(flags *pflag.FlagSet) {
 }
 
 var rootCmd = &cobra.Command{
-	Use:   "urlscan",
-	Short: "A CLI tool for interacting with urlscan.io",
+	Use:          "urlscan",
+	Short:        "A CLI tool for interacting with urlscan.io",
+	SilenceUsage: true,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		if err := viper.BindPFlags(cmd.PersistentFlags()); err != nil {
 			return err
