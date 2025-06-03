@@ -75,9 +75,9 @@ var searchCmd = &cobra.Command{
 }
 
 func init() {
-	searchCmd.Flags().IntP("limit", "l", api.MaxTotal, "Maximum number of results that will be returned by the iterator.")
-	searchCmd.Flags().IntP("size", "s", 100, "Number of results returned in a search.")
-	searchCmd.Flags().String("search-after", "", "Search after to retrieve next results.")
+	searchCmd.Flags().IntP("limit", "l", api.MaxTotal, "Maximum number of results that will be returned by the iterator")
+	searchCmd.Flags().IntP("size", "s", 100, "Number of results returned by the iterator in each batch")
+	searchCmd.Flags().String("search-after", "", "For retrieving the next batch of results, value of the sort attribute of the last (oldest) result you received (comma-separated)")
 
 	rootCmd.AddCommand(searchCmd)
 }
