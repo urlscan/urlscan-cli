@@ -23,7 +23,7 @@ func TestSetHost(t *testing.T) {
 func TestGet(t *testing.T) {
 	defer gock.Off()
 
-	gock.New("http:/testserver/").
+	gock.New("http://testserver/").
 		Get("/bar").
 		Reply(200).
 		JSON(map[string]string{"foo": "bar"})
@@ -50,14 +50,14 @@ func TestRetry(t *testing.T) {
 
 	retryCounter := &Counter{}
 
-	gock.New("http:/testserver/").
+	gock.New("http://testserver/").
 		Get("/bar").
 		AddMatcher(func(req *http.Request, ereq *gock.Request) (bool, error) { return retryCounter.Count() == 0, nil }).
 		Reply(http.StatusTooManyRequests).
 		SetHeaders(map[string]string{"X-Rate-Limit-Reset-After": "0"}).
 		JSON(map[string]string{"foo": "bar"})
 
-	gock.New("http:/testserver/").
+	gock.New("http://testserver/").
 		Get("/bar").
 		AddMatcher(func(req *http.Request, ereq *gock.Request) (bool, error) { return retryCounter.Count() == 1, nil }).
 		Reply(http.StatusOK).
@@ -73,12 +73,12 @@ func TestRetry(t *testing.T) {
 func TestWaitAndGetResult(t *testing.T) {
 	defer gock.Off()
 
-	gock.New("http:/testserver/").
+	gock.New("http://testserver/").
 		Post("/api/v1/scan/").
 		Reply(http.StatusOK).
 		JSON(map[string]string{"uuid": "dummy"})
 
-	gock.New("http:/testserver/").
+	gock.New("http://testserver/").
 		Get("/api/v1/result/dummy/").
 		Reply(http.StatusOK).
 		JSON(map[string]string{"foo": "bar"})
