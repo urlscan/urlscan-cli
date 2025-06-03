@@ -47,7 +47,7 @@ urlscan scan search <query>
 Alternatively, you can pass an argument via the standard input by passing `-`.
 
 ```bash
-echo "<uuid>" | urlscan result -
+echo "<uuid>" | urlscan scan result -
 ```
 
 See `urlscan --help` and also [the document](docs/urlscan.md) for more details.
