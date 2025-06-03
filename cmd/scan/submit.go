@@ -68,14 +68,14 @@ var submitCmd = &cobra.Command{
 }
 
 func init() {
-	submitCmd.Flags().StringArrayP("tags", "t", []string{}, "User-defined tags to annotate this scan.")
+	submitCmd.Flags().StringArrayP("tags", "t", []string{}, "User-defined tags to annotate this scan")
 	submitCmd.Flags().StringP("country", "c", "", " Specify which country the scan should be performed from (2-Letter ISO-3166-1 alpha-2 country")
 	submitCmd.Flags().StringP("customagent", "a", "", "Override User-Agent for this scan")
-	submitCmd.Flags().StringP("overrideSafety", "o", "", " If set to any value, this will disable reclassification of URLs with potential PII in them")
+	submitCmd.Flags().StringP("overrideSafety", "o", "", "If set to any value, this will disable reclassification of URLs with potential PII in them")
 	submitCmd.Flags().StringP("referer", "r", "", "Override HTTP referer for this scan")
 	submitCmd.Flags().StringP("visibility", "v", "", "One of public, unlisted, private")
 	submitCmd.Flags().BoolP("wait", "w", false, "Wait for the scan to finish")
-	submitCmd.Flags().IntP("wait-deadline", "d", 60, "Maximum waiting timeout in seconds")
+	submitCmd.Flags().IntP("wait-deadline", "d", 60, "Maximum wait time in seconds")
 
 	RootCmd.AddCommand(submitCmd)
 }

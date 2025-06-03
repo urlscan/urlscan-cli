@@ -25,7 +25,7 @@ type SearchResults struct {
 func (r *SearchResult) UnmarshalJSON(data []byte) error {
 	// a hack to prevent infinite UnmarshalJSON recursion loop
 	// ref. https://biscuit.ninja/posts/go-avoid-an-infitine-loop-with-custom-json-unmarshallers/
-	//  		https://github.com/stripe/stripe-go/blob/f1847e5d06c4d13389d10629c6827dc375bfd015/event.go#L79-L91
+	//      https://github.com/stripe/stripe-go/blob/f1847e5d06c4d13389d10629c6827dc375bfd015/event.go#L79-L91
 	type result SearchResult
 	var dst result
 
@@ -170,7 +170,7 @@ func (it *Iterator) getMoreResults() (results []*SearchResult, err error) {
 
 	it.link.RawQuery = q.Encode()
 
-	// set hasMore
+	// set HasMore
 	if r.Total != MaxTotal {
 		it.HasMore = r.Total > (it.count + len(r.Results))
 	} else {

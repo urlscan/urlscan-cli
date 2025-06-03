@@ -18,14 +18,14 @@ brew install urlscan-cli
 
 ### Configuring Your API Key
 
-There are two ways for configuration your API key:
+There are two ways for configuring your API key:
 
 1. `URLSCAN_API_KEY` environment variable
-2. Keyring (e.g. macOS Keychain, GNOME Keyring)
+2. Keyring (e.g., macOS Keychain, GNOME Keyring)
 
 NOTE: Ordered by the higher precedence.
 
-If you want to the keyring, you can set it via the terminal or the standard input:
+If you want to use the keyring, you can set it via the terminal or via standard input:
 
 ```bash
 $ urlscan key set
@@ -54,7 +54,7 @@ See `urlscan --help` and also [docs](https://urlscan.github.io/urlscan-cli/) for
 
 ### Proxy
 
-`HTTP_RPOXY` or `HTTPS_PROXY` environment variables are respected by default. Additionally, you can set the proxy via `--proxy` option:
+`HTTP_RPOXY` and `HTTPS_PROXY` environment variables are respected by default. Additionally, you can set the proxy via `--proxy` option:
 
 ```bash
 urlscan --proxy http://proxy:1234 <command>

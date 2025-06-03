@@ -314,7 +314,7 @@ func (cli *Client) WaitAndGetResult(ctx context.Context, uuid string, deadline i
 	ctx, cancel := context.WithTimeout(ctx, time.Duration(deadline)*time.Second)
 	defer cancel()
 
-	log.Info("start waiting for scan to finish", "uuid", uuid)
+	log.Info("Waiting for scan to finish", "uuid", uuid)
 
 	delay := 1 * time.Second
 
@@ -335,7 +335,7 @@ func (cli *Client) WaitAndGetResult(ctx context.Context, uuid string, deadline i
 		select {
 		case <-time.After(delay):
 			delay = delay * 2
-			log.Info("got 404 error, do wait", "delay", delay, "error", err.Error())
+			log.Info("Got 404 error, waiting for a scan result...", "delay", delay, "error", err.Error())
 		case <-ctx.Done():
 			return nil, ctx.Err()
 		}
