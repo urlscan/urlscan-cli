@@ -310,8 +310,8 @@ func (cli *Client) GetResult(uuid string) (*Response, error) {
 	return result, nil
 }
 
-func (cli *Client) WaitAndGetResult(ctx context.Context, uuid string, deadline int) (*Response, error) {
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(deadline)*time.Second)
+func (cli *Client) WaitAndGetResult(ctx context.Context, uuid string, maxWait int) (*Response, error) {
+	ctx, cancel := context.WithTimeout(ctx, time.Duration(maxWait)*time.Second)
 	defer cancel()
 
 	log.Info("Waiting for scan to finish", "uuid", uuid)

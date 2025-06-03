@@ -25,7 +25,7 @@ var submitCmd = &cobra.Command{
 		visibility, _ := cmd.Flags().GetString("visibility")
 
 		wait, _ := cmd.Flags().GetBool("wait")
-		waitDeadline, _ := cmd.Flags().GetInt("wait-deadline")
+		maxWait, _ := cmd.Flags().GetInt("max-wait")
 
 		reader := utils.StringReaderFromCmdArgs(args)
 		url, err := reader.ReadString()
@@ -56,7 +56,7 @@ var submitCmd = &cobra.Command{
 		}
 
 		ctx := cmd.Context()
-		result, err := client.WaitAndGetResult(ctx, res.UUID, waitDeadline)
+		result, err := client.WaitAndGetResult(ctx, res.UUID, maxWait)
 		if err != nil {
 			return err
 		}
@@ -75,7 +75,7 @@ func init() {
 	submitCmd.Flags().StringP("referer", "r", "", "Override HTTP referer for this scan")
 	submitCmd.Flags().StringP("visibility", "v", "", "One of public, unlisted, private")
 	submitCmd.Flags().BoolP("wait", "w", false, "Wait for the scan to finish")
-	submitCmd.Flags().IntP("wait-deadline", "d", 60, "Maximum wait time in seconds")
+	submitCmd.Flags().IntP("max-wait", "m", 60, "Maximum wait time in seconds")
 
 	RootCmd.AddCommand(submitCmd)
 }
