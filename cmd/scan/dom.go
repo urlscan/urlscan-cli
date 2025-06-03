@@ -34,7 +34,7 @@ var domCmd = &cobra.Command{
 
 		url := api.URL("%s", fmt.Sprintf("/dom/%s/", uuid))
 		if output == "" {
-			output = fmt.Sprintf("%s.png", uuid)
+			output = fmt.Sprintf("%s.html", uuid)
 		}
 		options := utils.NewDownloadOptions(client, url, output, force)
 		err = utils.Download(options)
