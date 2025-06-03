@@ -12,7 +12,7 @@ var submitCmdExample = `  urlscan scan submit <url>
   echo "<url>" | urlscan scan submit -`
 
 var submitCmd = &cobra.Command{
-	Use:     "submit",
+	Use:     "submit <url>",
 	Short:   "Submit a URL to scan",
 	Example: submitCmdExample,
 	Args:    cobra.ExactArgs(1),

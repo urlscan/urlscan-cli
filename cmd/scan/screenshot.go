@@ -12,7 +12,7 @@ var screenshotCmdExample = `  urlscan scan screenshot <uuid>
   echo "<uuid>" | urlscan scan screenshot -`
 
 var screenshotCmd = &cobra.Command{
-	Use:     "screenshot",
+	Use:     "screenshot <uuid>",
 	Short:   "Download a screenshot by UUID",
 	Example: screenshotCmdExample,
 	Args:    cobra.ExactArgs(1),

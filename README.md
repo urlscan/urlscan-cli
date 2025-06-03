@@ -50,7 +50,7 @@ Alternatively, you can pass an argument via the standard input by passing `-`.
 echo "<uuid>" | urlscan result -
 ```
 
-See `urlscan --help` and also [docs](https://urlscan.github.io/urlscan-cli/) for more details.
+See `urlscan --help` and also [the document](docs/urlscan.md) for more details.
 
 ### Proxy
 

@@ -28,7 +28,7 @@ var searchCmdExample = `  urlscan search <query>
   echo "<query>" | urlscan search -`
 
 var searchCmd = &cobra.Command{
-	Use:     "search",
+	Use:     "search <query>",
 	Short:   "Search by a query",
 	Example: searchCmdExample,
 	Args:    cobra.ExactArgs(1),
@@ -79,5 +79,5 @@ func init() {
 	searchCmd.Flags().IntP("size", "s", 100, "Number of results returned by the iterator in each batch")
 	searchCmd.Flags().String("search-after", "", "For retrieving the next batch of results, value of the sort attribute of the last (oldest) result you received (comma-separated)")
 
-	rootCmd.AddCommand(searchCmd)
+	RootCmd.AddCommand(searchCmd)
 }

@@ -31,5 +31,5 @@ var quotasCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(quotasCmd)
+	RootCmd.AddCommand(quotasCmd)
 }

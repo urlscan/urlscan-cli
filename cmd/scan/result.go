@@ -13,7 +13,7 @@ var resultCmdExample = `  urlscan scan result <uuid>
   echo "<uuid>" | urlscan scan result -`
 
 var resultCmd = &cobra.Command{
-	Use:     "result",
+	Use:     "result <uuid>",
 	Short:   "Get a result by UUID",
 	Example: resultCmdExample,
 	Args:    cobra.ExactArgs(1),

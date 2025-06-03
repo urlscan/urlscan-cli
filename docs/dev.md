@@ -21,6 +21,7 @@ go mod tidy
 - `main.go`: the root command
 - `api/`: main utilities for interacting with the urlscan.io API
 - `cmd/`: individual urlscan commands
+- `docutil`: a package for generating Cobra command docs
 - `pkg/`: packages for implementing commands
 
 ## Test

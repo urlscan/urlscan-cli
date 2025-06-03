@@ -25,7 +25,7 @@ func addProxyFlag(flags *pflag.FlagSet) {
 	flags.MarkHidden("proxy") //nolint:errcheck
 }
 
-var rootCmd = &cobra.Command{
+var RootCmd = &cobra.Command{
 	Use:          "urlscan",
 	Short:        "A CLI tool for interacting with urlscan.io",
 	SilenceUsage: true,
@@ -49,14 +49,14 @@ var rootCmd = &cobra.Command{
 }
 
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
+	if err := RootCmd.Execute(); err != nil {
 		os.Exit(1)
 	}
 }
 
 func init() {
-	addHostFlag(rootCmd.PersistentFlags())
-	addProxyFlag(rootCmd.PersistentFlags())
+	addHostFlag(RootCmd.PersistentFlags())
+	addProxyFlag(RootCmd.PersistentFlags())
 
-	rootCmd.AddCommand(scan.RootCmd)
+	RootCmd.AddCommand(scan.RootCmd)
 }
