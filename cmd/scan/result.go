@@ -9,8 +9,8 @@ import (
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
-var resultCmdExample = `  urlscan result <uuid>
-  echo "<uuid>" | urlscan result -`
+var resultCmdExample = `  urlscan scan result <uuid>
+  echo "<uuid>" | urlscan scan result -`
 
 var resultCmd = &cobra.Command{
 	Use:     "result",

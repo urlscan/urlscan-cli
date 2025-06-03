@@ -36,10 +36,12 @@ $ echo "<api_key>" | urlscan key set -
 
 ### Basic Commands
 
+#### Scan
+
 ```bash
-urlscan result <uuid>
-urlscan search <query>
-urlscan scan <url>
+urlscan scan submit <url>
+urlscan scan result <uuid>
+urlscan scan search <query>
 ```
 
 Alternatively, you can pass an argument via the standard input by passing `-`.

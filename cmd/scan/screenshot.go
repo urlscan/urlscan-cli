@@ -8,8 +8,8 @@ import (
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
-var screenshotCmdExample = `  urlscan screenshot <uuid>
-  echo "<uuid>" | urlscan screenshot -`
+var screenshotCmdExample = `  urlscan scan screenshot <uuid>
+  echo "<uuid>" | urlscan scan screenshot -`
 
 var screenshotCmd = &cobra.Command{
 	Use:     "screenshot",

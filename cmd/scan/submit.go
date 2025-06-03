@@ -8,13 +8,13 @@ import (
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
-var scanCmdExample = `  urlscan scan <url>
-  echo "<url>" | urlscan scan -`
+var submitCmdExample = `  urlscan scan submit <url>
+  echo "<url>" | urlscan scan submit -`
 
-var scanCmd = &cobra.Command{
-	Use:     "scan",
-	Short:   "Scan a URL",
-	Example: scanCmdExample,
+var submitCmd = &cobra.Command{
+	Use:     "submit",
+	Short:   "Submit a URL to scan",
+	Example: submitCmdExample,
 	Args:    cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		country, _ := cmd.Flags().GetString("country")
@@ -68,14 +68,14 @@ var scanCmd = &cobra.Command{
 }
 
 func init() {
-	scanCmd.Flags().StringArrayP("tags", "t", []string{}, "User-defined tags to annotate this scan.")
-	scanCmd.Flags().StringP("country", "c", "", " Specify which country the scan should be performed from (2-Letter ISO-3166-1 alpha-2 country")
-	scanCmd.Flags().StringP("customagent", "a", "", "Override User-Agent for this scan")
-	scanCmd.Flags().StringP("overrideSafety", "o", "", " If set to any value, this will disable reclassification of URLs with potential PII in them")
-	scanCmd.Flags().StringP("referer", "r", "", "Override HTTP referer for this scan")
-	scanCmd.Flags().StringP("visibility", "v", "", "One of public, unlisted, private")
-	scanCmd.Flags().BoolP("wait", "w", false, "Wait for the scan to finish")
-	scanCmd.Flags().IntP("wait-deadline", "d", 60, "Maximum waiting timeout in seconds")
+	submitCmd.Flags().StringArrayP("tags", "t", []string{}, "User-defined tags to annotate this scan.")
+	submitCmd.Flags().StringP("country", "c", "", " Specify which country the scan should be performed from (2-Letter ISO-3166-1 alpha-2 country")
+	submitCmd.Flags().StringP("customagent", "a", "", "Override User-Agent for this scan")
+	submitCmd.Flags().StringP("overrideSafety", "o", "", " If set to any value, this will disable reclassification of URLs with potential PII in them")
+	submitCmd.Flags().StringP("referer", "r", "", "Override HTTP referer for this scan")
+	submitCmd.Flags().StringP("visibility", "v", "", "One of public, unlisted, private")
+	submitCmd.Flags().BoolP("wait", "w", false, "Wait for the scan to finish")
+	submitCmd.Flags().IntP("wait-deadline", "d", 60, "Maximum waiting timeout in seconds")
 
-	RootCmd.AddCommand(scanCmd)
+	RootCmd.AddCommand(submitCmd)
 }
