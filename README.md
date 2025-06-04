@@ -54,7 +54,7 @@ See `urlscan --help` and also [the document](docs/urlscan.md) for more details.
 
 ### Proxy
 
-`HTTP_RPOXY` and `HTTPS_PROXY` environment variables are respected by default. Additionally, you can set the proxy via `--proxy` option:
+`HTTP_PROXY` and `HTTPS_PROXY` environment variables are respected by default. Additionally, you can set the proxy via `--proxy` option:
 
 ```bash
 urlscan --proxy http://proxy:1234 <command>

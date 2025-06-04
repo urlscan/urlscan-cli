@@ -3,7 +3,7 @@ BINARY=./dist/urlscan
 # setup the -ldflags option for go build
 LDFLAGS=-ldflags "-X github.com/urlscan/urlscan-cli/pkg/version.Version=${VERSION}"
 
-.PHONY: install udpate lint build docs clean release
+.PHONY: install update lint build docs clean release
 
 install:
 	go mod tidy
