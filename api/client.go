@@ -315,6 +315,22 @@ func (cli *Client) Scan(url string, options ...ScanOption) (*ScanResult, error) 
 	return r, nil
 }
 
+func (c *Client) GetHostname(hostname string, opts ...HostnameOption) (*Response, error) {
+	hostnameOpts := newHostnameOptions(opts...)
+
+	url := URL("/api/v1/hostname/%s", hostname)
+
+	// set query parameters
+	q := url.Query()
+	q.Add("limit", strconv.Itoa(hostnameOpts.Limit))
+	if hostnameOpts.PageState != "" {
+		q.Add("pageState", hostnameOpts.PageState)
+	}
+	url.RawQuery = q.Encode()
+
+	return c.Get(url)
+}
+
 func (cli *Client) GetResult(uuid string) (*Response, error) {
 	url := URL("%s", fmt.Sprintf("/api/v1/result/%s/", uuid))
 	result, err := cli.Get(url)
