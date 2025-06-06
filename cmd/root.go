@@ -8,6 +8,7 @@ import (
 	"github.com/spf13/viper"
 
 	api "github.com/urlscan/urlscan-cli/api"
+	"github.com/urlscan/urlscan-cli/cmd/pro"
 	"github.com/urlscan/urlscan-cli/cmd/scan"
 )
 
@@ -59,4 +60,5 @@ func init() {
 	addProxyFlag(RootCmd.PersistentFlags())
 
 	RootCmd.AddCommand(scan.RootCmd)
+	RootCmd.AddCommand(pro.RootCmd)
 }
