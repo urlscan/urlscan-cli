@@ -4,14 +4,16 @@ pre-commit:
       glob: "*.go"
       run: golangci-lint run --fix
       stage_fixed: true
-    test:
-      glob: "*.go"
-      run: go test ./...
     tidy:
       glob: "{*.go,go.mod}"
       run: go mod tidy
+      stage_fixed: true
     docs:
       glob: "cmd/*.go"
       run: |
         rm docs/urlscan*.md
         go run docutil/main.go
+      stage_fixed: true
+    test:
+      glob: "*.go"
+      run: go test ./...
