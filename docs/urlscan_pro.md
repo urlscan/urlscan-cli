@@ -12,4 +12,5 @@ Pro sub-commands
 
 * [urlscan](urlscan.md)	 - A CLI tool for interacting with urlscan.io
 * [urlscan pro brand](urlscan_pro_brand.md)	 - Brand sub-commands
+* [urlscan pro hostname](urlscan_pro_hostname.md)	 - Get the historical observations for a specific hostname in the hostname data source
 

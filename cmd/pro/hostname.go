@@ -1,4 +1,4 @@
-package cmd
+package pro
 
 import (
 	"encoding/json"
@@ -29,10 +29,9 @@ var hostnameLong = `To have the same idiom with the search command, this command
 
 - Request:
   - limit: is not exactly same as the API endpoint's "limit" query parameter. It is the maximum number of results that will be returned by the iterator.
-	- size: is equivalent to the API endpoint's "limit" query parameter, which is the number of results returned by the iterator in each batch.
+  - size: is equivalent to the API endpoint's "limit" query parameter, which is the number of results returned by the iterator in each batch.
 - Response:
-  - hasMore: is an additional field (not included in the API endpoint response) indicates if there are more results available.
-`
+  - hasMore: is an additional field (not included in the API endpoint response) indicates if there are more results available.`
 
 var hostnameCmd = &cobra.Command{
 	Use:     "hostname",

@@ -10,7 +10,6 @@ A CLI tool for interacting with urlscan.io
 
 ### SEE ALSO
 
-* [urlscan hostname](urlscan_hostname.md)	 - Get the historical observations for a specific hostname in the hostname data source
 * [urlscan key](urlscan_key.md)	 - Manage API key
 * [urlscan pro](urlscan_pro.md)	 - Pro sub-commands
 * [urlscan quotas](urlscan_quotas.md)	 - Get API quotas
