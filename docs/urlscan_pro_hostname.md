@@ -12,7 +12,6 @@ To have the same idiom with the search command, this command has the following s
 - Response:
   - hasMore: is an additional field (not included in the API endpoint response) indicates if there are more results available.
 
-
 ```
 urlscan pro hostname [flags]
 ```
