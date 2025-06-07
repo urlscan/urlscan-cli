@@ -22,8 +22,8 @@ func newHostnameResults() HostnameResults {
 	}
 }
 
-var hostnameCmdExample = `  urlscan hostname <hostname>
-  echo "<hostname>" | urlscan hostname -`
+var hostnameCmdExample = `  urlscan pro hostname <hostname>
+  echo "<hostname>" | urlscan pro hostname -`
 
 var hostnameLong = `To have the same idiom with the search command, this command has the following specs:
 

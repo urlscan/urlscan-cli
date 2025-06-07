@@ -19,8 +19,8 @@ urlscan pro hostname [flags]
 ### Examples
 
 ```
-  urlscan hostname <hostname>
-  echo "<hostname>" | urlscan hostname -
+  urlscan pro hostname <hostname>
+  echo "<hostname>" | urlscan pro hostname -
 ```
 
 ### Options
