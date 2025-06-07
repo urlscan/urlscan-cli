@@ -13,7 +13,7 @@ var ListCmdExample = `  urlscan pro brand list`
 
 var listCmd = &cobra.Command{
 	Use:     "list",
-	Short:   "Get the list of brands that we are able to detect phishing pages, the total number of detected pages and the latest hit for each brand",
+	Short:   "Get the list of brands that we are able to detect phishing pages for, the total number of detected pages, and the latest hit for each brand",
 	Example: ListCmdExample,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := utils.NewAPIClient()
