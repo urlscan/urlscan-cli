@@ -15,4 +15,5 @@ Scan sub-commands
 * [urlscan scan result](urlscan_scan_result.md)	 - Get a result by UUID
 * [urlscan scan screenshot](urlscan_scan_screenshot.md)	 - Download a screenshot by UUID
 * [urlscan scan submit](urlscan_scan_submit.md)	 - Submit a URL to scan
+* [urlscan scan user-agents](urlscan_scan_user-agents.md)	 - Get grouped user agents to use with the Scan API
 
