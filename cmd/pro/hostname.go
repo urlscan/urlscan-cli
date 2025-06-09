@@ -28,10 +28,10 @@ var hostnameCmdExample = `  urlscan pro hostname <hostname>
 var hostnameLong = `To have the same idiom with the search command, this command has the following specs:
 
 - Request:
-  - limit: is not exactly same as the API endpoint's "limit" query parameter. It is the maximum number of results that will be returned by the iterator.
-  - size: is equivalent to the API endpoint's "limit" query parameter, which is the number of results returned by the iterator in each batch.
+  - limit: the maximum number of results that will be returned by the iterator.
+  - size: the number of results returned by the iterator in each batch (equivalent to the API endpoint's "limit" query parameter).
 - Response:
-  - hasMore: is an additional field (not included in the API endpoint response) indicates if there are more results available.`
+  - hasMore: indicates more results are available.`
 
 var hostnameCmd = &cobra.Command{
 	Use:     "hostname",
