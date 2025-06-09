@@ -291,6 +291,11 @@ func (cli *Client) Search(q string, options ...IteratorOption) (*Iterator, error
 	return newIterator(cli, u, options...)
 }
 
+func (cli *Client) StructureSearch(uuid string, options ...IteratorOption) (*Iterator, error) {
+	u := URL("/api/v1/pro/result/%s/similar/", uuid)
+	return newIterator(cli, u, options...)
+}
+
 func (cli *Client) Scan(url string, options ...ScanOption) (*ScanResult, error) {
 	scanOptions := newScanOptions(url, options...)
 
