@@ -45,7 +45,7 @@ func (tm *KeyManager) RemoveKey() error {
 	return nil
 }
 
-func (tm *KeyManager) CheckSercretService() error {
+func (tm *KeyManager) CheckService() error {
 	_, err := keyring.Get(keyService, keyName)
 	if err != nil {
 		if errors.Is(err, keyring.ErrNotFound) {
