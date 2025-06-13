@@ -44,3 +44,14 @@ func (tm *KeyManager) RemoveKey() error {
 	}
 	return nil
 }
+
+func (tm *KeyManager) CheckSercretService() error {
+	_, err := keyring.Get(keyService, keyName)
+	if err != nil {
+		if errors.Is(err, keyring.ErrNotFound) {
+			return nil // Keyring service is available but no key is set
+		}
+		return errors.Join(fmt.Errorf("keyring service is unavialable, check your keyring configuration"), err)
+	}
+	return nil // Keyring service is available and a key exists
+}
