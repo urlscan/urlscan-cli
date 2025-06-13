@@ -86,6 +86,9 @@ var removeKeyCmd = &cobra.Command{
 var keyCmd = &cobra.Command{
 	Use:   "key",
 	Short: "Manage API key",
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		return utils.NewKeyManager().CheckService()
+	},
 }
 
 func init() {
