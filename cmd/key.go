@@ -77,8 +77,11 @@ var setKeyCmd = &cobra.Command{
 var removeKeyCmd = &cobra.Command{
 	Use:   "rm",
 	Short: "Remove urlscan.io API key",
-	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return cmd.Usage()
+		}
+
 		return utils.NewKeyManager().RemoveKey()
 	},
 }

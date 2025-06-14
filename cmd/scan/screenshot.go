@@ -15,8 +15,11 @@ var screenshotCmd = &cobra.Command{
 	Use:     "screenshot <uuid>",
 	Short:   "Download a screenshot by UUID",
 	Example: screenshotCmdExample,
-	Args:    cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 1 {
+			return cmd.Usage()
+		}
+
 		output, _ := cmd.Flags().GetString("output")
 		force, _ := cmd.Flags().GetBool("force")
 
