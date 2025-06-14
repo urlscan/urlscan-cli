@@ -16,8 +16,11 @@ var domCmd = &cobra.Command{
 	Use:     "dom <uuid>",
 	Short:   "Download a dom by UUID",
 	Example: domCmdExample,
-	Args:    cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 1 {
+			return cmd.Usage()
+		}
+
 		output, _ := cmd.Flags().GetString("output")
 		force, _ := cmd.Flags().GetBool("force")
 

@@ -16,6 +16,10 @@ var hostnameCmd = &cobra.Command{
 	Short:   "Get the historical observations for a specific hostname in the hostname data source",
 	Example: hostnameCmdExample,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 1 {
+			return cmd.Usage()
+		}
+
 		limit, _ := cmd.Flags().GetInt("limit")
 		pageState, _ := cmd.Flags().GetString("page-state")
 
