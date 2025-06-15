@@ -9,7 +9,7 @@ urlscan pro subscription update [flags]
 ### Examples
 
 ```
-  urlscan pro subscription create <subscription-id> -s <search-id-1> -s <search-id-2> -f <frequency> -e <email-address-1> -e <email-address-2> -n <name>
+  urlscan pro subscription update <subscription-id> -s <search-id-1> -s <search-id-2> -f <frequency> -e <email-address-1> -e <email-address-2> -n <name>
 ```
 
 ### Options
