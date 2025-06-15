@@ -191,21 +191,21 @@ func (cli *Client) parseResponse(resp *http.Response) (*Response, error) {
 	}
 
 	var reader = resp.Body
-	if resp.StatusCode != http.StatusOK {
-		apiErr := &Error{}
-		if err := json.NewDecoder(reader).Decode(apiErr); err != nil {
+	// consider 2xx response as successful
+	if resp.StatusCode >= http.StatusOK && resp.StatusCode < http.StatusMultipleChoices {
+		read, err := io.ReadAll(reader)
+		if err != nil {
 			return nil, err
 		}
-		return nil, apiErr
+		apiResp.Raw = json.RawMessage(read)
+		return apiResp, nil
 	}
 
-	read, err := io.ReadAll(reader)
-	if err != nil {
+	apiErr := &Error{}
+	if err := json.NewDecoder(reader).Decode(apiErr); err != nil {
 		return nil, err
 	}
-	apiResp.Raw = json.RawMessage(read)
-
-	return apiResp, nil
+	return nil, apiErr
 }
 
 func (cli *Client) Get(url *url.URL, options ...RequestOption) (*Response, error) {
@@ -234,13 +234,9 @@ func (cli *Client) Post(url *url.URL, req *Request, options ...RequestOption) (*
 	return cli.parseResponse(httpResp)
 }
 
-func (cli *Client) Delete(url *url.URL, req *Request, options ...RequestOption) (*Response, error) {
-	b := []byte(req.Raw)
-	defaultContentTypeOptions := append(
-		[]RequestOption{WithHeader("Content-Type", "application/json")},
-		options...)
-	o := opts(defaultContentTypeOptions...)
-	httpResp, err := cli.sendRequest("DELETE", url, bytes.NewReader(b), o.headers)
+func (cli *Client) Delete(url *url.URL, options ...RequestOption) (*Response, error) {
+	o := opts(options...)
+	httpResp, err := cli.sendRequest("DELETE", url, nil, o.headers)
 	if err != nil {
 		return nil, err
 	}
@@ -370,4 +366,29 @@ func (cli *Client) WaitAndGetResult(ctx context.Context, uuid string, maxWait in
 			return nil, ctx.Err()
 		}
 	}
+}
+
+func (cli *Client) CreateSubscription(opts ...SubscriptionOption) (*Response, error) {
+	subscriptionOptions := newSubscriptionOptions(opts...)
+	marshalled, err := json.Marshal(subscriptionOptions)
+	if err != nil {
+		return nil, err
+	}
+
+	return cli.Post(URL("/api/v1/user/subscriptions/"), &Request{
+		Raw: json.RawMessage(marshalled),
+	})
+}
+
+func (cli *Client) UpdateSubscription(opts ...SubscriptionOption) (*Response, error) {
+	subscriptionOptions := newSubscriptionOptions(opts...)
+	marshalled, err := json.Marshal(subscriptionOptions)
+	if err != nil {
+		return nil, err
+	}
+
+	url := URL("/api/v1/user/subscriptions/%s/", subscriptionOptions.Subscription.ID)
+	return cli.Put(url, &Request{
+		Raw: json.RawMessage(marshalled),
+	})
 }
