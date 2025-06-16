@@ -63,18 +63,7 @@ func Download(opt DownloadOptions) error {
 		}
 	}
 
-	w, err := os.Create(opt.Output)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		closeErr := w.Close()
-		if closeErr != nil {
-			err = closeErr
-		}
-	}()
-
-	_, err = opt.Client.Download(opt.URL, w)
+	_, err := opt.Client.Download(opt.URL, opt.Output)
 	if err != nil {
 		return err
 	}
