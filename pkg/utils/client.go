@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"errors"
 	"fmt"
 	"net/url"
 	"os"
@@ -64,29 +63,7 @@ func Download(opt DownloadOptions) error {
 		}
 	}
 
-	w, err := os.Create(opt.Output)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		closeErr := w.Close()
-
-		// if an error occurred during the download (e.g., 404 Not Found),
-		// we should remove the file to avoid leaving an empty file behind
-		if err != nil {
-			removeErr := os.Remove(opt.Output)
-
-			if removeErr != nil {
-				err = errors.Join(err, removeErr)
-			}
-		}
-
-		if closeErr != nil {
-			err = errors.Join(err, closeErr)
-		}
-	}()
-
-	_, err = opt.Client.Download(opt.URL, w)
+	_, err := opt.Client.Download(opt.URL, opt.Output)
 	if err != nil {
 		return err
 	}
