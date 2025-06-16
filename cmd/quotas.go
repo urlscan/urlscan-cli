@@ -11,8 +11,11 @@ import (
 var quotasCmd = &cobra.Command{
 	Use:   "quotas",
 	Short: "Get API quotas",
-	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return cmd.Usage()
+		}
+
 		client, err := utils.NewAPIClient()
 		if err != nil {
 			return err

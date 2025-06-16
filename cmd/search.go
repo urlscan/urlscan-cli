@@ -31,8 +31,11 @@ var searchCmd = &cobra.Command{
 	Use:     "search <query>",
 	Short:   "Search by a query",
 	Example: searchCmdExample,
-	Args:    cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 1 {
+			return cmd.Usage()
+		}
+
 		limit, _ := cmd.Flags().GetInt("limit")
 		size, _ := cmd.Flags().GetInt("size")
 		searchAfter, _ := cmd.Flags().GetString("search-after")

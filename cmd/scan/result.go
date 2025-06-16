@@ -16,8 +16,11 @@ var resultCmd = &cobra.Command{
 	Use:     "result <uuid>",
 	Short:   "Get a result by UUID",
 	Example: resultCmdExample,
-	Args:    cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 1 {
+			return cmd.Usage()
+		}
+
 		reader := utils.StringReaderFromCmdArgs(args)
 		uuid, err := reader.ReadString()
 		if err != nil {
