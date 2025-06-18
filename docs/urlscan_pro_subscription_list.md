@@ -1,6 +1,6 @@
 ## urlscan pro subscription list
 
-Get a list of Subscriptions for the current user
+Get a list of subscriptions for the current user
 
 ```
 urlscan pro subscription list [flags]
