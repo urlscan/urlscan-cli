@@ -19,7 +19,7 @@ urlscan pro subscription create [flags]
   -e, --email-addresses strings   Email addresses to send notifications to (required)
   -f, --frequency string          Frequency of notifications (live, hourly or daily) (required) 
   -h, --help                      help for create
-  -t, --ignore-time               Whether to ignore time constraints (required/defaults to false)
+  -t, --ignore-time               Whether to ignore time constraints (required, defaults to false)
   -a, --is-active                 Whether the subscription is active (required, defaults to true) (default true)
   -n, --name string               Name of the subscription (required)
   -s, --search-ids strings        Array of search IDs associated with this subscription (required)
