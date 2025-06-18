@@ -15,7 +15,7 @@ var structureSearchCmdExample = `  urlscan pro structure-search <uuid>
 
 var structureSearchCmd = &cobra.Command{
 	Use:     "structure-search <uuid>",
-	Short:   "Get structurally similar hits to a specific scan",
+	Short:   "Get structurally similar results to a specific scan",
 	Example: structureSearchCmdExample,
 	Args:    cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
