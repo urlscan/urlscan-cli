@@ -76,7 +76,7 @@ func init() {
 	createCmd.Flags().StringSliceP("email-addresses", "e", []string{}, "Email addresses to send notifications to (required)")
 	createCmd.Flags().StringP("name", "n", "", "Name of the subscription (required)")
 	createCmd.Flags().BoolP("is-active", "a", true, "Whether the subscription is active (required, defaults to true)")
-	createCmd.Flags().BoolP("ignore-time", "t", false, "Whether to ignore time constraints (required/defaults to false)")
+	createCmd.Flags().BoolP("ignore-time", "t", false, "Whether to ignore time constraints (required, defaults to false)")
 	// optional flags
 	createCmd.Flags().StringP("description", "d", "", "Description of the subscription (optional)")
 	createCmd.Flags().StringP("subscription-id", "i", "", "Subscription ID (optional, if not provided a new id will be generated)")
