@@ -72,7 +72,7 @@ var createCmd = &cobra.Command{
 func init() {
 	// required flags
 	createCmd.Flags().StringSliceP("search-ids", "s", []string{}, "Array of search IDs associated with this subscription (required)")
-	createCmd.Flags().StringP("frequency", "f", "", "Frequency of notifications (required/live, hourly or daily)")
+	createCmd.Flags().StringP("frequency", "f", "", "Frequency of notifications (live, hourly or daily) (required) ")
 	createCmd.Flags().StringSliceP("email-addresses", "e", []string{}, "Email addresses to send notifications to (required)")
 	createCmd.Flags().StringP("name", "n", "", "Name of the subscription (required)")
 	createCmd.Flags().BoolP("is-active", "a", true, "Whether the subscription is active (required, defaults to true)")
