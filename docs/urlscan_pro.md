@@ -10,8 +10,9 @@ Pro sub-commands
 
 ### SEE ALSO
 
-- [urlscan](urlscan.md) - A CLI tool for interacting with urlscan.io
-- [urlscan pro brand](urlscan_pro_brand.md) - Brand sub-commands
-- [urlscan pro file](urlscan_pro_file.md) - Download a file
-- [urlscan pro subscription](urlscan_pro_subscription.md) - Subscription sub-commands
-- [urlscan pro user](urlscan_pro_user.md) - Get information about the current user or API key making the request
+* [urlscan](urlscan.md)	 - A CLI tool for interacting with urlscan.io
+* [urlscan pro brand](urlscan_pro_brand.md)	 - Brand sub-commands
+* [urlscan pro file](urlscan_pro_file.md)	 - Download a file
+* [urlscan pro subscription](urlscan_pro_subscription.md)	 - Subscription sub-commands
+* [urlscan pro user](urlscan_pro_user.md)	 - Get information about the current user or API key making the request
+
