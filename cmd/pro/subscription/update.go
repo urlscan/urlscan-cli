@@ -75,13 +75,7 @@ var updateCmd = &cobra.Command{
 }
 
 func init() {
-	updateCmd.Flags().StringSliceP("search-ids", "s", []string{}, "Array of search IDs associated with this subscription (required)")
-	updateCmd.Flags().StringP("frequency", "f", "", "Frequency of notifications (required/live, hourly or daily)")
-	updateCmd.Flags().StringSliceP("email-addresses", "e", []string{}, "Email addresses to send notifications to (required)")
-	updateCmd.Flags().StringP("name", "n", "", "Name of the subscription (required)")
-	updateCmd.Flags().StringP("description", "d", "", "Description of the subscription (optional)")
-	updateCmd.Flags().BoolP("is-active", "a", true, "Whether the subscription is active (required/defaults to true)")
-	updateCmd.Flags().BoolP("ignore-time", "t", false, "Whether to ignore time constraints (required/defaults to false)")
+	setCreateOrUpdateFlags(updateCmd)
 
 	RootCmd.AddCommand(updateCmd)
 }
