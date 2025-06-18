@@ -47,9 +47,7 @@ func WithSubscriptionName(name string) SubscriptionOption {
 
 func WithSubscriptionDescription(description string) SubscriptionOption {
 	return func(opts *SubscriptionOptions) {
-		if description != "" {
-			opts.Subscription.Description = description
-		}
+		opts.Subscription.Description = description
 	}
 }
 
