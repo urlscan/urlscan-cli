@@ -13,7 +13,7 @@ var listCmdExample = `  urlscan pro subscription list`
 
 var listCmd = &cobra.Command{
 	Use:     "list",
-	Short:   "Get a list of Subscriptions for the current user",
+	Short:   "Get a list of subscriptions for the current user",
 	Example: listCmdExample,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := utils.NewAPIClient()
