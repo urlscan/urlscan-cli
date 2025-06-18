@@ -1,6 +1,6 @@
 ## urlscan pro structure-search
 
-Get structurally similar hits to a specific scan
+Get structurally similar results to a specific scan
 
 ```
 urlscan pro structure-search <uuid> [flags]
