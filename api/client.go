@@ -264,7 +264,7 @@ func (cli *Client) Put(url *url.URL, req *Request, options ...RequestOption) (*R
 	return cli.parseResponse(httpResp)
 }
 
-func (cli *Client) Download(url *url.URL, w io.Writer) (int64, error) {
+func (cli *Client) Download(url *url.URL, output string) (int64, error) {
 	resp, err := cli.sendRequest("GET", url, nil, nil)
 	if err != nil {
 		return 0, err
@@ -272,11 +272,19 @@ func (cli *Client) Download(url *url.URL, w io.Writer) (int64, error) {
 	defer resp.Body.Close() // nolint:errcheck
 
 	if resp.StatusCode == http.StatusOK {
-		return io.Copy(w, resp.Body)
-	}
+		w, err := os.Create(output)
+		if err != nil {
+			return 0, err
+		}
+		defer func() {
+			closeErr := w.Close()
 
-	if _, err := cli.parseResponse(resp); err != nil {
-		return 0, err
+			if closeErr != nil {
+				err = closeErr
+			}
+		}()
+
+		return io.Copy(w, resp.Body)
 	}
 
 	return 0, fmt.Errorf("unknown error downloading %q, HTTP response code: %d", url, resp.StatusCode)
