@@ -3,29 +3,20 @@ package subscription
 import (
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/spf13/cobra"
 	api "github.com/urlscan/urlscan-cli/api"
 
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
-var createCmdExample = `  urlscan pro subscription create <subscription-id> -s <search-id-1> -s <search-id-2> -f <frequency> -e <email-address-1> -e <email-address-2> -n <name>`
+var createCmdExample = `  urlscan pro subscription create -s <search-id-1> -s <search-id-2> -f <frequency> -e <email-address-1> -e <email-address-2> -n <name>`
 
 var createCmd = &cobra.Command{
 	Use:     "create",
 	Short:   "Create a new subscription",
 	Example: createCmdExample,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 1 {
-			return cmd.Usage()
-		}
-
-		reader := utils.StringReaderFromCmdArgs(args)
-		id, err := reader.ReadString()
-		if err != nil {
-			return err
-		}
-
 		// required flags (show usage if any are missing)
 		searchIds, _ := cmd.Flags().GetStringSlice("search-ids")
 		if len(searchIds) == 0 {
@@ -48,6 +39,10 @@ var createCmd = &cobra.Command{
 
 		// optional flags
 		description, _ := cmd.Flags().GetString("description")
+		id, _ := cmd.Flags().GetString("subscription-id")
+		if id == "" {
+			id = uuid.New().String()
+		}
 
 		client, err := utils.NewAPIClient()
 		if err != nil {
@@ -84,6 +79,7 @@ func init() {
 	createCmd.Flags().BoolP("ignore-time", "t", false, "Whether to ignore time constraints (required/defaults to false)")
 	// optional flags
 	createCmd.Flags().StringP("description", "d", "", "Description of the subscription (optional)")
+	createCmd.Flags().StringP("subscription-id", "i", "", "Subscription ID (optional, if not provided a new id will be generated)")
 
 	RootCmd.AddCommand(createCmd)
 }

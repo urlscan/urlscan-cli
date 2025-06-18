@@ -9,7 +9,7 @@ urlscan pro subscription create [flags]
 ### Examples
 
 ```
-  urlscan pro subscription create <subscription-id> -s <search-id-1> -s <search-id-2> -f <frequency> -e <email-address-1> -e <email-address-2> -n <name>
+  urlscan pro subscription create -s <search-id-1> -s <search-id-2> -f <frequency> -e <email-address-1> -e <email-address-2> -n <name>
 ```
 
 ### Options
@@ -23,6 +23,7 @@ urlscan pro subscription create [flags]
   -a, --is-active                 Whether the subscription is active (required/defaults to true) (default true)
   -n, --name string               Name of the subscription (required)
   -s, --search-ids strings        Array of search IDs associated with this subscription (required)
+  -i, --subscription-id string    Subscription ID (optional, if not provided a new id will be generated)
 ```
 
 ### SEE ALSO
