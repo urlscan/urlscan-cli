@@ -192,7 +192,7 @@ func (cli *Client) parseResponse(resp *http.Response) (*Response, error) {
 
 	var reader = resp.Body
 	// consider 2xx response as successful
-	if resp.StatusCode >= http.StatusOK && resp.StatusCode < http.StatusMultipleChoices {
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
 		read, err := io.ReadAll(reader)
 		if err != nil {
 			return nil, err
