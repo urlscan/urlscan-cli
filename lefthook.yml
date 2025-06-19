@@ -14,9 +14,6 @@ pre-commit:
         rm docs/urlscan*.md
         go run docutil/main.go
       stage_fixed: true
-
-pre-push:
-  commands:
     test:
       glob: "*.go"
       run: go test ./...

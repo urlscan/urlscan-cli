@@ -10,13 +10,9 @@ import (
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Show version",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 0 {
-			return cmd.Usage()
-		}
-
+	Args:  cobra.ExactArgs(0),
+	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("urlscan-cli %s\n", version.Version)
-		return nil
 	},
 }
 

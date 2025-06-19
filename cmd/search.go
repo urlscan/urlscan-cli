@@ -10,20 +10,6 @@ import (
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
-type Results struct {
-	Results []json.RawMessage `json:"results"`
-	HasMore bool              `json:"has_more"`
-	Total   int               `json:"total"`
-}
-
-func newResults() Results {
-	return Results{
-		Total:   0,
-		Results: make([]json.RawMessage, 0),
-		HasMore: false,
-	}
-}
-
 var searchCmdExample = `  urlscan search <query>
   echo "<query>" | urlscan search -`
 
@@ -31,11 +17,8 @@ var searchCmd = &cobra.Command{
 	Use:     "search <query>",
 	Short:   "Search by a query",
 	Example: searchCmdExample,
+	Args:    cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 1 {
-			return cmd.Usage()
-		}
-
 		limit, _ := cmd.Flags().GetInt("limit")
 		size, _ := cmd.Flags().GetInt("size")
 		searchAfter, _ := cmd.Flags().GetString("search-after")
@@ -55,7 +38,7 @@ var searchCmd = &cobra.Command{
 			return err
 		}
 
-		results := newResults()
+		results := utils.NewSearchResults()
 		for result, err := range it.Iterate() {
 			if err != nil {
 				return err
