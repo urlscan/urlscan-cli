@@ -260,7 +260,7 @@ func (cli *Client) Put(url *url.URL, req *Request, options ...RequestOption) (*R
 	return cli.parseResponse(httpResp)
 }
 
-func (cli *Client) Download(url *url.URL, output string) (int64, error) {
+func (cli *Client) Download(url *url.URL, w io.Writer) (int64, error) {
 	resp, err := cli.sendRequest("GET", url, nil, nil)
 	if err != nil {
 		return 0, err
@@ -268,19 +268,11 @@ func (cli *Client) Download(url *url.URL, output string) (int64, error) {
 	defer resp.Body.Close() // nolint:errcheck
 
 	if resp.StatusCode == http.StatusOK {
-		w, err := os.Create(output)
-		if err != nil {
-			return 0, err
-		}
-		defer func() {
-			closeErr := w.Close()
-
-			if closeErr != nil {
-				err = closeErr
-			}
-		}()
-
 		return io.Copy(w, resp.Body)
+	}
+
+	if _, err := cli.parseResponse(resp); err != nil {
+		return 0, err
 	}
 
 	return 0, fmt.Errorf("unknown error downloading %q, HTTP response code: %d", url, resp.StatusCode)
@@ -292,6 +284,11 @@ func (cli *Client) Search(q string, options ...IteratorOption) (*Iterator, error
 	query.Add("q", q)
 	u.RawQuery = query.Encode()
 
+	return newIterator(cli, u, options...)
+}
+
+func (cli *Client) StructureSearch(uuid string, options ...IteratorOption) (*Iterator, error) {
+	u := URL("/api/v1/pro/result/%s/similar/", uuid)
 	return newIterator(cli, u, options...)
 }
 
