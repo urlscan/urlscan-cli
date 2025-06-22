@@ -10,7 +10,7 @@ urlscan pro incident copy [flags]
 
 ```
   urlscan pro incident copy <incident-id>
-	echo <incident-id> | urlscan pro incident copy -
+  echo <incident-id> | urlscan pro incident copy -
 ```
 
 ### Options

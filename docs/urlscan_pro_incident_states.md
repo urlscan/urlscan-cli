@@ -10,7 +10,7 @@ urlscan pro incident states [flags]
 
 ```
   urlscan pro incident states <incident-id>
-	echo <incident-id> | urlscan pro incident states -
+  echo <incident-id> | urlscan pro incident states -
 ```
 
 ### Options

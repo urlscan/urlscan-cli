@@ -10,7 +10,7 @@ urlscan pro incident restart [flags]
 
 ```
   urlscan pro incident restart <incident-id>
-	echo <incident-id> | urlscan pro incident restart -
+  echo <incident-id> | urlscan pro incident restart -
 ```
 
 ### Options

@@ -10,7 +10,7 @@ urlscan pro incident close [flags]
 
 ```
   urlscan pro incident close <incident-id>
-	echo <incident-id> | urlscan pro incident close -
+  echo <incident-id> | urlscan pro incident close -
 ```
 
 ### Options

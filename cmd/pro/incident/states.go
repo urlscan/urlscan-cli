@@ -10,7 +10,7 @@ import (
 )
 
 var statesCmdExample = `  urlscan pro incident states <incident-id>
-	echo <incident-id> | urlscan pro incident states -`
+  echo <incident-id> | urlscan pro incident states -`
 
 var statesCmd = &cobra.Command{
 	Use:     "states",

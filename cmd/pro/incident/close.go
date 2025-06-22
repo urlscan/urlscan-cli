@@ -10,7 +10,7 @@ import (
 )
 
 var closeCmdExample = `  urlscan pro incident close <incident-id>
-	echo <incident-id> | urlscan pro incident close -`
+  echo <incident-id> | urlscan pro incident close -`
 
 var closeCmd = &cobra.Command{
 	Use:     "close",

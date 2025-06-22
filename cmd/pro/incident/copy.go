@@ -10,7 +10,7 @@ import (
 )
 
 var copyCmdExample = `  urlscan pro incident copy <incident-id>
-	echo <incident-id> | urlscan pro incident copy -`
+  echo <incident-id> | urlscan pro incident copy -`
 
 var copyCmd = &cobra.Command{
 	Use:     "copy",

@@ -10,7 +10,7 @@ import (
 )
 
 var restartCmdExample = `  urlscan pro incident restart <incident-id>
-	echo <incident-id> | urlscan pro incident restart -`
+  echo <incident-id> | urlscan pro incident restart -`
 
 var restartCmd = &cobra.Command{
 	Use:     "restart",
