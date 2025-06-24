@@ -18,27 +18,11 @@ var createCmd = &cobra.Command{
 	Example: createCmdExample,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// required flags (show usage if any are missing)
-		searchIds, _ := cmd.Flags().GetStringSlice("search-ids")
-		if len(searchIds) == 0 {
+		opts, err := mapCmdToSubscriptionOptions(cmd)
+		if err != nil {
 			return cmd.Usage()
 		}
-		frequency, _ := cmd.Flags().GetString("frequency")
-		if frequency == "" {
-			return cmd.Usage()
-		}
-		emailAddresses, _ := cmd.Flags().GetStringSlice("email-addresses")
-		if len(emailAddresses) == 0 {
-			return cmd.Usage()
-		}
-		name, _ := cmd.Flags().GetString("name")
-		if name == "" {
-			return cmd.Usage()
-		}
-		isActive, _ := cmd.Flags().GetBool("is-active")
-		ignoreTime, _ := cmd.Flags().GetBool("ignore-time")
 
-		// optional flags
-		description, _ := cmd.Flags().GetString("description")
 		id, _ := cmd.Flags().GetString("subscription-id")
 		if id == "" {
 			id = uuid.New().String()
@@ -50,14 +34,7 @@ var createCmd = &cobra.Command{
 		}
 
 		res, err := client.CreateSubscription(
-			api.WithSubscriptionID(id),
-			api.WithSubscriptionSearchIds(searchIds),
-			api.WithSubscriptionFrequency(frequency),
-			api.WithSubscriptionEmailAddresses(emailAddresses),
-			api.WithSubscriptionName(name),
-			api.WithSubscriptionDescription(description),
-			api.WithSubscriptionIsActive(isActive),
-			api.WithSubscriptionIgnoreTime(ignoreTime),
+			append([]api.SubscriptionOption{api.WithSubscriptionID(id)}, opts...)...,
 		)
 		if err != nil {
 			return err

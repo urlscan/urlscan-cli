@@ -422,3 +422,28 @@ func (cli *Client) UpdateSavedSearch(opts ...SavedSearchOption) (*Response, erro
 		Raw: json.RawMessage(marshalled),
 	})
 }
+
+func (cli *Client) CreateIncident(opts ...IncidentOption) (*Response, error) {
+	incidentOpts := newIncidentOptions(opts...)
+	marshalled, err := json.Marshal(incidentOpts)
+	if err != nil {
+		return nil, err
+	}
+
+	return cli.Post(URL("/api/v1/user/incidents/"), &Request{
+		Raw: json.RawMessage(marshalled),
+	})
+}
+
+func (cli *Client) UpdateIncident(id string, opts ...IncidentOption) (*Response, error) {
+	incidentOpts := newIncidentOptions(opts...)
+	marshalled, err := json.Marshal(incidentOpts)
+	if err != nil {
+		return nil, err
+	}
+
+	url := URL("/api/v1/user/incidents/%s/", id)
+	return cli.Put(url, &Request{
+		Raw: json.RawMessage(marshalled),
+	})
+}

@@ -47,7 +47,7 @@ var searchCmd = &cobra.Command{
 }
 
 func init() {
-	searchCmd.Flags().String("datasource", "scans", "datasource to search in (scans or hostnames, defaults to scans)")
+	searchCmd.Flags().StringP("datasource", "D", "scans", "datasource to search in (scans or hostnames)")
 
 	RootCmd.AddCommand(searchCmd)
 }
