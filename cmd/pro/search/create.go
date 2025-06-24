@@ -84,7 +84,7 @@ var createCmd = &cobra.Command{
 func init() {
 	setCreateOrUpdateFlags(createCmd)
 	// optional flag, only for create command
-	createCmd.Flags().StringP("search-id", "i", "", "Search ID (optional, if not provided a new id will be generated)")
+	createCmd.Flags().StringP("search-id", "i", "", "Search ID (optional, if not provided a new ID will be generated)")
 
 	RootCmd.AddCommand(createCmd)
 }
