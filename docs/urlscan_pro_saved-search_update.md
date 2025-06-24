@@ -16,7 +16,7 @@ urlscan pro saved-search update [flags]
 ### Options
 
 ```
-  -D, --datasource string          Which data this Saved Search operates on (hostnames or scans) (required (default "scans")
+  -D, --datasource string          Which data this saved search operates on (hostnames or scans) (required (default "scans")
   -d, --description string         Short description of the saved search (optional)
   -h, --help                       help for update
   -l, --long-description string    Long description of the saved search (optional)

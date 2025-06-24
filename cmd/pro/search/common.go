@@ -3,7 +3,7 @@ package search
 import "github.com/spf13/cobra"
 
 func setCreateOrUpdateFlags(cmd *cobra.Command) {
-	cmd.Flags().StringP("datasource", "D", "scans", "Which data this Saved Search operates on (hostnames or scans) (required")
+	cmd.Flags().StringP("datasource", "D", "scans", "Which data this saved search operates on (hostnames or scans) (required")
 	cmd.Flags().StringP("name", "n", "", "Name of the saved search (required)")
 	cmd.Flags().StringP("tlp", "t", "red", "TLP (Traffic Light Protocol) of the saved search (required)")
 	cmd.Flags().StringP("query", "q", "", "Search query of the saved search (required)")
