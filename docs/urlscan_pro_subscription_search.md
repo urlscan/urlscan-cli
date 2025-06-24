@@ -16,7 +16,7 @@ urlscan pro subscription search [flags]
 ### Options
 
 ```
-      --datasource string   datasource to search in (scans or hostnames, defaults to scans) (default "scans")
+  -D, --datasource string   datasource to search in (scans or hostnames) (default "scans")
   -h, --help                help for search
 ```
 

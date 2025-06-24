@@ -17,10 +17,10 @@ urlscan pro subscription update [flags]
 ```
   -d, --description string        Description of the subscription (optional)
   -e, --email-addresses strings   Email addresses to send notifications to (required)
-  -f, --frequency string          Frequency of notifications (live, hourly or daily) (required) 
+  -f, --frequency string          Frequency of notifications (live, hourly or daily) (required)
   -h, --help                      help for update
-  -t, --ignore-time               Whether to ignore time constraints (required, defaults to false)
-  -a, --is-active                 Whether the subscription is active (required, defaults to true) (default true)
+  -t, --ignore-time               Whether to ignore time constraints (required) (default false)
+  -a, --is-active                 Whether the subscription is active (required) (default true)
   -n, --name string               Name of the subscription (required)
   -s, --search-ids strings        Array of search IDs associated with this subscription (required)
 ```
