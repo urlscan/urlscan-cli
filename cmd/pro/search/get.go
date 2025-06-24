@@ -10,7 +10,7 @@ import (
 )
 
 var getCmdExample = `  urlscan pro saved-search get <search-id>
-  urlscan pro saved-search get --id <search-id>`
+  echo <search-id> | urlscan pro saved-search get -`
 
 var getCmd = &cobra.Command{
 	Use:     "get",
