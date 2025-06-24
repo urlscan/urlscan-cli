@@ -9,8 +9,8 @@ import (
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
-var forkCmdExample = `  urlscan pro incident restart <incident-id>
-  echo <incident-id> | urlscan pro incident restart -`
+var forkCmdExample = `  urlscan pro incident fork <incident-id>
+  echo <incident-id> | urlscan pro incident fork -`
 
 var forkCmd = &cobra.Command{
 	Use:     "fork",

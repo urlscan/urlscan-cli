@@ -9,8 +9,8 @@ urlscan pro incident fork [flags]
 ### Examples
 
 ```
-  urlscan pro incident restart <incident-id>
-  echo <incident-id> | urlscan pro incident restart -
+  urlscan pro incident fork <incident-id>
+  echo <incident-id> | urlscan pro incident fork -
 ```
 
 ### Options
