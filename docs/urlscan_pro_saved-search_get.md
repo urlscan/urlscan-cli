@@ -10,7 +10,7 @@ urlscan pro saved-search get [flags]
 
 ```
   urlscan pro saved-search get <search-id>
-  urlscan pro saved-search get --id <search-id>
+  echo <search-id> | urlscan pro saved-search get -
 ```
 
 ### Options
