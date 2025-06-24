@@ -14,7 +14,7 @@ func setCreateOrUpdateFlags(cmd *cobra.Command) {
 	cmd.Flags().Int("expire-after", 0, "Expire after in seconds (default 0)")
 	cmd.Flags().Int("scan-interval-after-malicious", 0, "Scan interval after malicious in seconds (default 0)")
 	cmd.Flags().Int("scan-interval-after-suspended", 0, "Scan interval after suspended in seconds (default 0)")
-	cmd.Flags().Int("scan-interval", 0, "Scan interval in seconds  (default 0)")
+	cmd.Flags().Int("scan-interval", 0, "Scan interval in seconds (default 0)")
 	cmd.Flags().Int("stop-delay-inactive", 0, "Stop delay inactive in seconds (default 0)")
 	cmd.Flags().Int("stop-delay-malicious", 0, "Stop delay malicious in seconds (optional) (default 0)")
 	cmd.Flags().Int("stop-delay-suspended", 0, "Stop delay suspended in seconds (optional) (default 0)")
