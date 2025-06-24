@@ -17,7 +17,7 @@ urlscan scan dom <uuid> [flags]
 
 ```
   -h, --help            help for dom
-  -o, --output string   Output file name. (default <uuid>.html)
+  -o, --output string   Output file name (default <uuid>.html)
 ```
 
 ### SEE ALSO
