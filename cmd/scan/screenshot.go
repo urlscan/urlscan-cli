@@ -47,7 +47,7 @@ var screenshotCmd = &cobra.Command{
 }
 
 func init() {
-	screenshotCmd.Flags().StringP("output", "o", "", "Output file name. (default <uuid>.png)")
+	screenshotCmd.Flags().StringP("output", "o", "", "Output file name (default <uuid>.png)")
 	screenshotCmd.Flags().BoolP("force", "f", false, "Enable to force overwriting an existing file.")
 
 	RootCmd.AddCommand(screenshotCmd)
