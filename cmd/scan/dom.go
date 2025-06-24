@@ -48,5 +48,5 @@ var domCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(domCmd)
-	domCmd.Flags().StringP("output", "o", "", "Output file name. (default <uuid>.html)")
+	domCmd.Flags().StringP("output", "o", "", "Output file name (default <uuid>.html)")
 }
