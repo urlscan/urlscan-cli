@@ -398,6 +398,31 @@ func (cli *Client) UpdateSubscription(opts ...SubscriptionOption) (*Response, er
 	})
 }
 
+func (cli *Client) CreateSavedSearch(opts ...SavedSearchOption) (*Response, error) {
+	savedSearchOptions := newSavedSearchOptions(opts...)
+	marshalled, err := json.Marshal(savedSearchOptions)
+	if err != nil {
+		return nil, err
+	}
+
+	return cli.Post(URL("/api/v1/user/searches/"), &Request{
+		Raw: json.RawMessage(marshalled),
+	})
+}
+
+func (cli *Client) UpdateSavedSearch(opts ...SavedSearchOption) (*Response, error) {
+	savedSearchOptions := newSavedSearchOptions(opts...)
+	marshalled, err := json.Marshal(savedSearchOptions)
+	if err != nil {
+		return nil, err
+	}
+
+	url := URL("/api/v1/user/searches/%s/", savedSearchOptions.Search.ID)
+	return cli.Put(url, &Request{
+		Raw: json.RawMessage(marshalled),
+	})
+}
+
 func (cli *Client) CreateIncident(opts ...IncidentOption) (*Response, error) {
 	incidentOpts := newIncidentOptions(opts...)
 	marshalled, err := json.Marshal(incidentOpts)

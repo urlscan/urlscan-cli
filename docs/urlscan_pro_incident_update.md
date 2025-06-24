@@ -24,7 +24,7 @@ urlscan pro incident update [flags]
   -h, --help                                help for update
       --incident-profile string             Incident profile (optional)
   -o, --observable string                   Observable (hostname, domain, IP or URL) (required)
-      --scan-interval int                   Scan interval in seconds  (default 0)
+      --scan-interval int                   Scan interval in seconds (default 0)
       --scan-interval-after-malicious int   Scan interval after malicious in seconds (default 0)
       --scan-interval-after-suspended int   Scan interval after suspended in seconds (default 0)
       --scan-interval-mode string           Scan interval mode (automatic or manual) (default "automatic")
