@@ -447,3 +447,42 @@ func (cli *Client) UpdateIncident(id string, opts ...IncidentOption) (*Response,
 		Raw: json.RawMessage(marshalled),
 	})
 }
+
+func (cli *Client) TriggerNonBlockingLiveScan(id string, opts ...LiveScanOption) (*Response, error) {
+	liveScanOpts := newLiveScanOptions(opts...)
+	marshalled, err := json.Marshal(liveScanOpts)
+	if err != nil {
+		return nil, err
+	}
+
+	url := URL("/api/v1/livescan/%s/task/", id)
+	return cli.Post(url, &Request{
+		Raw: json.RawMessage(marshalled),
+	})
+}
+
+func (cli *Client) TriggerLiveScan(id string, opts ...LiveScanOption) (*Response, error) {
+	liveScanOpts := newLiveScanOptions(opts...)
+	marshalled, err := json.Marshal(liveScanOpts)
+	if err != nil {
+		return nil, err
+	}
+
+	url := URL("/api/v1/livescan/%s/scan/", id)
+	return cli.Post(url, &Request{
+		Raw: json.RawMessage(marshalled),
+	})
+}
+
+func (cli *Client) StoreLiveScanResult(scannerId string, scanId string, opts ...LiveScanStoreOption) (*Response, error) {
+	liveScanStoreOpts := newLiveScanStoreOptions(opts...)
+	marshalled, err := json.Marshal(liveScanStoreOpts)
+	if err != nil {
+		return nil, err
+	}
+
+	url := URL("/api/v1/livescan/%s/%s/", scannerId, scanId)
+	return cli.Put(url, &Request{
+		Raw: json.RawMessage(marshalled),
+	})
+}
