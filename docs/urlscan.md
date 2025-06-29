@@ -1,6 +1,6 @@
 ## urlscan
 
-A CLI tool for interacting with urlscan.io
+Foo bar
 
 ### Options
 

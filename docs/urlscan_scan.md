@@ -10,7 +10,7 @@ Scan sub-commands
 
 ### SEE ALSO
 
-* [urlscan](urlscan.md)	 - A CLI tool for interacting with urlscan.io
+* [urlscan](urlscan.md)	 - Foo bar
 * [urlscan scan countries](urlscan_scan_countries.md)	 - Retrieve countries available for scanning using the Scan API
 * [urlscan scan dom](urlscan_scan_dom.md)	 - Download a dom by UUID
 * [urlscan scan result](urlscan_scan_result.md)	 - Get a result by UUID

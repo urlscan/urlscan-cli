@@ -10,7 +10,7 @@ Pro sub-commands
 
 ### SEE ALSO
 
-* [urlscan](urlscan.md)	 - A CLI tool for interacting with urlscan.io
+* [urlscan](urlscan.md)	 - Foo bar
 * [urlscan pro brand](urlscan_pro_brand.md)	 - Brand sub-commands
 * [urlscan pro incident](urlscan_pro_incident.md)	 - Incident sub-commands
 * [urlscan pro saved-search](urlscan_pro_saved-search.md)	 - Saved search sub-commands

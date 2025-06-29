@@ -23,5 +23,5 @@ urlscan hostname [flags]
 
 ### SEE ALSO
 
-* [urlscan](urlscan.md)	 - A CLI tool for interacting with urlscan.io
+* [urlscan](urlscan.md)	 - Foo bar
 
