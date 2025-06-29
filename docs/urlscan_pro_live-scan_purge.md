@@ -1,6 +1,6 @@
 ## urlscan pro live-scan purge
 
-Purge a temporary scan
+Purge a temporary live scan
 
 ```
 urlscan pro live-scan purge [flags]

@@ -18,7 +18,7 @@ urlscan pro live-scan scan [flags]
 ```
   -b, --blocking                       Whether to do a blocking scan or not (default true)
   -c, --capture-delay int              Delay after page has finished loading before capturing page content (in ms) (default 10000)
-  -d, --disable-features strings       Features to enable (annotation, dom, downloads, hideheadless, pageInformation, responses, screenshot, screenshotCompression & stealth)
+  -d, --disable-features strings       Features to disable (annotation, dom, downloads, hideheadless, pageInformation, responses, screenshot, screenshotCompression & stealth)
   -e, --enable-features strings        Features to enable (bannerBypass, downloadWait & fullscreen)
   -H, --extra-headers stringToString   Extra headers to send with the request (e.g. User-Agent: urlscan-cli) (default [])
   -h, --help                           help for scan
