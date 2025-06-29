@@ -6,8 +6,8 @@ type LiveScanOptions struct {
 		Visibility string `json:"visibility"`
 	} `json:"task"`
 	Scanner struct {
-		PageTimeout     int               `json:"pageTimeout,omitempty"`
-		CaptureDelay    int               `json:"captureDelay,omitempty"`
+		PageTimeout     int               `json:"pageTimeout"`
+		CaptureDelay    int               `json:"captureDelay"`
 		ExtraHeaders    map[string]string `json:"extraHeaders,omitempty"`
 		EnableFeatures  []string          `json:"enableFeatures,omitempty"`
 		DisableFeatures []string          `json:"disableFeatures,omitempty"`
