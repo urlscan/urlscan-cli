@@ -80,7 +80,7 @@ func init() {
 	scanCmd.Flags().IntP("capture-delay", "c", 10_000, "Delay after page has finished loading before capturing page content (in ms)")
 	scanCmd.Flags().StringToStringP("extra-headers", "H", map[string]string{}, "Extra headers to send with the request (e.g., User-Agent: urlscan-cli)")
 	scanCmd.Flags().StringSliceP("enable-features", "e", []string{}, "Features to enable (bannerBypass, downloadWait, fullscreen)")
-	scanCmd.Flags().StringSliceP("disable-features", "d", []string{}, "Features to disable (annotation, dom, downloads, hideheadless, pageInformation, responses, screenshot, screenshotCompression & stealth)")
+	scanCmd.Flags().StringSliceP("disable-features", "d", []string{}, "Features to disable (annotation, dom, downloads, hideheadless, pageInformation, responses, screenshot, screenshotCompression, stealth)")
 	addVisibilityFlag(scanCmd)
 	addScannerIdFlag(scanCmd)
 
