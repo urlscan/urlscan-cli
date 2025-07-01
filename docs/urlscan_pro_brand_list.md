@@ -1,6 +1,6 @@
 ## urlscan pro brand list
 
-Get the list of brands that we are able to detect phishing pages, the total number of detected pages and the latest hit for each brand
+Get the list of brands that we are able to detect phishing pages for, the total number of detected pages, and the latest hit for each brand
 
 ```
 urlscan pro brand list [flags]
