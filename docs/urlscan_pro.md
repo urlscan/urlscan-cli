@@ -14,6 +14,7 @@ Pro sub-commands
 * [urlscan pro brand](urlscan_pro_brand.md)	 - Brand sub-commands
 * [urlscan pro hostname](urlscan_pro_hostname.md)	 - Get the historical observations for a specific hostname in the hostname data source
 * [urlscan pro incident](urlscan_pro_incident.md)	 - Incident sub-commands
+* [urlscan pro live-scan](urlscan_pro_live-scan.md)	 - Live-scan sub-commands
 * [urlscan pro saved-search](urlscan_pro_saved-search.md)	 - Saved search sub-commands
 * [urlscan pro structure-search](urlscan_pro_structure-search.md)	 - Get structurally similar results to a specific scan
 * [urlscan pro subscription](urlscan_pro_subscription.md)	 - Subscription sub-commands
