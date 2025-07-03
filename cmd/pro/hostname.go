@@ -87,7 +87,7 @@ var hostnameCmd = &cobra.Command{
 func init() {
 	hostnameCmd.Flags().IntP("limit", "l", 10000, "Maximum number of results that will be returned by the iterator")
 	hostnameCmd.Flags().IntP("size", "s", 1000, "Number of results returned by the iterator in each batch")
-	hostnameCmd.Flags().StringP("page-state", "p", "", "Continue return additional results starting from this page state from the previous API call")
+	hostnameCmd.Flags().StringP("page-state", "p", "", "Returns additional results starting from this page state from the previous API call")
 
 	RootCmd.AddCommand(hostnameCmd)
 }
