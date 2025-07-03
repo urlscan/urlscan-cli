@@ -15,7 +15,7 @@ var domCmdExample = `  urlscan pro live-scan dom <scan-id> -s <scanner-id>
 
 var domCmd = &cobra.Command{
 	Use:     "dom",
-	Short:   "Get a dom of a live scan",
+	Short:   "Get dom of a live scan",
 	Example: domCmdExample,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
