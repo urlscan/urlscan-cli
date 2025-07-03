@@ -1,6 +1,6 @@
 ## urlscan pro live-scan dom
 
-Get a dom of a live scan
+Get dom of a live scan
 
 ```
 urlscan pro live-scan dom [flags]
