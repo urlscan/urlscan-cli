@@ -41,7 +41,7 @@ $ echo "<api_key>" | urlscan key set -
 ```bash
 urlscan scan submit <url>
 urlscan scan result <uuid>
-urlscan scan search <query>
+urlscan search <query>
 ```
 
 Alternatively, you can pass an argument via the standard input by passing `-`.
