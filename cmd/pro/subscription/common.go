@@ -14,8 +14,11 @@ func setCreateOrUpdateFlags(cmd *cobra.Command) {
 	cmd.Flags().StringP("frequency", "f", "", "Frequency of notifications (live, hourly or daily) (required)")
 	cmd.Flags().StringSliceP("email-addresses", "e", []string{}, "Email addresses to send notifications to (required)")
 	cmd.Flags().StringP("name", "n", "", "Name of the subscription (required)")
-	cmd.Flags().BoolP("is-active", "a", true, "Whether the subscription is active (required)")
-	cmd.Flags().BoolP("ignore-time", "t", false, "Whether to ignore time constraints (required) (default false)")
+
+	// defaulted flags
+	cmd.Flags().BoolP("is-active", "a", true, "Whether the subscription is active")
+	cmd.Flags().BoolP("ignore-time", "t", false, "Whether to ignore time constraints (default false)")
+
 	// optional flags
 	cmd.Flags().StringP("description", "d", "", "Description of the subscription (optional)")
 }

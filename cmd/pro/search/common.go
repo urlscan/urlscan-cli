@@ -3,12 +3,16 @@ package search
 import "github.com/spf13/cobra"
 
 func setCreateOrUpdateFlags(cmd *cobra.Command) {
-	cmd.Flags().StringP("datasource", "D", "scans", "Which data this saved search operates on (hostnames or scans) (required")
+	// required flags
 	cmd.Flags().StringP("name", "n", "", "Name of the saved search (required)")
-	cmd.Flags().StringP("tlp", "t", "red", "TLP (Traffic Light Protocol) of the saved search (required)")
 	cmd.Flags().StringP("query", "q", "", "Search query of the saved search (required)")
-	cmd.Flags().IntP("pass", "P", 2, "2 for inline-matching, 10 for bookmark-only (required)")
 
+	// defaulted flags
+	cmd.Flags().StringP("tlp", "t", "red", "TLP (Traffic Light Protocol) of the saved search")
+	cmd.Flags().StringP("datasource", "D", "scans", "Which data this saved search operates on (hostnames or scans)")
+	cmd.Flags().IntP("pass", "P", 2, "2 for inline-matching, 10 for bookmark-only")
+
+	// optional flags
 	cmd.Flags().StringSliceP("permissions", "p", []string{}, "Permissions of the saved search (optional)")
 	cmd.Flags().StringP("description", "d", "", "Short description of the saved search (optional)")
 	cmd.Flags().StringP("long-description", "l", "", "Long description of the saved search (optional)")
