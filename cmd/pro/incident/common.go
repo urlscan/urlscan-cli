@@ -8,21 +8,25 @@ import (
 )
 
 func setCreateOrUpdateFlags(cmd *cobra.Command) {
+	// required flags
 	cmd.Flags().StringP("observable", "o", "", "Observable (hostname, domain, IP or URL) (required)")
 
+	// defaulted flags
 	cmd.Flags().Int("countries-per-interval", 1, "Countries per interval")
 	cmd.Flags().Int("expire-after", 0, "Expire after in seconds (default 0)")
 	cmd.Flags().Int("scan-interval-after-malicious", 0, "Scan interval after malicious in seconds (default 0)")
 	cmd.Flags().Int("scan-interval-after-suspended", 0, "Scan interval after suspended in seconds (default 0)")
 	cmd.Flags().Int("scan-interval", 0, "Scan interval in seconds (default 0)")
 	cmd.Flags().Int("stop-delay-inactive", 0, "Stop delay inactive in seconds (default 0)")
-	cmd.Flags().Int("stop-delay-malicious", 0, "Stop delay malicious in seconds (optional) (default 0)")
-	cmd.Flags().Int("stop-delay-suspended", 0, "Stop delay suspended in seconds (optional) (default 0)")
+	cmd.Flags().Int("stop-delay-malicious", 0, "Stop delay malicious in seconds (default 0)")
+	cmd.Flags().Int("stop-delay-suspended", 0, "Stop delay suspended in seconds (default 0)")
 	cmd.Flags().Int("user-agents-per-interval", 1, "User agents per interval")
-	cmd.Flags().String("expire-at", "", "Expire at (optional)")
-	cmd.Flags().String("incident-profile", "", "Incident profile (optional)")
 	cmd.Flags().String("scan-interval-mode", "automatic", "Scan interval mode (automatic or manual)")
 	cmd.Flags().String("visibility", "private", "Visibility (unlisted or private)")
+
+	// optional flags
+	cmd.Flags().String("incident-profile", "", "Incident profile (optional)")
+	cmd.Flags().String("expire-at", "", "Expire at (optional)")
 	cmd.Flags().StringSlice("channels", []string{}, "Channels")
 	cmd.Flags().StringSlice("countries", []string{}, "Countries")
 	cmd.Flags().StringSlice("user-agents", []string{}, "User agents")
