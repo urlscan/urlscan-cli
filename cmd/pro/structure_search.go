@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 
 	api "github.com/urlscan/urlscan-cli/api"
+	"github.com/urlscan/urlscan-cli/cmd/flags"
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
@@ -20,6 +21,7 @@ var structureSearchCmd = &cobra.Command{
 	Args:    cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		limit, _ := cmd.Flags().GetInt("limit")
+		noLimit, _ := cmd.Flags().GetBool("no-limit")
 		size, _ := cmd.Flags().GetInt("size")
 		searchAfter, _ := cmd.Flags().GetString("search-after")
 		q, _ := cmd.Flags().GetString("query")
@@ -34,7 +36,14 @@ var structureSearchCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		it, err := client.StructureSearch(uuid, api.IteratorSize(size), api.IteratorLimit(limit), api.IteratorSearchAfter(searchAfter), api.IteratorQuery(q))
+		it, err := client.StructureSearch(
+			uuid,
+			api.IteratorSize(size),
+			api.IteratorLimit(limit),
+			api.IteratorSearchAfter(searchAfter),
+			api.IteratorQuery(q),
+			api.IteratorNoLimit(noLimit),
+		)
 		if err != nil {
 			return err
 		}
@@ -62,8 +71,9 @@ var structureSearchCmd = &cobra.Command{
 }
 
 func init() {
-	structureSearchCmd.Flags().IntP("limit", "l", api.MaxTotal, "Maximum number of results that will be returned by the iterator")
-	structureSearchCmd.Flags().IntP("size", "s", 100, "Number of results returned by the iterator in each batch")
+	flags.AddSizeFlag(structureSearchCmd)
+	flags.AddLimitFlag(structureSearchCmd)
+	flags.AddNoLimitFlag(structureSearchCmd)
 	structureSearchCmd.Flags().String("search-after", "", "For retrieving the next batch of results, value of the sort attribute of the last (oldest) result you received (comma-separated)")
 
 	structureSearchCmd.Flags().StringP("query", "q", "", "Additional query filter")

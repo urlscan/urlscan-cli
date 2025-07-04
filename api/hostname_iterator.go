@@ -46,6 +46,13 @@ func HostnameIteratorLimit(limit int) HostnameIteratorOption {
 	}
 }
 
+func HostnameIteratorNoLimit(noLimit bool) HostnameIteratorOption {
+	return func(it *HostnameIterator) error {
+		it.noLimit = noLimit
+		return nil
+	}
+}
+
 func HostnameIteratorPageState(pageState string) HostnameIteratorOption {
 	return func(it *HostnameIterator) error {
 		it.PageState = pageState
@@ -56,6 +63,7 @@ func HostnameIteratorPageState(pageState string) HostnameIteratorOption {
 type HostnameIterator struct {
 	client    *Client
 	limit     int
+	noLimit   bool
 	size      int
 	count     int
 	PageState string
@@ -122,7 +130,7 @@ func (it *HostnameIterator) getMoreResults() (results []*json.RawMessage, err er
 
 func (it *HostnameIterator) Iterate() iter.Seq2[*json.RawMessage, error] {
 	return func(yield func(*json.RawMessage, error) bool) {
-		for it.count < it.limit {
+		for it.count < it.limit || it.noLimit {
 			results, err := it.getMoreResults()
 			if err != nil {
 				yield(nil, err)
@@ -135,7 +143,7 @@ func (it *HostnameIterator) Iterate() iter.Seq2[*json.RawMessage, error] {
 				}
 
 				it.count++
-				if it.count >= it.limit {
+				if !it.noLimit && it.count >= it.limit {
 					return
 				}
 			}

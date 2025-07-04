@@ -6,6 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/urlscan/urlscan-cli/api"
+	"github.com/urlscan/urlscan-cli/cmd/flags"
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
@@ -41,6 +42,7 @@ var hostnameCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		size, _ := cmd.Flags().GetInt("size")
 		limit, _ := cmd.Flags().GetInt("limit")
+		noLimit, _ := cmd.Flags().GetBool("no-limit")
 		pageState, _ := cmd.Flags().GetString("page-state")
 
 		reader := utils.StringReaderFromCmdArgs(args)
@@ -58,6 +60,7 @@ var hostnameCmd = &cobra.Command{
 			api.HostnameIteratorLimit(limit),
 			api.HostnameIteratorSize(size),
 			api.HostnameIteratorPageState(pageState),
+			api.HostnameIteratorNoLimit(noLimit),
 		)
 		if err != nil {
 			return err
@@ -85,8 +88,9 @@ var hostnameCmd = &cobra.Command{
 }
 
 func init() {
-	hostnameCmd.Flags().IntP("limit", "l", 10000, "Maximum number of results that will be returned by the iterator")
-	hostnameCmd.Flags().IntP("size", "s", 1000, "Number of results returned by the iterator in each batch")
+	flags.AddSizeFlag(hostnameCmd)
+	flags.AddLimitFlag(hostnameCmd)
+	flags.AddNoLimitFlag(hostnameCmd)
 	hostnameCmd.Flags().StringP("page-state", "p", "", "Returns additional results starting from this page state from the previous API call")
 
 	RootCmd.AddCommand(hostnameCmd)

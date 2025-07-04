@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 
 	api "github.com/urlscan/urlscan-cli/api"
+	"github.com/urlscan/urlscan-cli/cmd/flags"
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
@@ -20,6 +21,7 @@ var searchCmd = &cobra.Command{
 	Args:    cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		limit, _ := cmd.Flags().GetInt("limit")
+		noLimit, _ := cmd.Flags().GetBool("no-limit")
 		size, _ := cmd.Flags().GetInt("size")
 		searchAfter, _ := cmd.Flags().GetString("search-after")
 
@@ -33,7 +35,7 @@ var searchCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		it, err := client.Search(q, api.IteratorSize(size), api.IteratorLimit(limit), api.IteratorSearchAfter(searchAfter))
+		it, err := client.Search(q, api.IteratorSize(size), api.IteratorLimit(limit), api.IteratorSearchAfter(searchAfter), api.IteratorNoLimit(noLimit))
 		if err != nil {
 			return err
 		}
@@ -61,8 +63,9 @@ var searchCmd = &cobra.Command{
 }
 
 func init() {
-	searchCmd.Flags().IntP("limit", "l", api.MaxTotal, "Maximum number of results that will be returned by the iterator")
-	searchCmd.Flags().IntP("size", "s", 100, "Number of results returned by the iterator in each batch")
+	flags.AddSizeFlag(searchCmd)
+	flags.AddLimitFlag(searchCmd)
+	flags.AddNoLimitFlag(searchCmd)
 	searchCmd.Flags().String("search-after", "", "For retrieving the next batch of results, value of the sort attribute of the last (oldest) result you received (comma-separated)")
 
 	RootCmd.AddCommand(searchCmd)
