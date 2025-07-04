@@ -1,4 +1,4 @@
-package pro
+package cmd
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
-var userCmdExample = `  urlscan pro user`
+var userCmdExample = `  urlscan user`
 
 var userCmd = &cobra.Command{
 	Use:     "user",
@@ -21,7 +21,7 @@ var userCmd = &cobra.Command{
 			return err
 		}
 
-		url := api.URL("/api/v1/pro/username")
+		url := api.URL("/user/username")
 		result, err := client.Get(url)
 		if err != nil {
 			return err
