@@ -41,7 +41,7 @@ $ echo "<api_key>" | urlscan key set -
 ```bash
 urlscan scan submit <url>
 urlscan scan result <uuid>
-urlscan scan search <query>
+urlscan search <query>
 ```
 
 Alternatively, you can pass an argument via the standard input by passing `-`.
@@ -54,7 +54,7 @@ See `urlscan --help` and also [the document](docs/urlscan.md) for more details.
 
 ### Proxy
 
-`HTTP_PROXY` and `HTTPS_PROXY` environment variables are respected by default. Additionally, you can set the proxy via `--proxy` option:
+`HTTP_PROXY` and `HTTPS_PROXY` environment variables are respected by default. Additionally, you can set the proxy via the `--proxy` option:
 
 ```bash
 urlscan --proxy http://proxy:1234 <command>
