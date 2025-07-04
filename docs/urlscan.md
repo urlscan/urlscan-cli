@@ -15,5 +15,6 @@ A CLI tool for interacting with urlscan.io
 * [urlscan quotas](urlscan_quotas.md)	 - Get API quotas
 * [urlscan scan](urlscan_scan.md)	 - Scan sub-commands
 * [urlscan search](urlscan_search.md)	 - Search by a query
+* [urlscan user](urlscan_user.md)	 - Get information about the current user or API key making the request
 * [urlscan version](urlscan_version.md)	 - Show version
 
