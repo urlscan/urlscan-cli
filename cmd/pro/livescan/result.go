@@ -27,6 +27,11 @@ var resultCmd = &cobra.Command{
 			return err
 		}
 
+		err = utils.ValidateUUID(scanId)
+		if err != nil {
+			return err
+		}
+
 		scannerId, _ := cmd.Flags().GetString("scanner-id")
 		if scannerId == "" {
 			return cmd.Usage()

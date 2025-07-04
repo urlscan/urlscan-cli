@@ -51,6 +51,10 @@ var createCmd = &cobra.Command{
 		if id == "" {
 			id = uuid.New().String()
 		}
+		err := utils.ValidateUUID(id)
+		if err != nil {
+			return err
+		}
 
 		client, err := utils.NewAPIClient()
 		if err != nil {

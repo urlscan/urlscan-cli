@@ -27,6 +27,11 @@ var searchCmd = &cobra.Command{
 			return err
 		}
 
+		err = utils.ValidateUUID(id)
+		if err != nil {
+			return err
+		}
+
 		datasource, _ := cmd.Flags().GetString("datasource")
 
 		client, err := utils.NewAPIClient()
