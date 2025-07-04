@@ -16,7 +16,7 @@ func setCreateOrUpdateFlags(cmd *cobra.Command) {
 	cmd.Flags().StringP("name", "n", "", "Name of the subscription (required)")
 
 	// defaulted flags
-	cmd.Flags().BoolP("is-active", "a", true, "Whether the subscription is active)")
+	cmd.Flags().BoolP("is-active", "a", true, "Whether the subscription is active")
 	cmd.Flags().BoolP("ignore-time", "t", false, "Whether to ignore time constraints (default false)")
 
 	// optional flags
