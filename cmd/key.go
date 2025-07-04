@@ -77,8 +77,11 @@ var setKeyCmd = &cobra.Command{
 var removeKeyCmd = &cobra.Command{
 	Use:   "rm",
 	Short: "Remove urlscan.io API key",
-	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 0 {
+			return cmd.Usage()
+		}
+
 		return utils.NewKeyManager().RemoveKey()
 	},
 }
@@ -86,6 +89,9 @@ var removeKeyCmd = &cobra.Command{
 var keyCmd = &cobra.Command{
 	Use:   "key",
 	Short: "Manage API key",
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		return utils.NewKeyManager().CheckService()
+	},
 }
 
 func init() {
