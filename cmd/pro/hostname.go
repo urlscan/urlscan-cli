@@ -42,7 +42,7 @@ var hostnameCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		size, _ := cmd.Flags().GetInt("size")
 		limit, _ := cmd.Flags().GetInt("limit")
-		noLimit, _ := cmd.Flags().GetBool("no-limit")
+		all, _ := cmd.Flags().GetBool("all")
 		pageState, _ := cmd.Flags().GetString("page-state")
 
 		reader := utils.StringReaderFromCmdArgs(args)
@@ -60,7 +60,7 @@ var hostnameCmd = &cobra.Command{
 			api.HostnameIteratorLimit(limit),
 			api.HostnameIteratorSize(size),
 			api.HostnameIteratorPageState(pageState),
-			api.HostnameIteratorNoLimit(noLimit),
+			api.HostnameIteratorAll(all),
 		)
 		if err != nil {
 			return err
@@ -90,7 +90,7 @@ var hostnameCmd = &cobra.Command{
 func init() {
 	flags.AddSizeFlag(hostnameCmd)
 	flags.AddLimitFlag(hostnameCmd)
-	flags.AddNoLimitFlag(hostnameCmd)
+	flags.AddAllFlag(hostnameCmd)
 	hostnameCmd.Flags().StringP("page-state", "p", "", "Returns additional results starting from this page state from the previous API call")
 
 	RootCmd.AddCommand(hostnameCmd)

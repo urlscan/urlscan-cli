@@ -9,8 +9,8 @@ func AddForceFlag(cmd *cobra.Command) {
 	cmd.Flags().BoolP("force", "f", false, "Force overwrite an existing file.")
 }
 
-func AddNoLimitFlag(cmd *cobra.Command) {
-	cmd.Flags().Bool("no-limit", false, "Don't limit the number of results returned by the iterator, limit is ignored if it's set (default false)")
+func AddAllFlag(cmd *cobra.Command) {
+	cmd.Flags().Bool("all", false, " Return all results; limit is ignored if --all is specified (default false)")
 }
 
 func AddLimitFlag(cmd *cobra.Command) {

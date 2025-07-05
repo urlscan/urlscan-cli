@@ -21,7 +21,7 @@ var searchCmd = &cobra.Command{
 	Args:    cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		limit, _ := cmd.Flags().GetInt("limit")
-		noLimit, _ := cmd.Flags().GetBool("no-limit")
+		all, _ := cmd.Flags().GetBool("all")
 		size, _ := cmd.Flags().GetInt("size")
 		searchAfter, _ := cmd.Flags().GetString("search-after")
 
@@ -35,7 +35,7 @@ var searchCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		it, err := client.Search(q, api.IteratorSize(size), api.IteratorLimit(limit), api.IteratorSearchAfter(searchAfter), api.IteratorNoLimit(noLimit))
+		it, err := client.Search(q, api.IteratorSize(size), api.IteratorLimit(limit), api.IteratorSearchAfter(searchAfter), api.IteratorAll(all))
 		if err != nil {
 			return err
 		}
@@ -65,7 +65,7 @@ var searchCmd = &cobra.Command{
 func init() {
 	flags.AddSizeFlag(searchCmd)
 	flags.AddLimitFlag(searchCmd)
-	flags.AddNoLimitFlag(searchCmd)
+	flags.AddAllFlag(searchCmd)
 	searchCmd.Flags().String("search-after", "", "For retrieving the next batch of results, value of the sort attribute of the last (oldest) result you received (comma-separated)")
 
 	RootCmd.AddCommand(searchCmd)

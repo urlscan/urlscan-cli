@@ -21,7 +21,8 @@ var structureSearchCmd = &cobra.Command{
 	Args:    cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		limit, _ := cmd.Flags().GetInt("limit")
-		noLimit, _ := cmd.Flags().GetBool("no-limit")
+		all, _ := cmd.Flags().GetBool("all")
+
 		size, _ := cmd.Flags().GetInt("size")
 		searchAfter, _ := cmd.Flags().GetString("search-after")
 		q, _ := cmd.Flags().GetString("query")
@@ -42,7 +43,7 @@ var structureSearchCmd = &cobra.Command{
 			api.IteratorLimit(limit),
 			api.IteratorSearchAfter(searchAfter),
 			api.IteratorQuery(q),
-			api.IteratorNoLimit(noLimit),
+			api.IteratorAll(all),
 		)
 		if err != nil {
 			return err
@@ -73,7 +74,7 @@ var structureSearchCmd = &cobra.Command{
 func init() {
 	flags.AddSizeFlag(structureSearchCmd)
 	flags.AddLimitFlag(structureSearchCmd)
-	flags.AddNoLimitFlag(structureSearchCmd)
+	flags.AddAllFlag(structureSearchCmd)
 	structureSearchCmd.Flags().String("search-after", "", "For retrieving the next batch of results, value of the sort attribute of the last (oldest) result you received (comma-separated)")
 
 	structureSearchCmd.Flags().StringP("query", "q", "", "Additional query filter")
