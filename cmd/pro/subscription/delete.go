@@ -27,6 +27,11 @@ var deleteCmd = &cobra.Command{
 			return err
 		}
 
+		err = utils.ValidateUUID(id)
+		if err != nil {
+			return err
+		}
+
 		client, err := utils.NewAPIClient()
 		if err != nil {
 			return err

@@ -27,6 +27,11 @@ var updateCmd = &cobra.Command{
 			return err
 		}
 
+		err = utils.ValidateUUID(id)
+		if err != nil {
+			return err
+		}
+
 		// required flags (show usage if any are missing)
 		datasource, _ := cmd.Flags().GetString("datasource")
 		if datasource == "" {

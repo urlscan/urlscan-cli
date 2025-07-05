@@ -25,6 +25,10 @@ var updateCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		err = utils.ValidateUUID(id)
+		if err != nil {
+			return err
+		}
 
 		opts, err := mapCmdToSubscriptionOptions(cmd)
 		if err != nil {

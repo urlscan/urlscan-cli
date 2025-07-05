@@ -26,6 +26,11 @@ var updateCmd = &cobra.Command{
 			return err
 		}
 
+		err = utils.ValidateULID(id)
+		if err != nil {
+			return err
+		}
+
 		opts, err := mapCmdToIncidentOptions(cmd)
 		if err != nil {
 			return cmd.Usage()
