@@ -26,9 +26,9 @@ urlscan pro hostname [flags]
 ### Options
 
 ```
+      --all                  Return all results; limit is ignored if --all is specified (default false)
   -h, --help                help for hostname
   -l, --limit int           Maximum number of results that will be returned by the iterator (default 10000)
-      --no-limit            Don't limit the number of results returned by the iterator, limit is ignored if it's set (default false)
   -p, --page-state string   Returns additional results starting from this page state from the previous API call
   -s, --size int            Number of results returned by the iterator in each batch (default 100)
 ```

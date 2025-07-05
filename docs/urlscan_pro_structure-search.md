@@ -16,9 +16,9 @@ urlscan pro structure-search <uuid> [flags]
 ### Options
 
 ```
+      --all                    Return all results; limit is ignored if --all is specified (default false)
   -h, --help                  help for structure-search
   -l, --limit int             Maximum number of results that will be returned by the iterator (default 10000)
-      --no-limit              Don't limit the number of results returned by the iterator, limit is ignored if it's set (default false)
   -q, --query string          Additional query filter
       --search-after string   For retrieving the next batch of results, value of the sort attribute of the last (oldest) result you received (comma-separated)
   -s, --size int              Number of results returned by the iterator in each batch (default 100)
