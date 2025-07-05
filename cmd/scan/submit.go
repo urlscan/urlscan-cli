@@ -41,7 +41,7 @@ var submitCmd = &cobra.Command{
 			return err
 		}
 
-		res, err := client.Scan(url,
+		scanResult, err := client.Scan(url,
 			api.WithScanCountry(country),
 			api.WithScanCustomAgent(customAgent),
 			api.WithScanOverrideSafety(overrideSafety),
@@ -54,17 +54,17 @@ var submitCmd = &cobra.Command{
 		}
 
 		if !wait {
-			fmt.Print(string(res.Raw))
+			fmt.Print(scanResult.PrettyJson())
 			return nil
 		}
 
 		ctx := cmd.Context()
-		result, err := client.WaitAndGetResult(ctx, res.UUID, maxWait)
+		waitResult, err := client.WaitAndGetResult(ctx, scanResult.UUID, maxWait)
 		if err != nil {
 			return err
 		}
 
-		fmt.Print(string(result.Raw))
+		fmt.Print(waitResult.PrettyJson())
 
 		return nil
 	},

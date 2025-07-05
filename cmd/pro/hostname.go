@@ -73,7 +73,7 @@ var hostnameCmd = &cobra.Command{
 
 		results.HasMore = it.HasMore
 
-		b, err := json.Marshal(results)
+		b, err := json.MarshalIndent(results, "", "  ")
 		if err != nil {
 			return err
 		}

@@ -37,12 +37,12 @@ var deleteCmd = &cobra.Command{
 		}
 
 		url := api.URL("/api/v1/user/searches/%s/", id)
-		res, err := client.Delete(url)
+		result, err := client.Delete(url)
 		if err != nil {
 			return err
 		}
 
-		fmt.Print(string(res.Raw))
+		fmt.Print(result.PrettyJson())
 
 		return nil
 	},

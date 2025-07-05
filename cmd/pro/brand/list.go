@@ -27,7 +27,7 @@ var listCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Print(string(result.Raw))
+		fmt.Print(result.PrettyJson())
 
 		return nil
 	},

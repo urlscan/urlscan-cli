@@ -38,12 +38,12 @@ var restartCmd = &cobra.Command{
 		}
 
 		url := api.URL("/api/v1/user/incidents/%s/restart", id)
-		res, err := client.Put(url, &api.Request{})
+		result, err := client.Put(url, &api.Request{})
 		if err != nil {
 			return err
 		}
 
-		fmt.Print(string(res.Raw))
+		fmt.Print(result.PrettyJson())
 
 		return nil
 	},

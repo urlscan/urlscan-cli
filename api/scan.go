@@ -1,10 +1,24 @@
 package api
 
-import "encoding/json"
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+)
 
 type ScanResult struct {
 	UUID string          `json:"uuid"`
 	Raw  json.RawMessage `json:"-"`
+}
+
+func (r *ScanResult) PrettyJson() string {
+	var jsonBody bytes.Buffer
+	err := json.Indent(&jsonBody, r.Raw, "", "  ")
+	if err != nil {
+		msg := fmt.Sprintf("error formatting JSON response: %s", err)
+		panic(msg)
+	}
+	return jsonBody.String()
 }
 
 func (r *ScanResult) UnmarshalJSON(data []byte) error {
