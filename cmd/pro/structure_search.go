@@ -72,7 +72,7 @@ var structureSearchCmd = &cobra.Command{
 }
 
 func init() {
-	flags.AddSizeFlag(structureSearchCmd)
+	flags.AddSizeFlag(structureSearchCmd, 1_000)
 	flags.AddLimitFlag(structureSearchCmd)
 	flags.AddAllFlag(structureSearchCmd)
 	structureSearchCmd.Flags().String("search-after", "", "For retrieving the next batch of results, value of the sort attribute of the last (oldest) result you received (comma-separated)")

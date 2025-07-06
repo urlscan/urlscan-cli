@@ -17,6 +17,6 @@ func AddLimitFlag(cmd *cobra.Command) {
 	cmd.Flags().IntP("limit", "l", api.MaxTotal, "Maximum number of results that will be returned by the iterator")
 }
 
-func AddSizeFlag(cmd *cobra.Command) {
-	cmd.Flags().IntP("size", "s", 100, "Number of results returned by the iterator in each batch")
+func AddSizeFlag(cmd *cobra.Command, value int) {
+	cmd.Flags().IntP("size", "s", value, "Number of results returned by the iterator in each batch")
 }

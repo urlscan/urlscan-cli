@@ -88,7 +88,7 @@ var hostnameCmd = &cobra.Command{
 }
 
 func init() {
-	flags.AddSizeFlag(hostnameCmd)
+	flags.AddSizeFlag(hostnameCmd, 1_000)
 	flags.AddLimitFlag(hostnameCmd)
 	flags.AddAllFlag(hostnameCmd)
 	hostnameCmd.Flags().StringP("page-state", "p", "", "Returns additional results starting from this page state from the previous API call")

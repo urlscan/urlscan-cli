@@ -63,7 +63,7 @@ var searchCmd = &cobra.Command{
 }
 
 func init() {
-	flags.AddSizeFlag(searchCmd)
+	flags.AddSizeFlag(searchCmd, 100) // non-pro user's max size is 100
 	flags.AddLimitFlag(searchCmd)
 	flags.AddAllFlag(searchCmd)
 	searchCmd.Flags().String("search-after", "", "For retrieving the next batch of results, value of the sort attribute of the last (oldest) result you received (comma-separated)")
