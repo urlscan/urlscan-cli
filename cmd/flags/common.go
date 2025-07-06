@@ -10,7 +10,7 @@ func AddForceFlag(cmd *cobra.Command) {
 }
 
 func AddAllFlag(cmd *cobra.Command) {
-	cmd.Flags().Bool("all", false, " Return all results; limit is ignored if --all is specified (default false)")
+	cmd.Flags().Bool("all", false, "Return all results; limit is ignored if --all is specified (default false)")
 }
 
 func AddLimitFlag(cmd *cobra.Command) {
