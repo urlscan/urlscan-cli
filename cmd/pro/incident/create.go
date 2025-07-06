@@ -25,12 +25,12 @@ var createCmd = &cobra.Command{
 			return err
 		}
 
-		res, err := client.CreateIncident(opts...)
+		result, err := client.CreateIncident(opts...)
 		if err != nil {
 			return err
 		}
 
-		fmt.Print(string(res.Raw))
+		fmt.Print(result.PrettyJson())
 
 		return nil
 	},

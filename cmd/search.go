@@ -54,7 +54,7 @@ var searchCmd = &cobra.Command{
 		results.HasMore = it.HasMore
 		results.Total = it.Total
 
-		b, err := json.Marshal(results)
+		b, err := json.MarshalIndent(results, "", "  ")
 		if err != nil {
 			return err
 		}

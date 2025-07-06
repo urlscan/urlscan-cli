@@ -38,12 +38,12 @@ var copyCmd = &cobra.Command{
 		}
 
 		url := api.URL("/api/v1/user/incidents/%s/copy", id)
-		res, err := client.Put(url, &api.Request{})
+		result, err := client.Put(url, &api.Request{})
 		if err != nil {
 			return err
 		}
 
-		fmt.Print(string(res.Raw))
+		fmt.Print(result.PrettyJson())
 
 		return nil
 	},

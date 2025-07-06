@@ -55,6 +55,16 @@ func URL(pathFmt string, a ...any) *url.URL {
 	return baseURL.ResolveReference(url)
 }
 
+func (r *Response) PrettyJson() string {
+	var jsonBody bytes.Buffer
+	err := json.Indent(&jsonBody, r.Raw, "", "  ")
+	if err != nil {
+		log.Info("error formatting JSON response, fallback to the original", "error", err)
+		return string(r.Raw)
+	}
+	return jsonBody.String()
+}
+
 func SetHost(host string) {
 	if strings.HasPrefix(host, "https://") {
 		baseURL.Scheme = "https"

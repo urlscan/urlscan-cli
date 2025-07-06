@@ -38,12 +38,12 @@ var getCmd = &cobra.Command{
 		}
 
 		url := api.URL("/api/v1/user/incidents/%s", id)
-		res, err := client.Get(url)
+		result, err := client.Get(url)
 		if err != nil {
 			return err
 		}
 
-		fmt.Print(string(res.Raw))
+		fmt.Print(result.PrettyJson())
 
 		return nil
 	},

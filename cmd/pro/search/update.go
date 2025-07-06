@@ -67,7 +67,7 @@ var updateCmd = &cobra.Command{
 			return err
 		}
 
-		res, err := client.UpdateSavedSearch(
+		result, err := client.UpdateSavedSearch(
 			api.WithSavedSearchID(id),
 			api.WithSavedSearchDatasource(datasource),
 			api.WithSavedSearchName(name),
@@ -85,7 +85,7 @@ var updateCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Print(string(res.Raw))
+		fmt.Print(result.PrettyJson())
 
 		return nil
 	},

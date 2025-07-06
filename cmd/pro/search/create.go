@@ -61,7 +61,7 @@ var createCmd = &cobra.Command{
 			return err
 		}
 
-		res, err := client.CreateSavedSearch(
+		result, err := client.CreateSavedSearch(
 			api.WithSavedSearchID(id),
 			api.WithSavedSearchDatasource(datasource),
 			api.WithSavedSearchName(name),
@@ -79,7 +79,7 @@ var createCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Print(string(res.Raw))
+		fmt.Print(result.PrettyJson())
 
 		return nil
 	},

@@ -38,14 +38,14 @@ var createCmd = &cobra.Command{
 			return err
 		}
 
-		res, err := client.CreateSubscription(
+		result, err := client.CreateSubscription(
 			append([]api.SubscriptionOption{api.WithSubscriptionID(id)}, opts...)...,
 		)
 		if err != nil {
 			return err
 		}
 
-		fmt.Print(string(res.Raw))
+		fmt.Print(result.PrettyJson())
 
 		return nil
 	},
