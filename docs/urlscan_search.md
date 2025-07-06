@@ -16,7 +16,7 @@ urlscan search <query> [flags]
 ### Options
 
 ```
-      --all                    Return all results; limit is ignored if --all is specified (default false)
+      --all                   Return all results; limit is ignored if --all is specified (default false)
   -h, --help                  help for search
   -l, --limit int             Maximum number of results that will be returned by the iterator (default 10000)
       --search-after string   For retrieving the next batch of results, value of the sort attribute of the last (oldest) result you received (comma-separated)
