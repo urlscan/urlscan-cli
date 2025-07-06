@@ -74,6 +74,13 @@ func IteratorLimit(n int) IteratorOption {
 	}
 }
 
+func IteratorAll(all bool) IteratorOption {
+	return func(it *Iterator) error {
+		it.all = all
+		return nil
+	}
+}
+
 func IteratorQuery(q string) IteratorOption {
 	return func(it *Iterator) error {
 		it.q = q
@@ -84,6 +91,7 @@ func IteratorQuery(q string) IteratorOption {
 type Iterator struct {
 	client      *Client
 	limit       int
+	all         bool
 	size        int
 	q           string
 	searchAfter string
@@ -182,7 +190,7 @@ func (it *Iterator) getMoreResults() (results []*SearchResult, err error) {
 
 func (it *Iterator) Iterate() iter.Seq2[*SearchResult, error] {
 	return func(yield func(*SearchResult, error) bool) {
-		for it.limit == 0 || it.count < it.limit {
+		for it.count < it.limit || it.all {
 			results, err := it.getMoreResults()
 			if err != nil {
 				yield(nil, err)
@@ -195,7 +203,7 @@ func (it *Iterator) Iterate() iter.Seq2[*SearchResult, error] {
 				}
 
 				it.count++
-				if it.count >= it.limit {
+				if !it.all && it.count >= it.limit {
 					return
 				}
 			}

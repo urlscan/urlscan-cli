@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 
 	api "github.com/urlscan/urlscan-cli/api"
+	"github.com/urlscan/urlscan-cli/cmd/flags"
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
@@ -23,6 +24,7 @@ var searchCmd = &cobra.Command{
 		}
 
 		limit, _ := cmd.Flags().GetInt("limit")
+		all, _ := cmd.Flags().GetBool("all")
 		size, _ := cmd.Flags().GetInt("size")
 		searchAfter, _ := cmd.Flags().GetString("search-after")
 
@@ -36,7 +38,7 @@ var searchCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		it, err := client.Search(q, api.IteratorSize(size), api.IteratorLimit(limit), api.IteratorSearchAfter(searchAfter))
+		it, err := client.Search(q, api.IteratorSize(size), api.IteratorLimit(limit), api.IteratorSearchAfter(searchAfter), api.IteratorAll(all))
 		if err != nil {
 			return err
 		}
@@ -64,8 +66,9 @@ var searchCmd = &cobra.Command{
 }
 
 func init() {
-	searchCmd.Flags().IntP("limit", "l", api.MaxTotal, "Maximum number of results that will be returned by the iterator")
-	searchCmd.Flags().IntP("size", "s", 100, "Number of results returned by the iterator in each batch")
+	flags.AddSizeFlag(searchCmd, 100) // non-pro user's max size is 100
+	flags.AddLimitFlag(searchCmd)
+	flags.AddAllFlag(searchCmd)
 	searchCmd.Flags().String("search-after", "", "For retrieving the next batch of results, value of the sort attribute of the last (oldest) result you received (comma-separated)")
 
 	RootCmd.AddCommand(searchCmd)
