@@ -244,7 +244,7 @@ func (cli *Client) parseResponse(resp *http.Response) (*Response, error) {
 }
 
 func (cli *Client) DoWithJsonParse(req *http.Request) (*Response, error) {
-	resp, err := cli.Do(req)
+	resp, err := cli.httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -340,30 +340,6 @@ func (cli *Client) Search(q string, options ...IteratorOption) (*Iterator, error
 func (cli *Client) StructureSearch(uuid string, options ...IteratorOption) (*Iterator, error) {
 	u := URL("/api/v1/pro/result/%s/similar/", uuid)
 	return newIterator(cli, u, options...)
-}
-
-func (cli *Client) Scan(url string, options ...ScanOption) (*ScanResult, error) {
-	scanOptions := newScanOptions(url, options...)
-
-	marshalled, err := json.Marshal(scanOptions)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := cli.Post(URL("/api/v1/scan/"), &Request{
-		Raw: json.RawMessage(marshalled),
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	r := &ScanResult{}
-	err = json.Unmarshal(resp.Raw, r)
-	if err != nil {
-		return nil, err
-	}
-
-	return r, nil
 }
 
 func (c *Client) IterateHostname(hostname string, opts ...HostnameIteratorOption) (*HostnameIterator, error) {

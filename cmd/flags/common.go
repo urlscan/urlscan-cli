@@ -20,3 +20,11 @@ func AddLimitFlag(cmd *cobra.Command) {
 func AddSizeFlag(cmd *cobra.Command, value int) {
 	cmd.Flags().IntP("size", "s", value, "Number of results returned by the iterator in each batch")
 }
+
+func AddMaxConcurrencyFlag(cmd *cobra.Command) {
+	cmd.Flags().Int("max-concurrency", 5, "Maximum number of concurrent requests for batch operation")
+}
+
+func AddTotalTimeoutFlag(cmd *cobra.Command) {
+	cmd.Flags().Int("total-timeout", 60*30, "Total timeout for the batch operation in seconds, 0 means no timeout")
+}

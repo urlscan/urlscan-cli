@@ -6,6 +6,7 @@ require (
 	github.com/briandowns/spinner v1.23.2
 	github.com/google/uuid v1.6.0
 	github.com/h2non/gock v1.2.0
+	github.com/samber/lo v1.51.0
 	github.com/samber/mo v1.14.0
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/pflag v1.0.6

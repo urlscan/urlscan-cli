@@ -2,10 +2,13 @@ package api
 
 import (
 	"context"
-	"github.com/samber/mo"
-	"net/http"
+	"encoding/json"
+	"errors"
+	"fmt"
 	"sync"
 	"time"
+
+	"github.com/samber/mo"
 
 	"golang.org/x/sync/errgroup"
 )
@@ -16,10 +19,6 @@ type BatchOptions struct {
 }
 
 type BatchOption func(*BatchOptions)
-
-type BatchResult = mo.Result[*http.Response]
-type JSONBatchResult = mo.Result[*Response]
-type ScanBatchResult = mo.Result[*ScanResult]
 
 func WithBatchMaxConcurrency(max int) BatchOption {
 	return func(opts *BatchOptions) {
@@ -81,4 +80,17 @@ func Batch[T any](cli *Client, tasks []BatchTask[T], opts ...BatchOption) ([]mo.
 	}
 
 	return results, nil
+}
+
+func BatchJsonResultToRaw(r *mo.Result[*json.RawMessage]) *json.RawMessage {
+	if r.IsError() {
+		err := r.Error()
+		var apiErr *Error
+		if errors.As(err, &apiErr) {
+			return &apiErr.Raw
+		}
+		raw := json.RawMessage(fmt.Sprintf(`{"error": "%s"}`, err.Error()))
+		return &raw
+	}
+	return r.MustGet()
 }

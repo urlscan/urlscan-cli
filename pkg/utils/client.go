@@ -1,12 +1,15 @@
 package utils
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/url"
 	"os"
 	"time"
 
 	"github.com/briandowns/spinner"
+	"github.com/samber/lo"
+	"github.com/samber/mo"
 	api "github.com/urlscan/urlscan-cli/api"
 	"github.com/urlscan/urlscan-cli/pkg/version"
 )
@@ -74,4 +77,18 @@ func Download(opt DownloadOptions) error {
 	fmt.Printf("Downloaded: %s from %s\n", opt.Output, opt.URL.String())
 
 	return nil
+}
+
+type BatchJsonResultPair struct {
+	Key    string          `json:"key"`
+	Result json.RawMessage `json:"result"`
+}
+
+func NewBatchJsonResultPairs(keys []string, results []mo.Result[*json.RawMessage]) []*BatchJsonResultPair {
+	return lo.ZipBy2(keys, results, func(url string, result mo.Result[*json.RawMessage]) *BatchJsonResultPair {
+		return &BatchJsonResultPair{
+			Key:    url,
+			Result: *api.BatchJsonResultToRaw(&result),
+		}
+	})
 }

@@ -1,72 +1,144 @@
 package scan
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/spf13/cobra"
 	api "github.com/urlscan/urlscan-cli/api"
+	"github.com/urlscan/urlscan-cli/cmd/flags"
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
-var submitCmdExample = `  urlscan scan submit <url>
-  echo "<url>" | urlscan scan submit -`
+type scanner struct {
+	client    *utils.APIClient
+	scanOpts  []api.ScanOption
+	batchOpts []api.BatchOption
+	wait      bool
+	maxWait   int
+	ctx       context.Context
+}
+
+func (s *scanner) doSingle(url string) error {
+	scanResult, err := s.client.Scan(url, s.scanOpts...)
+	if err != nil {
+		return err
+	}
+	if !s.wait {
+		fmt.Print(scanResult.PrettyJson())
+		return nil
+	}
+
+	waitResult, err := s.client.WaitAndGetResult(s.ctx, scanResult.UUID, s.maxWait)
+	if err != nil {
+		return err
+	}
+	fmt.Print(waitResult.PrettyJson())
+	return nil
+}
+
+func (s *scanner) doBatch(urls []string) error {
+	tasks := make([]api.BatchTask[*json.RawMessage], len(urls))
+	for i, url := range urls {
+		if s.wait {
+			tasks[i] = s.client.NewBatchScanWitWaitTask(url, s.maxWait, s.scanOpts...)
+		} else {
+			tasks[i] = s.client.NewBatchScanTask(url, s.scanOpts...)
+		}
+	}
+
+	results, err := api.Batch(s.client.Client, tasks, s.batchOpts...)
+	if err != nil {
+		return err
+	}
+
+	pairs := utils.NewBatchJsonResultPairs(urls, results)
+
+	b, err := json.MarshalIndent(pairs, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	fmt.Print(string(b))
+
+	return nil
+}
+
+func (s *scanner) do(urls []string) error {
+	if len(urls) == 1 {
+		return s.doSingle(urls[0])
+	}
+	return s.doBatch(urls)
+
+}
+
+func newScanner(cmd *cobra.Command) (*scanner, error) {
+	country, _ := cmd.Flags().GetString("country")
+	customAgent, _ := cmd.Flags().GetString("customagent")
+	overrideSafety, _ := cmd.Flags().GetString("overrideSafety")
+	referer, _ := cmd.Flags().GetString("referer")
+	tags, _ := cmd.Flags().GetStringArray("tags")
+	visibility, _ := cmd.Flags().GetString("visibility")
+	wait, _ := cmd.Flags().GetBool("wait")
+	maxWait, _ := cmd.Flags().GetInt("max-wait")
+
+	maxConcurrency, _ := cmd.Flags().GetInt("max-concurrency")
+	totalTimeout, _ := cmd.Flags().GetInt("total-timeout")
+
+	client, err := utils.NewAPIClient()
+	if err != nil {
+		return nil, err
+	}
+
+	return &scanner{
+		client: client,
+		scanOpts: []api.ScanOption{
+			api.WithScanCountry(country),
+			api.WithScanCustomAgent(customAgent),
+			api.WithScanOverrideSafety(overrideSafety),
+			api.WithScanReferer(referer),
+			api.WithScanVisibility(visibility),
+			api.WithScanTags(tags),
+		},
+		batchOpts: []api.BatchOption{
+			api.WithBatchMaxConcurrency(maxConcurrency),
+			api.WithBatchTotalTimeout(totalTimeout),
+		},
+		wait:    wait,
+		maxWait: maxWait,
+		ctx:     cmd.Context(),
+	}, nil
+}
+
+var submitCmdExample = `  urlscan scan submit <url>...
+  echo "<url>" | urlscan scan submit -
+  # submit with a file containing URLs per line, space, or tab
+  urlscan scan submit list_of_urls.txt
+  # combine the file input and the URL input
+  urlscan scan submit list_of_urls.txt <url>`
 
 var submitCmd = &cobra.Command{
 	Use:     "submit <url>",
 	Short:   "Submit a URL to scan",
 	Example: submitCmdExample,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 1 {
+		if len(args) == 0 {
 			return cmd.Usage()
 		}
 
-		country, _ := cmd.Flags().GetString("country")
-		customAgent, _ := cmd.Flags().GetString("customagent")
-		overrideSafety, _ := cmd.Flags().GetString("overrideSafety")
-		referer, _ := cmd.Flags().GetString("referer")
-		tags, _ := cmd.Flags().GetStringArray("tags")
-		visibility, _ := cmd.Flags().GetString("visibility")
-
-		wait, _ := cmd.Flags().GetBool("wait")
-		maxWait, _ := cmd.Flags().GetInt("max-wait")
-
-		reader := utils.StringReaderFromCmdArgs(args)
-		url, err := reader.ReadString()
+		reader := utils.NewMappedStringsReader(utils.StringReaderFromCmdArgs(args), utils.ResolveFileOrValue)
+		urls, err := reader.ReadAll()
 		if err != nil {
 			return err
 		}
 
-		client, err := utils.NewAPIClient()
+		scanner, err := newScanner(cmd)
 		if err != nil {
 			return err
 		}
 
-		scanResult, err := client.Scan(url,
-			api.WithScanCountry(country),
-			api.WithScanCustomAgent(customAgent),
-			api.WithScanOverrideSafety(overrideSafety),
-			api.WithScanReferer(referer),
-			api.WithScanTags(tags),
-			api.WithScanVisibility(visibility),
-		)
-		if err != nil {
-			return err
-		}
-
-		if !wait {
-			fmt.Print(scanResult.PrettyJson())
-			return nil
-		}
-
-		ctx := cmd.Context()
-		waitResult, err := client.WaitAndGetResult(ctx, scanResult.UUID, maxWait)
-		if err != nil {
-			return err
-		}
-
-		fmt.Print(waitResult.PrettyJson())
-
-		return nil
+		return scanner.do(urls)
 	},
 }
 
@@ -79,6 +151,9 @@ func init() {
 	submitCmd.Flags().StringP("visibility", "v", "", "One of public, unlisted, private")
 	submitCmd.Flags().BoolP("wait", "w", false, "Wait for the scan to finish")
 	submitCmd.Flags().IntP("max-wait", "m", 60, "Maximum wait time in seconds")
+
+	flags.AddMaxConcurrencyFlag(submitCmd)
+	flags.AddTotalTimeoutFlag(submitCmd)
 
 	RootCmd.AddCommand(submitCmd)
 }

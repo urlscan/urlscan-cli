@@ -2,8 +2,11 @@ package api
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
+
+	"github.com/samber/mo"
 )
 
 type ScanResult struct {
@@ -108,4 +111,53 @@ func newScanOptions(url string, opts ...ScanOption) *ScanOptions {
 		o(opt)
 	}
 	return opt
+}
+
+func (cli *Client) Scan(url string, options ...ScanOption) (*ScanResult, error) {
+	scanOptions := newScanOptions(url, options...)
+
+	marshalled, err := json.Marshal(scanOptions)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := cli.Post(URL("/api/v1/scan/"), &Request{
+		Raw: json.RawMessage(marshalled),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	r := &ScanResult{}
+	err = json.Unmarshal(resp.Raw, r)
+	if err != nil {
+		return nil, err
+	}
+
+	return r, nil
+}
+
+func (cli *Client) NewBatchScanTask(url string, opts ...ScanOption) BatchTask[*json.RawMessage] {
+	return func(cli *Client, ctx context.Context) mo.Result[*json.RawMessage] {
+		r, err := cli.Scan(url, opts...)
+		if err != nil {
+			return mo.Err[*json.RawMessage](err)
+		}
+		return mo.Ok(&r.Raw)
+	}
+}
+
+func (cli *Client) NewBatchScanWitWaitTask(url string, maxWait int, opts ...ScanOption) BatchTask[*json.RawMessage] {
+	return func(cli *Client, ctx context.Context) mo.Result[*json.RawMessage] {
+		scanResult, err := cli.Scan(url, opts...)
+		if err != nil {
+			return mo.Err[*json.RawMessage](err)
+		}
+
+		waitResult, err := cli.WaitAndGetResult(ctx, scanResult.UUID, maxWait)
+		if err != nil {
+			return mo.Err[*json.RawMessage](err)
+		}
+		return mo.Ok(&waitResult.Raw)
+	}
 }
