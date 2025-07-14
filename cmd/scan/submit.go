@@ -127,7 +127,7 @@ var submitCmd = &cobra.Command{
 			return cmd.Usage()
 		}
 
-		reader := utils.NewMappedStringsReader(utils.StringReaderFromCmdArgs(args), utils.ResolveFileOrValue)
+		reader := utils.NewMappedStringReader(utils.StringReaderFromCmdArgs(args), utils.ResolveFileOrValue)
 		urls, err := reader.ReadAll()
 		if err != nil {
 			return err
