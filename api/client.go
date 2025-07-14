@@ -373,7 +373,7 @@ func (cli *Client) WaitAndGetResult(ctx context.Context, uuid string, maxWait in
 		select {
 		case <-time.After(delay):
 			delay += 1 * time.Second
-			log.Info("Got 404 error, waiting for a scan result...", "delay", delay, "error", err.Error())
+			log.Info("Got 404 error, waiting for a scan result...", "delay", delay, "error", err.Error(), "uuid", uuid)
 		case <-ctx.Done():
 			return nil, ctx.Err()
 		}
