@@ -62,8 +62,7 @@ var domCmd = &cobra.Command{
 func init() {
 	addScannerIdFlag(domCmd)
 	flags.AddForceFlag(domCmd)
-
-	domCmd.Flags().StringP("output", "o", "", "Output file name (default <uuid>.html)")
+	flags.AddOutputFlag(domCmd, "<uuid>.html")
 
 	RootCmd.AddCommand(domCmd)
 }

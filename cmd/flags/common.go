@@ -1,6 +1,8 @@
 package flags
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 	"github.com/urlscan/urlscan-cli/api"
 )
@@ -19,4 +21,8 @@ func AddLimitFlag(cmd *cobra.Command) {
 
 func AddSizeFlag(cmd *cobra.Command, value int) {
 	cmd.Flags().IntP("size", "s", value, "Number of results returned by the iterator in each batch")
+}
+
+func AddOutputFlag(cmd *cobra.Command, defaultExample string) {
+	cmd.Flags().StringP("output", "o", "", fmt.Sprintf("Output file name (default %s)", defaultExample))
 }

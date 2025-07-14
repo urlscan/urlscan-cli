@@ -5,6 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 	api "github.com/urlscan/urlscan-cli/api"
+	"github.com/urlscan/urlscan-cli/cmd/flags"
 
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
@@ -55,6 +56,8 @@ var domCmd = &cobra.Command{
 }
 
 func init() {
+	flags.AddOutputFlag(domCmd, "<uuid>.html")
+	flags.AddForceFlag(domCmd)
+
 	RootCmd.AddCommand(domCmd)
-	domCmd.Flags().StringP("output", "o", "", "Output file name (default <uuid>.html)")
 }
