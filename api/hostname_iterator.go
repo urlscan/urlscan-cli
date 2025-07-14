@@ -154,3 +154,8 @@ func (it *HostnameIterator) Iterate() iter.Seq2[*json.RawMessage, error] {
 		}
 	}
 }
+
+func (c *Client) IterateHostname(hostname string, opts ...HostnameIteratorOption) (*HostnameIterator, error) {
+	u := URL("/api/v1/hostname/%s", hostname)
+	return newHostnameIterator(c, u, opts...)
+}

@@ -1,5 +1,7 @@
 package api
 
+import "encoding/json"
+
 type SubscriptionOptions struct {
 	Subscription struct {
 		ID             string   `json:"_id"`
@@ -71,4 +73,29 @@ func newSubscriptionOptions(opts ...SubscriptionOption) *SubscriptionOptions {
 	}
 
 	return subscriptionOptions
+}
+
+func (cli *Client) CreateSubscription(opts ...SubscriptionOption) (*Response, error) {
+	subscriptionOptions := newSubscriptionOptions(opts...)
+	marshalled, err := json.Marshal(subscriptionOptions)
+	if err != nil {
+		return nil, err
+	}
+
+	return cli.Post(URL("/api/v1/user/subscriptions/"), &Request{
+		Raw: json.RawMessage(marshalled),
+	})
+}
+
+func (cli *Client) UpdateSubscription(opts ...SubscriptionOption) (*Response, error) {
+	subscriptionOptions := newSubscriptionOptions(opts...)
+	marshalled, err := json.Marshal(subscriptionOptions)
+	if err != nil {
+		return nil, err
+	}
+
+	url := URL("/api/v1/user/subscriptions/%s/", subscriptionOptions.Subscription.ID)
+	return cli.Put(url, &Request{
+		Raw: json.RawMessage(marshalled),
+	})
 }
