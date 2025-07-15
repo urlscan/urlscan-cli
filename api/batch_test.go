@@ -43,7 +43,7 @@ func TestBatch(t *testing.T) {
 		}
 	}
 
-	results, err := Batch(c, tasks, WithBatchMaxConcurrency(2), WithBatchTotalTimeout(5))
+	results, err := Batch(c, tasks, WithBatchMaxConcurrency(2), WithBatchTimeout(5))
 	assert.NoError(t, err)
 
 	assert.Equal(t, results[0].MustGet().StatusCode, http.StatusOK)
