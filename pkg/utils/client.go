@@ -38,35 +38,77 @@ func NewAPIClient() (*APIClient, error) {
 }
 
 type DownloadOptions struct {
-	Client *APIClient
-	URL    *url.URL
-	Output string
-	Force  bool
+	client *APIClient
+	url    *url.URL
+	output string
+	force  bool
+	silent bool
 }
 
-func NewDownloadOptions(client *APIClient, url *url.URL, output string, force bool) DownloadOptions {
-	return DownloadOptions{
-		Client: client,
-		URL:    url,
-		Output: output,
-		Force:  force,
+type DownloadOption = func(*DownloadOptions)
+
+func WithDownloadClient(client *APIClient) DownloadOption {
+	return func(opts *DownloadOptions) {
+		opts.client = client
 	}
 }
 
-func Download(opt DownloadOptions) error {
-	// init and start the spinner
+func WithDownloadURL(url *url.URL) DownloadOption {
+	return func(opts *DownloadOptions) {
+		opts.url = url
+	}
+}
+
+func WithDownloadOutput(output string) DownloadOption {
+	return func(opts *DownloadOptions) {
+		opts.output = output
+	}
+}
+
+func WithDownloadForce(force bool) DownloadOption {
+	return func(opts *DownloadOptions) {
+		opts.force = force
+	}
+}
+
+func WithDownloadDOM(uuid string) DownloadOption {
+	return func(opts *DownloadOptions) {
+		opts.url = api.URL("%s", fmt.Sprintf("/dom/%s/", uuid))
+	}
+}
+
+func WithDownloadScreenshot(uuid string) DownloadOption {
+	return func(opts *DownloadOptions) {
+		opts.url = api.URL("%s", fmt.Sprintf("/screenshots/%s.png", uuid))
+	}
+}
+
+func WithDownloadSilent(silent bool) DownloadOption {
+	return func(opts *DownloadOptions) {
+		opts.silent = silent
+	}
+}
+
+func NewDownloadOptions(opts ...DownloadOption) *DownloadOptions {
+	downloadOpts := &DownloadOptions{}
+	for _, o := range opts {
+		o(downloadOpts)
+	}
+	return downloadOpts
+}
+
+func DownloadWithSpinner(opts *DownloadOptions) error {
 	s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
 	s.Start()
 
-	if !opt.Force {
-		// check if the file already exists
-		if _, err := os.Stat(opt.Output); err == nil {
+	if !opts.force {
+		if fileExists(opts.output) {
 			s.Stop()
-			return fmt.Errorf("%s already exists", opt.Output)
+			return fmt.Errorf("%s already exists", opts.output)
 		}
 	}
 
-	_, err := opt.Client.Download(opt.URL, opt.Output)
+	_, err := opts.client.Download(opts.url, opts.output)
 	if err != nil {
 		return err
 	}
@@ -74,7 +116,13 @@ func Download(opt DownloadOptions) error {
 	// stop the spinner
 	s.Stop()
 
-	fmt.Printf("Downloaded: %s from %s\n", opt.Output, opt.URL.String())
+	msg := fmt.Sprintf("Downloaded: %s from %s\n", opts.output, opts.url.String())
+	if opts.silent {
+		// output it to stderr to make the rest of stdout clean (for piping with jq, etc.)
+		fmt.Fprint(os.Stderr, msg)
+	} else {
+		fmt.Print(msg)
+	}
 
 	return nil
 }
