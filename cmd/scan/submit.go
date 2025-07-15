@@ -42,7 +42,7 @@ func (s *scanner) doBatch(urls []string) error {
 	tasks := make([]api.BatchTask[*json.RawMessage], len(urls))
 	for i, url := range urls {
 		if s.wait {
-			tasks[i] = s.client.NewBatchScanWitWaitTask(url, s.maxWait, s.scanOpts...)
+			tasks[i] = s.client.NewBatchScanWithWaitTask(url, s.maxWait, s.scanOpts...)
 		} else {
 			tasks[i] = s.client.NewBatchScanTask(url, s.scanOpts...)
 		}

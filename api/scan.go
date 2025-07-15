@@ -147,7 +147,7 @@ func (cli *Client) NewBatchScanTask(url string, opts ...ScanOption) BatchTask[*j
 	}
 }
 
-func (cli *Client) NewBatchScanWitWaitTask(url string, maxWait int, opts ...ScanOption) BatchTask[*json.RawMessage] {
+func (cli *Client) NewBatchScanWithWaitTask(url string, maxWait int, opts ...ScanOption) BatchTask[*json.RawMessage] {
 	return func(cli *Client, ctx context.Context) mo.Result[*json.RawMessage] {
 		scanResult, err := cli.Scan(url, opts...)
 		if err != nil {
