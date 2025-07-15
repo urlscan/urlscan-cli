@@ -28,15 +28,15 @@ var submitCmd = &cobra.Command{
 		wait, _ := cmd.Flags().GetBool("wait")
 		maxWait, _ := cmd.Flags().GetInt("max-wait")
 
-		withBoth, _ := cmd.Flags().GetBool("with-both")
-		withScreenshot, _ := cmd.Flags().GetBool("with-screenshot")
-		withScreenshot = withScreenshot || withBoth
-		withDOM, _ := cmd.Flags().GetBool("with-dom")
-		withDOM = withDOM || withBoth
+		both, _ := cmd.Flags().GetBool("both")
+		screenshot, _ := cmd.Flags().GetBool("screenshot")
+		screenshot = screenshot || both
+		dom, _ := cmd.Flags().GetBool("dom")
+		dom = dom || both
 		force, _ := cmd.Flags().GetBool("force")
 
 		// override wait if any of with flag is set
-		wait = wait || withScreenshot || withDOM
+		wait = wait || screenshot || dom
 
 		reader := utils.StringReaderFromCmdArgs(args)
 		url, err := reader.ReadString()
@@ -67,7 +67,7 @@ var submitCmd = &cobra.Command{
 
 		fmt.Print(waitResult.PrettyJson())
 
-		if withScreenshot {
+		if screenshot {
 			downloadOpts := utils.NewDownloadOptions(
 				utils.WithDownloadClient(client),
 				utils.WithDownloadScreenshot(scanResult.UUID),
@@ -81,7 +81,7 @@ var submitCmd = &cobra.Command{
 			}
 		}
 
-		if withDOM {
+		if dom {
 			downloadOpts := utils.NewDownloadOptions(
 				utils.WithDownloadClient(client),
 				utils.WithDownloadDOM(scanResult.UUID),
@@ -103,9 +103,9 @@ func init() {
 	addScanFlags(submitCmd)
 	flags.AddForceFlag(submitCmd)
 
-	submitCmd.Flags().Bool("with-screenshot", false, "Download a screenshot (this flag overrides wait flag to true)")
-	submitCmd.Flags().Bool("with-dom", false, "Download a DOM (this flag overrides wait flag to true)")
-	submitCmd.Flags().Bool("with-both", false, "Download both a screenshot and a DOM (this flag overrides wait, with-screen and with-both flags to true)")
+	submitCmd.Flags().Bool("with-screenshot", false, "Download only the screenshot (overrides wait)")
+	submitCmd.Flags().Bool("dom", false, "Download only the DOM contents (overrides wait)")
+	submitCmd.Flags().Bool("both", false, "Download screenshot and DOM contents (overrides wait/dom/screenshot)")
 
 	RootCmd.AddCommand(submitCmd)
 }
