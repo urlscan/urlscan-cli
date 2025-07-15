@@ -103,7 +103,7 @@ func init() {
 	addScanFlags(submitCmd)
 	flags.AddForceFlag(submitCmd)
 
-	submitCmd.Flags().Bool("with-screenshot", false, "Download only the screenshot (overrides wait)")
+	submitCmd.Flags().Bool("screenshot", false, "Download only the screenshot (overrides wait)")
 	submitCmd.Flags().Bool("dom", false, "Download only the DOM contents (overrides wait)")
 	submitCmd.Flags().Bool("both", false, "Download screenshot and DOM contents (overrides wait/dom/screenshot)")
 

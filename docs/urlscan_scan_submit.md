@@ -25,10 +25,10 @@ urlscan scan submit <url> [flags]
   -m, --max-wait int            Maximum wait time per scan in seconds (default 60)
   -o, --overrideSafety string   If set to any value, this will disable reclassification of URLs with potential PII in them
   -r, --referer string          Override HTTP referer for this scan
+      --screenshot              Download only the screenshot (overrides wait)
   -t, --tags stringArray        User-defined tags to annotate this scan
   -v, --visibility string       One of public, unlisted, private
   -w, --wait                    Wait for the scan(s) to finish
-      --with-screenshot         Download only the screenshot (overrides wait)
 ```
 
 ### SEE ALSO
