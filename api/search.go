@@ -1,5 +1,7 @@
 package api
 
+import "encoding/json"
+
 type SavedSearchOptions struct {
 	Search struct {
 		ID               string   `json:"_id"`
@@ -97,4 +99,29 @@ func newSavedSearchOptions(opts ...SavedSearchOption) *SavedSearchOptions {
 		opt(options)
 	}
 	return options
+}
+
+func (cli *Client) CreateSavedSearch(opts ...SavedSearchOption) (*Response, error) {
+	savedSearchOptions := newSavedSearchOptions(opts...)
+	marshalled, err := json.Marshal(savedSearchOptions)
+	if err != nil {
+		return nil, err
+	}
+
+	return cli.Post(URL("/api/v1/user/searches/"), &Request{
+		Raw: json.RawMessage(marshalled),
+	})
+}
+
+func (cli *Client) UpdateSavedSearch(opts ...SavedSearchOption) (*Response, error) {
+	savedSearchOptions := newSavedSearchOptions(opts...)
+	marshalled, err := json.Marshal(savedSearchOptions)
+	if err != nil {
+		return nil, err
+	}
+
+	url := URL("/api/v1/user/searches/%s/", savedSearchOptions.Search.ID)
+	return cli.Put(url, &Request{
+		Raw: json.RawMessage(marshalled),
+	})
 }
