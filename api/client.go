@@ -36,9 +36,23 @@ type Response struct {
 }
 
 type Error struct {
-	Status      int    `json:"status"`
-	Message     string `json:"message"`
-	Description string `json:"description"`
+	Status      int             `json:"status"`
+	Message     string          `json:"message"`
+	Description string          `json:"description,omitempty"`
+	Raw         json.RawMessage `json:"-"`
+}
+
+func (r *Error) UnmarshalJSON(data []byte) error {
+	type result Error
+	var dst result
+
+	err := json.Unmarshal(data, &dst)
+	if err != nil {
+		return err
+	}
+	*r = Error(dst)
+	r.Raw = data
+	return err
 }
 
 func (e Error) Error() string {
@@ -172,7 +186,7 @@ func NewClient(APIKey string, opts ...ClientOption) *Client {
 	return c
 }
 
-func (cli *Client) sendRequest(method string, url *url.URL, body io.Reader, headers map[string]string) (*http.Response, error) {
+func (cli *Client) NewRequest(method string, url *url.URL, body io.Reader, headers map[string]string) (*http.Request, error) {
 	req, err := http.NewRequest(method, url.String(), body)
 	if err != nil {
 		return nil, err
@@ -189,11 +203,21 @@ func (cli *Client) sendRequest(method string, url *url.URL, body io.Reader, head
 		req.Header.Set(k, v)
 	}
 
-	return (cli.httpClient).Do(req)
+	return req, nil
+}
+
+func (cli *Client) Do(req *http.Request) (*http.Response, error) {
+	resp, err := cli.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close() //nolint:errcheck
+
+	return resp, nil
 }
 
 func (cli *Client) parseResponse(resp *http.Response) (*Response, error) {
-	apiResp := &Response{}
+	jsonResp := &Response{}
 
 	if !strings.HasPrefix(resp.Header.Get("Content-Type"), "application/json") {
 		return nil, fmt.Errorf("expecting JSON response from %s %s",
@@ -201,32 +225,41 @@ func (cli *Client) parseResponse(resp *http.Response) (*Response, error) {
 	}
 
 	var reader = resp.Body
-	// consider 2xx response as successful
-	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-		read, err := io.ReadAll(reader)
-		if err != nil {
-			return nil, err
-		}
-		apiResp.Raw = json.RawMessage(read)
-		return apiResp, nil
-	}
-
-	apiErr := &Error{}
-	if err := json.NewDecoder(reader).Decode(apiErr); err != nil {
+	read, err := io.ReadAll(reader)
+	if err != nil {
 		return nil, err
 	}
-	return nil, apiErr
+	// consider 2xx response as successful
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		jsonResp.Raw = json.RawMessage(read)
+		return jsonResp, nil
+	}
+
+	jsonErr := &Error{}
+	err = json.Unmarshal(read, jsonErr)
+	if err != nil {
+		return nil, err
+	}
+	return nil, jsonErr
+}
+
+func (cli *Client) DoWithJsonParse(req *http.Request) (*Response, error) {
+	resp, err := cli.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close() //nolint:errcheck
+
+	return cli.parseResponse(resp)
 }
 
 func (cli *Client) Get(url *url.URL, options ...RequestOption) (*Response, error) {
 	o := opts(options...)
-	httpResp, err := cli.sendRequest("GET", url, nil, o.headers)
+	req, err := cli.NewRequest("GET", url, nil, o.headers)
 	if err != nil {
 		return nil, err
 	}
-	defer httpResp.Body.Close() //nolint:errcheck
-
-	return cli.parseResponse(httpResp)
+	return cli.DoWithJsonParse(req)
 }
 
 func (cli *Client) Post(url *url.URL, req *Request, options ...RequestOption) (*Response, error) {
@@ -235,24 +268,21 @@ func (cli *Client) Post(url *url.URL, req *Request, options ...RequestOption) (*
 		[]RequestOption{WithHeader("Content-Type", "application/json")},
 		options...)
 	o := opts(defaultContentTypeOptions...)
-	httpResp, err := cli.sendRequest("POST", url, bytes.NewReader(b), o.headers)
+
+	httpReq, err := cli.NewRequest("POST", url, bytes.NewReader(b), o.headers)
 	if err != nil {
 		return nil, err
 	}
-	defer httpResp.Body.Close() //nolint:errcheck
-
-	return cli.parseResponse(httpResp)
+	return cli.DoWithJsonParse(httpReq)
 }
 
 func (cli *Client) Delete(url *url.URL, options ...RequestOption) (*Response, error) {
 	o := opts(options...)
-	httpResp, err := cli.sendRequest("DELETE", url, nil, o.headers)
+	req, err := cli.NewRequest("DELETE", url, nil, o.headers)
 	if err != nil {
 		return nil, err
 	}
-	defer httpResp.Body.Close() //nolint:errcheck
-
-	return cli.parseResponse(httpResp)
+	return cli.DoWithJsonParse(req)
 }
 
 func (cli *Client) Put(url *url.URL, req *Request, options ...RequestOption) (*Response, error) {
@@ -261,21 +291,23 @@ func (cli *Client) Put(url *url.URL, req *Request, options ...RequestOption) (*R
 		[]RequestOption{WithHeader("Content-Type", "application/json")},
 		options...)
 	o := opts(defaultContentTypeOptions...)
-	httpResp, err := cli.sendRequest("PUT", url, bytes.NewReader(b), o.headers)
+	httpReq, err := cli.NewRequest("PUT", url, bytes.NewReader(b), o.headers)
 	if err != nil {
 		return nil, err
 	}
-	defer httpResp.Body.Close() // nolint:errcheck
-
-	return cli.parseResponse(httpResp)
+	return cli.DoWithJsonParse(httpReq)
 }
 
 func (cli *Client) Download(url *url.URL, output string) (int64, error) {
-	resp, err := cli.sendRequest("GET", url, nil, nil)
+	req, err := cli.NewRequest("GET", url, nil, nil)
 	if err != nil {
 		return 0, err
 	}
-	defer resp.Body.Close() // nolint:errcheck
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return 0, err
+	}
 
 	if resp.StatusCode == http.StatusOK {
 		w, err := os.Create(output)
@@ -308,30 +340,6 @@ func (cli *Client) Search(q string, options ...IteratorOption) (*Iterator, error
 func (cli *Client) StructureSearch(uuid string, options ...IteratorOption) (*Iterator, error) {
 	u := URL("/api/v1/pro/result/%s/similar/", uuid)
 	return newIterator(cli, u, options...)
-}
-
-func (cli *Client) Scan(url string, options ...ScanOption) (*ScanResult, error) {
-	scanOptions := newScanOptions(url, options...)
-
-	marshalled, err := json.Marshal(scanOptions)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := cli.Post(URL("/api/v1/scan/"), &Request{
-		Raw: json.RawMessage(marshalled),
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	r := &ScanResult{}
-	err = json.Unmarshal(resp.Raw, r)
-	if err != nil {
-		return nil, err
-	}
-
-	return r, nil
 }
 
 func (cli *Client) GetResult(uuid string) (*Response, error) {

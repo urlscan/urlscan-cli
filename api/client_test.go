@@ -94,3 +94,21 @@ func TestWaitAndGetResult(t *testing.T) {
 	assert.Equal(t, "{\"foo\":\"bar\"}\n", string(got.Raw))
 	assert.Equal(t, gock.IsDone(), true)
 }
+
+func TestError(t *testing.T) {
+	defer gock.Off()
+
+	gock.New("http://testserver/").
+		Get("/foo").
+		Reply(http.StatusBadRequest).
+		SetHeader("Content-Type", "application/json").
+		BodyString(`{"status": 400, "message": "dummy"}`)
+
+	c := newTestClient()
+	req, err := http.NewRequest("GET", URL("http://testserver/foo").String(), nil)
+	assert.NoError(t, err)
+
+	_, err = c.DoWithJsonParse(req)
+	assert.Error(t, err)
+	assert.Equal(t, "dummy", err.Error())
+}
