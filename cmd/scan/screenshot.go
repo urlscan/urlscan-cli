@@ -5,6 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 	api "github.com/urlscan/urlscan-cli/api"
+	"github.com/urlscan/urlscan-cli/cmd/flags"
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
@@ -55,8 +56,8 @@ var screenshotCmd = &cobra.Command{
 }
 
 func init() {
-	screenshotCmd.Flags().StringP("output", "o", "", "Output file name (default <uuid>.png)")
-	screenshotCmd.Flags().BoolP("force", "f", false, "Enable to force overwriting an existing file.")
+	flags.AddOutputFlag(screenshotCmd, "<uuid>.png")
+	flags.AddForceFlag(screenshotCmd)
 
 	RootCmd.AddCommand(screenshotCmd)
 }

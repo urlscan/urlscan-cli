@@ -342,11 +342,6 @@ func (cli *Client) StructureSearch(uuid string, options ...IteratorOption) (*Ite
 	return newIterator(cli, u, options...)
 }
 
-func (c *Client) IterateHostname(hostname string, opts ...HostnameIteratorOption) (*HostnameIterator, error) {
-	u := URL("/api/v1/hostname/%s", hostname)
-	return newHostnameIterator(c, u, opts...)
-}
-
 func (cli *Client) GetResult(uuid string) (*Response, error) {
 	url := URL("%s", fmt.Sprintf("/api/v1/result/%s/", uuid))
 	result, err := cli.Get(url)
@@ -381,123 +376,9 @@ func (cli *Client) WaitAndGetResult(ctx context.Context, uuid string, maxWait in
 		select {
 		case <-time.After(delay):
 			delay += 1 * time.Second
-			log.Info("Got 404 error, waiting for a scan result...", "delay", delay, "error", err.Error())
+			log.Info("Got 404 error, waiting for a scan result...", "delay", delay, "error", err.Error(), "uuid", uuid)
 		case <-ctx.Done():
 			return nil, ctx.Err()
 		}
 	}
-}
-
-func (cli *Client) CreateSubscription(opts ...SubscriptionOption) (*Response, error) {
-	subscriptionOptions := newSubscriptionOptions(opts...)
-	marshalled, err := json.Marshal(subscriptionOptions)
-	if err != nil {
-		return nil, err
-	}
-
-	return cli.Post(URL("/api/v1/user/subscriptions/"), &Request{
-		Raw: json.RawMessage(marshalled),
-	})
-}
-
-func (cli *Client) UpdateSubscription(opts ...SubscriptionOption) (*Response, error) {
-	subscriptionOptions := newSubscriptionOptions(opts...)
-	marshalled, err := json.Marshal(subscriptionOptions)
-	if err != nil {
-		return nil, err
-	}
-
-	url := URL("/api/v1/user/subscriptions/%s/", subscriptionOptions.Subscription.ID)
-	return cli.Put(url, &Request{
-		Raw: json.RawMessage(marshalled),
-	})
-}
-
-func (cli *Client) CreateSavedSearch(opts ...SavedSearchOption) (*Response, error) {
-	savedSearchOptions := newSavedSearchOptions(opts...)
-	marshalled, err := json.Marshal(savedSearchOptions)
-	if err != nil {
-		return nil, err
-	}
-
-	return cli.Post(URL("/api/v1/user/searches/"), &Request{
-		Raw: json.RawMessage(marshalled),
-	})
-}
-
-func (cli *Client) UpdateSavedSearch(opts ...SavedSearchOption) (*Response, error) {
-	savedSearchOptions := newSavedSearchOptions(opts...)
-	marshalled, err := json.Marshal(savedSearchOptions)
-	if err != nil {
-		return nil, err
-	}
-
-	url := URL("/api/v1/user/searches/%s/", savedSearchOptions.Search.ID)
-	return cli.Put(url, &Request{
-		Raw: json.RawMessage(marshalled),
-	})
-}
-
-func (cli *Client) CreateIncident(opts ...IncidentOption) (*Response, error) {
-	incidentOpts := newIncidentOptions(opts...)
-	marshalled, err := json.Marshal(incidentOpts)
-	if err != nil {
-		return nil, err
-	}
-
-	return cli.Post(URL("/api/v1/user/incidents/"), &Request{
-		Raw: json.RawMessage(marshalled),
-	})
-}
-
-func (cli *Client) UpdateIncident(id string, opts ...IncidentOption) (*Response, error) {
-	incidentOpts := newIncidentOptions(opts...)
-	marshalled, err := json.Marshal(incidentOpts)
-	if err != nil {
-		return nil, err
-	}
-
-	url := URL("/api/v1/user/incidents/%s/", id)
-	return cli.Put(url, &Request{
-		Raw: json.RawMessage(marshalled),
-	})
-}
-
-func (cli *Client) TriggerNonBlockingLiveScan(id string, opts ...LiveScanOption) (*Response, error) {
-	liveScanOpts := newLiveScanOptions(opts...)
-	marshalled, err := json.Marshal(liveScanOpts)
-	if err != nil {
-		return nil, err
-	}
-
-	url := URL("/api/v1/livescan/%s/task/", id)
-	return cli.Post(url, &Request{
-		Raw: json.RawMessage(marshalled),
-	})
-}
-
-func (cli *Client) TriggerLiveScan(id string, opts ...LiveScanOption) (*Response, error) {
-	liveScanOpts := newLiveScanOptions(opts...)
-	marshalled, err := json.Marshal(liveScanOpts)
-	if err != nil {
-		return nil, err
-	}
-
-	url := URL("/api/v1/livescan/%s/scan/", id)
-	return cli.Post(url, &Request{
-		Raw: json.RawMessage(marshalled),
-	})
-}
-
-func (cli *Client) StoreLiveScanResult(scannerId string, scanId string, opts ...LiveScanStoreOption) (*Response, error) {
-	liveScanStoreOpts := newLiveScanStoreOptions(opts...)
-	marshalled, err := json.Marshal(liveScanStoreOpts)
-	if err != nil {
-		return nil, err
-	}
-
-	url := URL("/api/v1/livescan/%s/%s/", scannerId, scanId)
-	return cli.Put(url, &Request{
-		Raw: json.RawMessage(marshalled),
-	})
 }
