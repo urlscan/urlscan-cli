@@ -304,10 +304,11 @@ func (cli *Client) Download(url *url.URL, output string) (int64, error) {
 		return 0, err
 	}
 
-	resp, err := cli.Do(req)
+	resp, err := cli.httpClient.Do(req)
 	if err != nil {
 		return 0, err
 	}
+	defer resp.Body.Close() //nolint:errcheck
 
 	if resp.StatusCode == http.StatusOK {
 		w, err := os.Create(output)
