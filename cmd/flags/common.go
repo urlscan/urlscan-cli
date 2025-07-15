@@ -8,7 +8,7 @@ import (
 )
 
 func AddForceFlag(cmd *cobra.Command) {
-	cmd.Flags().BoolP("force", "f", false, "Force overwrite an existing file.")
+	cmd.Flags().BoolP("force", "f", false, "Force overwrite an existing file")
 }
 
 func AddAllFlag(cmd *cobra.Command) {
