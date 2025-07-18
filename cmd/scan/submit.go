@@ -28,11 +28,11 @@ var submitCmd = &cobra.Command{
 		wait, _ := cmd.Flags().GetBool("wait")
 		maxWait, _ := cmd.Flags().GetInt("max-wait")
 
-		both, _ := cmd.Flags().GetBool("both")
+		download, _ := cmd.Flags().GetBool("download")
 		screenshot, _ := cmd.Flags().GetBool("screenshot")
-		screenshot = screenshot || both
+		screenshot = screenshot || download
 		dom, _ := cmd.Flags().GetBool("dom")
-		dom = dom || both
+		dom = dom || download
 		force, _ := cmd.Flags().GetBool("force")
 
 		// override wait if any of with flag is set
@@ -105,7 +105,7 @@ func init() {
 
 	submitCmd.Flags().Bool("screenshot", false, "Download only the screenshot (overrides wait)")
 	submitCmd.Flags().Bool("dom", false, "Download only the DOM contents (overrides wait)")
-	submitCmd.Flags().Bool("both", false, "Download screenshot and DOM contents (overrides wait/dom/screenshot)")
+	submitCmd.Flags().Bool("download", false, "Download screenshot and DOM contents (overrides wait/dom/screenshot)")
 
 	RootCmd.AddCommand(submitCmd)
 }
