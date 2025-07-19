@@ -167,7 +167,6 @@ func (msr *MappedStringReader) ReadString() (string, error) {
 type FilteredStringReader struct {
 	r          StringReader
 	validateFn func(string) error
-	err        error
 }
 
 func NewFilteredStringReader(r StringReader, validateFn func(string) error) *FilteredStringReader {
@@ -178,7 +177,7 @@ func (f *FilteredStringReader) ReadString() (s string, err error) {
 	if f.Next() {
 		return f.Value(), nil
 	}
-	return "", f.err
+	return "", f.r.Err()
 }
 
 func (f *FilteredStringReader) Next() bool {
