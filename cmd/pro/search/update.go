@@ -85,7 +85,7 @@ var updateCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Print(result.PrettyJson())
+		fmt.Print(result.PrettyJSON())
 
 		return nil
 	},

@@ -34,7 +34,7 @@ func (s *scanner) do(urls []string) error {
 		return err
 	}
 
-	pairs := utils.NewBatchJsonResultPairs(urls, results)
+	pairs := utils.NewBatchJSONResultPairs(urls, results)
 
 	b, err := json.MarshalIndent(pairs, "", "  ")
 	if err != nil {

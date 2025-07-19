@@ -27,35 +27,35 @@ var baseURL = url.URL{
 	Host:   "urlscan.io",
 }
 
-type Request struct {
+type JSONRequest struct {
 	Raw json.RawMessage `json:"-"`
 }
 
-type Response struct {
+type JSONResponse struct {
 	Raw json.RawMessage `json:"-"`
 }
 
-type Error struct {
+type JSONError struct {
 	Status      int             `json:"status"`
 	Message     string          `json:"message"`
 	Description string          `json:"description,omitempty"`
 	Raw         json.RawMessage `json:"-"`
 }
 
-func (r *Error) UnmarshalJSON(data []byte) error {
-	type result Error
+func (r *JSONError) UnmarshalJSON(data []byte) error {
+	type result JSONError
 	var dst result
 
 	err := json.Unmarshal(data, &dst)
 	if err != nil {
 		return err
 	}
-	*r = Error(dst)
+	*r = JSONError(dst)
 	r.Raw = data
 	return err
 }
 
-func (e Error) Error() string {
+func (e JSONError) Error() string {
 	return e.Message
 }
 
@@ -69,7 +69,7 @@ func URL(pathFmt string, a ...any) *url.URL {
 	return baseURL.ResolveReference(url)
 }
 
-func (r *Response) PrettyJson() string {
+func (r *JSONResponse) PrettyJSON() string {
 	var jsonBody bytes.Buffer
 	err := json.Indent(&jsonBody, r.Raw, "", "  ")
 	if err != nil {
@@ -139,7 +139,7 @@ func (t *RetryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 
 type APIClient interface {
 	Get(url *url.URL, options ...RequestOption) (any, error)
-	Post(url *url.URL, req *Request, options ...RequestOption) (any, error)
+	Post(url *url.URL, req *JSONRequest, options ...RequestOption) (any, error)
 }
 
 type Client struct {
@@ -216,8 +216,8 @@ func (cli *Client) Do(req *http.Request) (*http.Response, error) {
 	return resp, nil
 }
 
-func (cli *Client) parseResponse(resp *http.Response) (*Response, error) {
-	jsonResp := &Response{}
+func (cli *Client) parseResponse(resp *http.Response) (*JSONResponse, error) {
+	jsonResp := &JSONResponse{}
 
 	if !strings.HasPrefix(resp.Header.Get("Content-Type"), "application/json") {
 		return nil, fmt.Errorf("expecting JSON response from %s %s",
@@ -235,7 +235,7 @@ func (cli *Client) parseResponse(resp *http.Response) (*Response, error) {
 		return jsonResp, nil
 	}
 
-	jsonErr := &Error{}
+	jsonErr := &JSONError{}
 	err = json.Unmarshal(read, jsonErr)
 	if err != nil {
 		return nil, err
@@ -243,7 +243,7 @@ func (cli *Client) parseResponse(resp *http.Response) (*Response, error) {
 	return nil, jsonErr
 }
 
-func (cli *Client) DoWithJsonParse(req *http.Request) (*Response, error) {
+func (cli *Client) DoWithJSONParse(req *http.Request) (*JSONResponse, error) {
 	resp, err := cli.httpClient.Do(req)
 	if err != nil {
 		return nil, err
@@ -253,16 +253,16 @@ func (cli *Client) DoWithJsonParse(req *http.Request) (*Response, error) {
 	return cli.parseResponse(resp)
 }
 
-func (cli *Client) Get(url *url.URL, options ...RequestOption) (*Response, error) {
+func (cli *Client) Get(url *url.URL, options ...RequestOption) (*JSONResponse, error) {
 	o := opts(options...)
 	req, err := cli.NewRequest("GET", url, nil, o.headers)
 	if err != nil {
 		return nil, err
 	}
-	return cli.DoWithJsonParse(req)
+	return cli.DoWithJSONParse(req)
 }
 
-func (cli *Client) Post(url *url.URL, req *Request, options ...RequestOption) (*Response, error) {
+func (cli *Client) Post(url *url.URL, req *JSONRequest, options ...RequestOption) (*JSONResponse, error) {
 	b := []byte(req.Raw)
 	defaultContentTypeOptions := append(
 		[]RequestOption{WithHeader("Content-Type", "application/json")},
@@ -273,19 +273,19 @@ func (cli *Client) Post(url *url.URL, req *Request, options ...RequestOption) (*
 	if err != nil {
 		return nil, err
 	}
-	return cli.DoWithJsonParse(httpReq)
+	return cli.DoWithJSONParse(httpReq)
 }
 
-func (cli *Client) Delete(url *url.URL, options ...RequestOption) (*Response, error) {
+func (cli *Client) Delete(url *url.URL, options ...RequestOption) (*JSONResponse, error) {
 	o := opts(options...)
 	req, err := cli.NewRequest("DELETE", url, nil, o.headers)
 	if err != nil {
 		return nil, err
 	}
-	return cli.DoWithJsonParse(req)
+	return cli.DoWithJSONParse(req)
 }
 
-func (cli *Client) Put(url *url.URL, req *Request, options ...RequestOption) (*Response, error) {
+func (cli *Client) Put(url *url.URL, req *JSONRequest, options ...RequestOption) (*JSONResponse, error) {
 	b := []byte(req.Raw)
 	defaultContentTypeOptions := append(
 		[]RequestOption{WithHeader("Content-Type", "application/json")},
@@ -295,7 +295,7 @@ func (cli *Client) Put(url *url.URL, req *Request, options ...RequestOption) (*R
 	if err != nil {
 		return nil, err
 	}
-	return cli.DoWithJsonParse(httpReq)
+	return cli.DoWithJSONParse(httpReq)
 }
 
 func (cli *Client) Download(url *url.URL, output string) (int64, error) {
@@ -343,7 +343,7 @@ func (cli *Client) StructureSearch(uuid string, options ...IteratorOption) (*Ite
 	return newIterator(cli, u, options...)
 }
 
-func (cli *Client) GetResult(uuid string) (*Response, error) {
+func (cli *Client) GetResult(uuid string) (*JSONResponse, error) {
 	url := URL("%s", fmt.Sprintf("/api/v1/result/%s/", uuid))
 	result, err := cli.Get(url)
 	if err != nil {
@@ -352,7 +352,7 @@ func (cli *Client) GetResult(uuid string) (*Response, error) {
 	return result, nil
 }
 
-func (cli *Client) WaitAndGetResult(ctx context.Context, uuid string, maxWait int) (*Response, error) {
+func (cli *Client) WaitAndGetResult(ctx context.Context, uuid string, maxWait int) (*JSONResponse, error) {
 	ctx, cancel := context.WithTimeout(ctx, time.Duration(maxWait)*time.Second)
 	defer cancel()
 
@@ -367,9 +367,9 @@ func (cli *Client) WaitAndGetResult(ctx context.Context, uuid string, maxWait in
 		}
 
 		// raise an error if it's not 404 error
-		var apiErr *Error
-		if errors.As(err, &apiErr) {
-			if apiErr.Status != http.StatusNotFound {
+		var jsonErr *JSONError
+		if errors.As(err, &jsonErr) {
+			if jsonErr.Status != http.StatusNotFound {
 				return nil, err
 			}
 		}

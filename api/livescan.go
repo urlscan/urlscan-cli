@@ -95,7 +95,7 @@ func newLiveScanStoreOptions(opts ...LiveScanStoreOption) *LiveScanStoreOptions 
 }
 
 
-func (cli *Client) TriggerNonBlockingLiveScan(id string, opts ...LiveScanOption) (*Response, error) {
+func (cli *Client) TriggerNonBlockingLiveScan(id string, opts ...LiveScanOption) (*JSONResponse, error) {
 	liveScanOpts := newLiveScanOptions(opts...)
 	marshalled, err := json.Marshal(liveScanOpts)
 	if err != nil {
@@ -103,12 +103,12 @@ func (cli *Client) TriggerNonBlockingLiveScan(id string, opts ...LiveScanOption)
 	}
 
 	url := URL("/api/v1/livescan/%s/task/", id)
-	return cli.Post(url, &Request{
+	return cli.Post(url, &JSONRequest{
 		Raw: json.RawMessage(marshalled),
 	})
 }
 
-func (cli *Client) TriggerLiveScan(id string, opts ...LiveScanOption) (*Response, error) {
+func (cli *Client) TriggerLiveScan(id string, opts ...LiveScanOption) (*JSONResponse, error) {
 	liveScanOpts := newLiveScanOptions(opts...)
 	marshalled, err := json.Marshal(liveScanOpts)
 	if err != nil {
@@ -116,12 +116,12 @@ func (cli *Client) TriggerLiveScan(id string, opts ...LiveScanOption) (*Response
 	}
 
 	url := URL("/api/v1/livescan/%s/scan/", id)
-	return cli.Post(url, &Request{
+	return cli.Post(url, &JSONRequest{
 		Raw: json.RawMessage(marshalled),
 	})
 }
 
-func (cli *Client) StoreLiveScanResult(scannerId string, scanId string, opts ...LiveScanStoreOption) (*Response, error) {
+func (cli *Client) StoreLiveScanResult(scannerId string, scanId string, opts ...LiveScanStoreOption) (*JSONResponse, error) {
 	liveScanStoreOpts := newLiveScanStoreOptions(opts...)
 	marshalled, err := json.Marshal(liveScanStoreOpts)
 	if err != nil {
@@ -129,7 +129,7 @@ func (cli *Client) StoreLiveScanResult(scannerId string, scanId string, opts ...
 	}
 
 	url := URL("/api/v1/livescan/%s/%s/", scannerId, scanId)
-	return cli.Put(url, &Request{
+	return cli.Put(url, &JSONRequest{
 		Raw: json.RawMessage(marshalled),
 	})
 }
