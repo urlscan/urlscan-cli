@@ -18,10 +18,14 @@ urlscan scan submit <url> [flags]
 ```
   -c, --country string          Specify which country the scan should be performed from (2-Letter ISO-3166-1 alpha-2 country
   -a, --customagent string      Override User-Agent for this scan
+      --dom                     Download only the DOM contents (overrides wait)
+      --download                Download screenshot and DOM contents (overrides wait/dom/screenshot)
+  -f, --force                   Force overwrite an existing file
   -h, --help                    help for submit
   -m, --max-wait int            Maximum wait time per scan in seconds (default 60)
   -o, --overrideSafety string   If set to any value, this will disable reclassification of URLs with potential PII in them
   -r, --referer string          Override HTTP referer for this scan
+      --screenshot              Download only the screenshot (overrides wait)
   -t, --tags stringArray        User-defined tags to annotate this scan
   -v, --visibility string       One of public, unlisted, private
   -w, --wait                    Wait for the scan(s) to finish

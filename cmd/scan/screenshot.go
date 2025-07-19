@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	api "github.com/urlscan/urlscan-cli/api"
 	"github.com/urlscan/urlscan-cli/cmd/flags"
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
@@ -40,13 +39,16 @@ var screenshotCmd = &cobra.Command{
 			return err
 		}
 
-		url := api.URL("%s", fmt.Sprintf("/screenshots/%s.png", uuid))
 		if output == "" {
 			output = fmt.Sprintf("%s.png", uuid)
 		}
-
-		options := utils.NewDownloadOptions(client, url, output, force)
-		err = utils.Download(options)
+		opts := utils.NewDownloadOptions(
+			utils.WithDownloadClient(client),
+			utils.WithDownloadScreenshot(uuid),
+			utils.WithDownloadOutput(output),
+			utils.WithDownloadForce(force),
+		)
+		err = utils.DownloadWithSpinner(opts)
 		if err != nil {
 			return err
 		}

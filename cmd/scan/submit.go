@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	"github.com/urlscan/urlscan-cli/cmd/flags"
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
@@ -26,6 +27,16 @@ var submitCmd = &cobra.Command{
 
 		wait, _ := cmd.Flags().GetBool("wait")
 		maxWait, _ := cmd.Flags().GetInt("max-wait")
+
+		download, _ := cmd.Flags().GetBool("download")
+		screenshot, _ := cmd.Flags().GetBool("screenshot")
+		screenshot = screenshot || download
+		dom, _ := cmd.Flags().GetBool("dom")
+		dom = dom || download
+		force, _ := cmd.Flags().GetBool("force")
+
+		// override wait if any of with flag is set
+		wait = wait || screenshot || dom
 
 		reader := utils.StringReaderFromCmdArgs(args)
 		url, err := reader.ReadString()
@@ -56,12 +67,45 @@ var submitCmd = &cobra.Command{
 
 		fmt.Print(waitResult.PrettyJson())
 
+		if screenshot {
+			downloadOpts := utils.NewDownloadOptions(
+				utils.WithDownloadClient(client),
+				utils.WithDownloadScreenshot(scanResult.UUID),
+				utils.WithDownloadOutput(fmt.Sprintf("%s.png", scanResult.UUID)),
+				utils.WithDownloadForce(force),
+				utils.WithDownloadSilent(true),
+			)
+			err := utils.DownloadWithSpinner(downloadOpts)
+			if err != nil {
+				return err
+			}
+		}
+
+		if dom {
+			downloadOpts := utils.NewDownloadOptions(
+				utils.WithDownloadClient(client),
+				utils.WithDownloadDOM(scanResult.UUID),
+				utils.WithDownloadOutput(fmt.Sprintf("%s.html", scanResult.UUID)),
+				utils.WithDownloadForce(force),
+				utils.WithDownloadSilent(true),
+			)
+			err := utils.DownloadWithSpinner(downloadOpts)
+			if err != nil {
+				return err
+			}
+		}
+
 		return nil
 	},
 }
 
 func init() {
 	addScanFlags(submitCmd)
+	flags.AddForceFlag(submitCmd)
+
+	submitCmd.Flags().Bool("screenshot", false, "Download only the screenshot (overrides wait)")
+	submitCmd.Flags().Bool("dom", false, "Download only the DOM contents (overrides wait)")
+	submitCmd.Flags().Bool("download", false, "Download screenshot and DOM contents (overrides wait/dom/screenshot)")
 
 	RootCmd.AddCommand(submitCmd)
 }

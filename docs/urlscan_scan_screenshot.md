@@ -16,7 +16,7 @@ urlscan scan screenshot <uuid> [flags]
 ### Options
 
 ```
-  -f, --force           Force overwrite an existing file.
+  -f, --force           Force overwrite an existing file
   -h, --help            help for screenshot
   -o, --output string   Output file name (default <uuid>.png)
 ```

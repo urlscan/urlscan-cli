@@ -45,8 +45,14 @@ var fileCmd = &cobra.Command{
 		query.Add("password", password)
 		url.RawQuery = query.Encode()
 
-		options := utils.NewDownloadOptions(client, url, filename, force)
-		err = utils.Download(options)
+		opts := utils.NewDownloadOptions(
+			utils.WithDownloadClient(client),
+			utils.WithDownloadURL(url),
+			utils.WithDownloadOutput(filename),
+			utils.WithDownloadForce(force),
+		)
+
+		err = utils.DownloadWithSpinner(opts)
 		if err != nil {
 			return err
 		}

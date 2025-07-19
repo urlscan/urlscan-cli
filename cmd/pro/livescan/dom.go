@@ -49,8 +49,13 @@ var domCmd = &cobra.Command{
 		}
 
 		url := api.URL("/api/v1/livescan/%s/dom/%s", scannerId, scanId)
-		options := utils.NewDownloadOptions(client, url, output, force)
-		err = utils.Download(options)
+		opts := utils.NewDownloadOptions(
+			utils.WithDownloadClient(client),
+			utils.WithDownloadURL(url),
+			utils.WithDownloadOutput(output),
+			utils.WithDownloadForce(force),
+		)
+		err = utils.DownloadWithSpinner(opts)
 		if err != nil {
 			return err
 		}
