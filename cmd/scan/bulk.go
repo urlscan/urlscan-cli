@@ -83,16 +83,16 @@ var bulkSubmitCmdExample = `  urlscan scan bulk-submit <url>...
   urlscan scan bulk-submit list_of_urls.txt <url>`
 
 var bulkSubmitCmd = &cobra.Command{
-	Use:   "bulk-submit <url>...",
-	Short: "Bulk submit URLs to scan",
+	Use:     "bulk-submit <url>...",
+	Short:   "Bulk submit URLs to scan",
 	Example: bulkSubmitCmdExample,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return cmd.Usage()
 		}
 
-		reader := utils.NewMappedStringReader(utils.StringReaderFromCmdArgs(args), utils.ResolveFileOrValue)
-		urls, err := reader.ReadAll()
+		reader := utils.NewFilteredStringReader(utils.NewMappedStringReader(utils.StringReaderFromCmdArgs(args), utils.ResolveFileOrValue), utils.ValidateURL)
+		urls, err := utils.ReadAllFromReader(reader)
 		if err != nil {
 			return err
 		}

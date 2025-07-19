@@ -71,3 +71,37 @@ func TestValidateUUID(t *testing.T) {
 		}
 	}
 }
+
+func TestValidateURL(t *testing.T) {
+	tests := []struct {
+		input   string
+		wantErr bool
+	}{
+		// Valid URLs
+		{"http://example.com", false},
+		{"https://example.com", false},
+		{"http://example.com/path?query=1", false},
+		{"https://sub.domain.com:8080/path/to/resource", false},
+		{"http://example.com/#fragment", false},
+		{"https://example.com/?q=test#frag", false},
+		// Invalid URLs
+		{"example.com", true},
+		{"htp://example.com", true},
+		{"http:/example.com", true},
+		{"http//example.com", true},
+		{"http://", true},
+		{"http:// example.com", true},
+		{"http://example .com", true},
+		{"", true},
+		{"https://", true},
+		{"ftp:/example.com", true},
+		{"http://exa mple.com", true},
+	}
+
+	for _, tt := range tests {
+		err := ValidateURL(tt.input)
+		if (err != nil) != tt.wantErr {
+			t.Errorf("ValidateURL(%q) error = %v, wantErr %v", tt.input, err, tt.wantErr)
+		}
+	}
+}
