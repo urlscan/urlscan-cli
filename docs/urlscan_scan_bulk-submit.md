@@ -21,11 +21,15 @@ urlscan scan bulk-submit <url>... [flags]
 ```
   -c, --country string          Specify which country the scan should be performed from (2-Letter ISO-3166-1 alpha-2 country
   -a, --customagent string      Override User-Agent for this scan
+      --dom                     Download only the DOM contents (overrides wait)
+      --download                Download screenshot and DOM contents (overrides wait/dom/screenshot)
+  -f, --force                   Force overwrite an existing file
   -h, --help                    help for bulk-submit
       --max-concurrency int     Maximum number of concurrent requests for batch operation (default 5)
   -m, --max-wait int            Maximum wait time per scan in seconds (default 60)
   -o, --overrideSafety string   If set to any value, this will disable reclassification of URLs with potential PII in them
   -r, --referer string          Override HTTP referer for this scan
+      --screenshot              Download only the screenshot (overrides wait)
   -t, --tags stringArray        User-defined tags to annotate this scan
       --timeout int             Timeout for the batch operation in seconds, 0 means no timeout (default 1800)
   -v, --visibility string       One of public, unlisted, private
