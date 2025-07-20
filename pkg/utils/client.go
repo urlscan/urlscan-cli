@@ -97,24 +97,11 @@ func NewDownloadOptions(opts ...DownloadOption) *DownloadOptions {
 	return downloadOpts
 }
 
-func DownloadWithSpinner(opts *DownloadOptions) error {
-	s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
-	s.Start()
-
-	if !opts.force {
-		if fileExists(opts.output) {
-			s.Stop()
-			return fmt.Errorf("%s already exists", opts.output)
-		}
-	}
-
+func Download(opts *DownloadOptions) error {
 	_, err := opts.client.Download(opts.url, opts.output)
 	if err != nil {
 		return err
 	}
-
-	// stop the spinner
-	s.Stop()
 
 	msg := fmt.Sprintf("Downloaded: %s from %s\n", opts.output, opts.url.String())
 	if opts.silent {
@@ -125,6 +112,19 @@ func DownloadWithSpinner(opts *DownloadOptions) error {
 	}
 
 	return nil
+}
+
+func DownloadWithSpinner(opts *DownloadOptions) error {
+	s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
+	// start the spinner
+	s.Start()
+
+	err := Download(opts)
+
+	// stop the spinner
+	s.Stop()
+
+	return err
 }
 
 type BatchJsonResultPair struct {
