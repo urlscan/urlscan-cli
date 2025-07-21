@@ -82,9 +82,15 @@ var bulkSubmitCmdExample = `  urlscan scan bulk-submit <url>...
   # combine the file input and the URL input
   urlscan scan bulk-submit list_of_urls.txt <url>`
 
+var bulkSubmitCmdLong = `Submit multiple URLs to scan in bulk.
+
+This command allows you to submit a list of URLs for scanning in bulk. You can provide URLs via command line arguments or through a file.
+Note that the URLs will be validated before submission, and only valid URLs will be processed.`
+
 var bulkSubmitCmd = &cobra.Command{
 	Use:     "bulk-submit <url>...",
 	Short:   "Bulk submit URLs to scan",
+	Long:    bulkSubmitCmdLong,
 	Example: bulkSubmitCmdExample,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
