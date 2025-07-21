@@ -75,19 +75,19 @@ func newSubscriptionOptions(opts ...SubscriptionOption) *SubscriptionOptions {
 	return subscriptionOptions
 }
 
-func (cli *Client) CreateSubscription(opts ...SubscriptionOption) (*Response, error) {
+func (cli *Client) CreateSubscription(opts ...SubscriptionOption) (*JSONResponse, error) {
 	subscriptionOptions := newSubscriptionOptions(opts...)
 	marshalled, err := json.Marshal(subscriptionOptions)
 	if err != nil {
 		return nil, err
 	}
 
-	return cli.Post(URL("/api/v1/user/subscriptions/"), &Request{
+	return cli.Post(URL("/api/v1/user/subscriptions/"), &JSONRequest{
 		Raw: json.RawMessage(marshalled),
 	})
 }
 
-func (cli *Client) UpdateSubscription(opts ...SubscriptionOption) (*Response, error) {
+func (cli *Client) UpdateSubscription(opts ...SubscriptionOption) (*JSONResponse, error) {
 	subscriptionOptions := newSubscriptionOptions(opts...)
 	marshalled, err := json.Marshal(subscriptionOptions)
 	if err != nil {
@@ -95,7 +95,7 @@ func (cli *Client) UpdateSubscription(opts ...SubscriptionOption) (*Response, er
 	}
 
 	url := URL("/api/v1/user/subscriptions/%s/", subscriptionOptions.Subscription.ID)
-	return cli.Put(url, &Request{
+	return cli.Put(url, &JSONRequest{
 		Raw: json.RawMessage(marshalled),
 	})
 }

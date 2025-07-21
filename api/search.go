@@ -101,19 +101,19 @@ func newSavedSearchOptions(opts ...SavedSearchOption) *SavedSearchOptions {
 	return options
 }
 
-func (cli *Client) CreateSavedSearch(opts ...SavedSearchOption) (*Response, error) {
+func (cli *Client) CreateSavedSearch(opts ...SavedSearchOption) (*JSONResponse, error) {
 	savedSearchOptions := newSavedSearchOptions(opts...)
 	marshalled, err := json.Marshal(savedSearchOptions)
 	if err != nil {
 		return nil, err
 	}
 
-	return cli.Post(URL("/api/v1/user/searches/"), &Request{
+	return cli.Post(URL("/api/v1/user/searches/"), &JSONRequest{
 		Raw: json.RawMessage(marshalled),
 	})
 }
 
-func (cli *Client) UpdateSavedSearch(opts ...SavedSearchOption) (*Response, error) {
+func (cli *Client) UpdateSavedSearch(opts ...SavedSearchOption) (*JSONResponse, error) {
 	savedSearchOptions := newSavedSearchOptions(opts...)
 	marshalled, err := json.Marshal(savedSearchOptions)
 	if err != nil {
@@ -121,7 +121,7 @@ func (cli *Client) UpdateSavedSearch(opts ...SavedSearchOption) (*Response, erro
 	}
 
 	url := URL("/api/v1/user/searches/%s/", savedSearchOptions.Search.ID)
-	return cli.Put(url, &Request{
+	return cli.Put(url, &JSONRequest{
 		Raw: json.RawMessage(marshalled),
 	})
 }

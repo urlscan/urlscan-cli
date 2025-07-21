@@ -14,7 +14,7 @@ type ScanResult struct {
 	Raw  json.RawMessage `json:"-"`
 }
 
-func (r *ScanResult) PrettyJson() string {
+func (r *ScanResult) PrettyJSON() string {
 	var jsonBody bytes.Buffer
 	err := json.Indent(&jsonBody, r.Raw, "", "  ")
 	if err != nil {
@@ -121,7 +121,7 @@ func (cli *Client) Scan(url string, options ...ScanOption) (*ScanResult, error) 
 		return nil, err
 	}
 
-	resp, err := cli.Post(URL("/api/v1/scan/"), &Request{
+	resp, err := cli.Post(URL("/api/v1/scan/"), &JSONRequest{
 		Raw: json.RawMessage(marshalled),
 	})
 	if err != nil {

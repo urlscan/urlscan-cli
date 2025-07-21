@@ -55,7 +55,7 @@ var submitCmd = &cobra.Command{
 		}
 
 		if !wait {
-			fmt.Print(scanResult.PrettyJson())
+			fmt.Print(scanResult.PrettyJSON())
 			return nil
 		}
 
@@ -65,7 +65,7 @@ var submitCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Print(waitResult.PrettyJson())
+		fmt.Print(waitResult.PrettyJSON())
 
 		if screenshot {
 			downloadOpts := utils.NewDownloadOptions(

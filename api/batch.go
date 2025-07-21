@@ -82,12 +82,12 @@ func Batch[T any](cli *Client, tasks []BatchTask[T], opts ...BatchOption) ([]mo.
 	return results, nil
 }
 
-func BatchJsonResultToRaw(r *mo.Result[*json.RawMessage]) *json.RawMessage {
+func BatchJSONResultToRaw(r *mo.Result[*json.RawMessage]) *json.RawMessage {
 	if r.IsError() {
 		err := r.Error()
-		var apiErr *Error
-		if errors.As(err, &apiErr) {
-			return &apiErr.Raw
+		var jsonErr *JSONError
+		if errors.As(err, &jsonErr) {
+			return &jsonErr.Raw
 		}
 		raw := json.RawMessage(fmt.Sprintf(`{"error": "%s"}`, err.Error()))
 		return &raw
