@@ -94,7 +94,6 @@ func newLiveScanStoreOptions(opts ...LiveScanStoreOption) *LiveScanStoreOptions 
 	return options
 }
 
-
 func (cli *Client) TriggerNonBlockingLiveScan(id string, opts ...LiveScanOption) (*JSONResponse, error) {
 	liveScanOpts := newLiveScanOptions(opts...)
 	marshalled, err := json.Marshal(liveScanOpts)
