@@ -2,6 +2,13 @@
 
 Bulk submit URLs to scan
 
+### Synopsis
+
+Submit multiple URLs to scan in bulk.
+
+This command allows you to submit a list of URLs for scanning in bulk. You can provide URLs via command line arguments or through a file.
+Note that the URLs will be validated before submission, and only valid URLs will be processed.
+
 ```
 urlscan scan bulk-submit <url>... [flags]
 ```

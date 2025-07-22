@@ -149,6 +149,14 @@ func (msr *MappedStringReader) Next() bool {
 	return false
 }
 
+func (msr *MappedStringReader) Value() string {
+	return msr.value
+}
+
+func (msr *MappedStringReader) Err() error {
+	return msr.err
+}
+
 func (msr *MappedStringReader) ReadString() (string, error) {
 	if msr.Next() {
 		return msr.value, nil
@@ -156,13 +164,47 @@ func (msr *MappedStringReader) ReadString() (string, error) {
 	return "", msr.err
 }
 
-func (msr *MappedStringReader) ReadAll() ([]string, error) {
-	var results []string
-	for msr.Next() {
-		results = append(results, msr.value)
+type FilteredStringReader struct {
+	r          StringReader
+	validateFn func(string) error
+}
+
+func NewFilteredStringReader(r StringReader, validateFn func(string) error) *FilteredStringReader {
+	return &FilteredStringReader{r: r, validateFn: validateFn}
+}
+
+func (f *FilteredStringReader) ReadString() (s string, err error) {
+	if f.Next() {
+		return f.Value(), nil
 	}
-	if msr.err != nil && msr.err != io.EOF {
-		return nil, msr.err
+	return "", f.r.Err()
+}
+
+func (f *FilteredStringReader) Next() bool {
+	for next := f.r.Next(); next; next = f.r.Next() {
+		value := f.r.Value()
+		if f.validateFn(value) == nil {
+			return true
+		}
+	}
+	return false
+}
+
+func (f *FilteredStringReader) Value() string {
+	return f.r.Value()
+}
+
+func (f *FilteredStringReader) Err() error {
+	return f.r.Err()
+}
+
+func ReadAllFromReader(r StringReader) ([]string, error) {
+	var results []string
+	for r.Next() {
+		results = append(results, r.Value())
+	}
+	if r.Err() != nil && r.Err() != io.EOF {
+		return nil, r.Err()
 	}
 	return results, nil
 }
