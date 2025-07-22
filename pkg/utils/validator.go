@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"net/url"
 	"regexp"
 )
 
@@ -20,6 +21,22 @@ func ValidateUUID(s string) error {
 	// A UUID is a 36-character string in the format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 	if len(s) != 36 || !re_UUID.Match([]byte(s)) {
 		return fmt.Errorf("invalid UUID format: %s", s)
+	}
+	return nil
+}
+
+func ValidateURL(s string) error {
+	parsed, err := url.Parse(s)
+	if err != nil {
+		return fmt.Errorf("invalid URL format: %s", s)
+	}
+
+	if parsed.Scheme != "http" && parsed.Scheme != "https" {
+		return fmt.Errorf("invalid URL format: %s", s)
+	}
+
+	if parsed.Host == "" {
+		return fmt.Errorf("invalid URL format: %s", s)
 	}
 	return nil
 }

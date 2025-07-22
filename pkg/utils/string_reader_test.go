@@ -50,7 +50,24 @@ func TestMappedStringReader(t *testing.T) {
 
 	for _, test := range tests {
 		reader := NewMappedStringReader(StringReaderFromCmdArgs(test.input), ResolveFileOrValue)
-		got, err := reader.ReadAll()
+		got, err := ReadAllFromReader(reader)
+		assert.NoError(t, err)
+		assert.Equal(t, test.expected, got)
+	}
+}
+
+func TestFilteredStringReader(t *testing.T) {
+	tests := []struct {
+		input    []string
+		expected []string
+	}{
+		{[]string{"http://example.com", "https://example.com", "foo", "bar"}, []string{"http://example.com", "https://example.com"}},
+		{[]string{"foo", "bar", "http://example.com", "https://example.com", "foo", "bar"}, []string{"http://example.com", "https://example.com"}},
+	}
+
+	for _, test := range tests {
+		reader := NewFilteredStringReader(StringReaderFromCmdArgs(test.input), ValidateURL)
+		got, err := ReadAllFromReader(reader)
 		assert.NoError(t, err)
 		assert.Equal(t, test.expected, got)
 	}

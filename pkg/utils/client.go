@@ -127,16 +127,16 @@ func DownloadWithSpinner(opts *DownloadOptions) error {
 	return err
 }
 
-type BatchJsonResultPair struct {
+type BatchJSONResultPair struct {
 	Key    string          `json:"key"`
 	Result json.RawMessage `json:"result"`
 }
 
-func NewBatchJsonResultPairs(keys []string, results []mo.Result[*json.RawMessage]) []*BatchJsonResultPair {
-	return lo.ZipBy2(keys, results, func(url string, result mo.Result[*json.RawMessage]) *BatchJsonResultPair {
-		return &BatchJsonResultPair{
+func NewBatchJSONResultPairs(keys []string, results []mo.Result[*json.RawMessage]) []*BatchJSONResultPair {
+	return lo.ZipBy2(keys, results, func(url string, result mo.Result[*json.RawMessage]) *BatchJSONResultPair {
+		return &BatchJSONResultPair{
 			Key:    url,
-			Result: *api.BatchJsonResultToRaw(&result),
+			Result: *api.BatchJSONResultToRaw(&result),
 		}
 	})
 }

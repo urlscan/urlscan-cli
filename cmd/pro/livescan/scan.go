@@ -61,7 +61,7 @@ var scanCmd = &cobra.Command{
 			if err != nil {
 				return err
 			}
-			fmt.Print(result.PrettyJson())
+			fmt.Print(result.PrettyJSON())
 			return nil
 		}
 
@@ -69,7 +69,7 @@ var scanCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		fmt.Print(result.PrettyJson())
+		fmt.Print(result.PrettyJSON())
 
 		return nil
 	},

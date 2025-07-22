@@ -148,19 +148,19 @@ func newIncidentOptions(opts ...IncidentOption) *IncidentOptions {
 	return options
 }
 
-func (cli *Client) CreateIncident(opts ...IncidentOption) (*Response, error) {
+func (cli *Client) CreateIncident(opts ...IncidentOption) (*JSONResponse, error) {
 	incidentOpts := newIncidentOptions(opts...)
 	marshalled, err := json.Marshal(incidentOpts)
 	if err != nil {
 		return nil, err
 	}
 
-	return cli.Post(URL("/api/v1/user/incidents/"), &Request{
+	return cli.Post(URL("/api/v1/user/incidents/"), &JSONRequest{
 		Raw: json.RawMessage(marshalled),
 	})
 }
 
-func (cli *Client) UpdateIncident(id string, opts ...IncidentOption) (*Response, error) {
+func (cli *Client) UpdateIncident(id string, opts ...IncidentOption) (*JSONResponse, error) {
 	incidentOpts := newIncidentOptions(opts...)
 	marshalled, err := json.Marshal(incidentOpts)
 	if err != nil {
@@ -168,7 +168,7 @@ func (cli *Client) UpdateIncident(id string, opts ...IncidentOption) (*Response,
 	}
 
 	url := URL("/api/v1/user/incidents/%s/", id)
-	return cli.Put(url, &Request{
+	return cli.Put(url, &JSONRequest{
 		Raw: json.RawMessage(marshalled),
 	})
 }

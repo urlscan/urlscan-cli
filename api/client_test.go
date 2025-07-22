@@ -108,7 +108,7 @@ func TestError(t *testing.T) {
 	req, err := http.NewRequest("GET", URL("http://testserver/foo").String(), nil)
 	assert.NoError(t, err)
 
-	_, err = c.DoWithJsonParse(req)
+	_, err = c.DoWithJSONParse(req)
 	assert.Error(t, err)
 	assert.Equal(t, "dummy", err.Error())
 }
