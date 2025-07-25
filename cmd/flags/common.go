@@ -58,3 +58,15 @@ func AddWaitFlag(cmd *cobra.Command) {
 func AddMaxWaitFlag(cmd *cobra.Command) {
 	cmd.Flags().IntP("max-wait", "m", 60, "Maximum wait time per scan in seconds")
 }
+
+func AddScreenshotFlag(cmd *cobra.Command) {
+	cmd.Flags().Bool("screenshot", false, "Download only the screenshot (overrides wait)")
+}
+
+func AddDOMFlag(cmd *cobra.Command) {
+	cmd.Flags().Bool("dom", false, "Download only the DOM contents (overrides wait)")
+}
+
+func AddDownloadFlag(cmd *cobra.Command) {
+	cmd.Flags().Bool("download", false, "Download screenshot and DOM contents (overrides wait/dom/screenshot)")
+}

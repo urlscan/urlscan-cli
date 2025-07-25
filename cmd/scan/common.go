@@ -15,9 +15,13 @@ func addScanFlags(cmd *cobra.Command) {
 	flags.AddVisibilityFlag(cmd)
 	flags.AddWaitFlag(cmd)
 	flags.AddMaxWaitFlag(cmd)
+
+	flags.AddScreenshotFlag(cmd)
+	flags.AddDOMFlag(cmd)
+	flags.AddDownloadFlag(cmd)
 }
 
-func mapCmdToScanOptions(cmd *cobra.Command) (opts []api.ScanOption, err error) {
+func newScanOptions(cmd *cobra.Command) (opts []api.ScanOption) {
 	country, _ := cmd.Flags().GetString("country")
 	customAgent, _ := cmd.Flags().GetString("customagent")
 	overrideSafety, _ := cmd.Flags().GetString("overrideSafety")
@@ -25,7 +29,7 @@ func mapCmdToScanOptions(cmd *cobra.Command) (opts []api.ScanOption, err error) 
 	tags, _ := cmd.Flags().GetStringArray("tags")
 	visibility, _ := cmd.Flags().GetString("visibility")
 
-	opts = append(opts,
+	return append(opts,
 		api.WithScanCountry(country),
 		api.WithScanCustomAgent(customAgent),
 		api.WithScanOverrideSafety(overrideSafety),
@@ -33,6 +37,23 @@ func mapCmdToScanOptions(cmd *cobra.Command) (opts []api.ScanOption, err error) 
 		api.WithScanTags(tags),
 		api.WithScanVisibility(visibility),
 	)
+}
 
-	return opts, nil
+func newScreenshotFlag(cmd *cobra.Command) bool {
+	download, _ := cmd.Flags().GetBool("download")
+	screenshot, _ := cmd.Flags().GetBool("screenshot")
+	return screenshot || download
+}
+
+func newDOMFlag(cmd *cobra.Command) bool {
+	download, _ := cmd.Flags().GetBool("download")
+	dom, _ := cmd.Flags().GetBool("dom")
+	return dom || download
+}
+
+func newWaitFlag(cmd *cobra.Command) bool {
+	wait, _ := cmd.Flags().GetBool("wait")
+	screenshot := newScreenshotFlag(cmd)
+	dom := newDOMFlag(cmd)
+	return wait || screenshot || dom
 }

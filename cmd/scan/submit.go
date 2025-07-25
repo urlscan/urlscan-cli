@@ -20,23 +20,14 @@ var submitCmd = &cobra.Command{
 			return cmd.Usage()
 		}
 
-		scanOpts, err := mapCmdToScanOptions(cmd)
-		if err != nil {
-			return err
-		}
+		scanOpts := newScanOptions(cmd)
 
-		wait, _ := cmd.Flags().GetBool("wait")
+		wait := newWaitFlag(cmd)
 		maxWait, _ := cmd.Flags().GetInt("max-wait")
 
-		download, _ := cmd.Flags().GetBool("download")
-		screenshot, _ := cmd.Flags().GetBool("screenshot")
-		screenshot = screenshot || download
-		dom, _ := cmd.Flags().GetBool("dom")
-		dom = dom || download
+		screenshot := newScreenshotFlag(cmd)
+		dom := newDOMFlag(cmd)
 		force, _ := cmd.Flags().GetBool("force")
-
-		// override wait if any of with flag is set
-		wait = wait || screenshot || dom
 
 		reader := utils.StringReaderFromCmdArgs(args)
 		url, err := reader.ReadString()
@@ -102,10 +93,6 @@ var submitCmd = &cobra.Command{
 func init() {
 	addScanFlags(submitCmd)
 	flags.AddForceFlag(submitCmd)
-
-	submitCmd.Flags().Bool("screenshot", false, "Download only the screenshot (overrides wait)")
-	submitCmd.Flags().Bool("dom", false, "Download only the DOM contents (overrides wait)")
-	submitCmd.Flags().Bool("download", false, "Download screenshot and DOM contents (overrides wait/dom/screenshot)")
 
 	RootCmd.AddCommand(submitCmd)
 }
