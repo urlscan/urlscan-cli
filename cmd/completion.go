@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -44,6 +45,8 @@ var completionCmd = &cobra.Command{
 			err = RootCmd.GenZshCompletion(os.Stdout)
 		case "fish":
 			err = RootCmd.GenFishCompletion(os.Stdout, true)
+		default:
+			return fmt.Errorf("unsupported shell type %q", shell)
 		}
 		if err != nil {
 			return err
