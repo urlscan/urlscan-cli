@@ -11,7 +11,7 @@ The built binaries can be found on [the releases page](https://github.com/urlsca
 ### macOS
 
 ```sh
-brew install urlscan-cli
+brew install --cask urlscan/tap/urlscan-cli
 ```
 
 ## Usage
