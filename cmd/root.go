@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -10,6 +11,7 @@ import (
 	api "github.com/urlscan/urlscan-cli/api"
 	"github.com/urlscan/urlscan-cli/cmd/pro"
 	"github.com/urlscan/urlscan-cli/cmd/scan"
+	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
 func addHostFlag(flags *pflag.FlagSet) {
@@ -31,6 +33,7 @@ var RootCmd = &cobra.Command{
 	Short:        "A CLI tool for interacting with urlscan.io",
 	SilenceUsage: true,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		// bind flags
 		if err := viper.BindPFlags(cmd.PersistentFlags()); err != nil {
 			return err
 		}
@@ -45,6 +48,13 @@ var RootCmd = &cobra.Command{
 		if proxy != "" {
 			os.Setenv("http_proxy", proxy) //nolint:errcheck
 		}
+
+		// check API key presence
+		key, err := utils.GetKey()
+		if err != nil || key == "" {
+			return fmt.Errorf("API key not found, please set the URLSCAN_API_KEY environment variable or set it in keyring by `urlscan key set`")
+		}
+
 		return nil
 	},
 }

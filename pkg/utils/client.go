@@ -18,7 +18,7 @@ type APIClient struct {
 	*api.Client
 }
 
-func NewAPIClient() (*APIClient, error) {
+func GetKey() (string, error) {
 	// api key loading precedence:
 	// 1. Environment variable (URLSCAN_API_KEY)
 	// 2. Keyring
@@ -26,9 +26,17 @@ func NewAPIClient() (*APIClient, error) {
 	if key == "" {
 		got, err := NewKeyManager().GetKey()
 		if err != nil {
-			return nil, err
+			return "", err
 		}
 		key = got
+	}
+	return key, nil
+}
+
+func NewAPIClient() (*APIClient, error) {
+	key, err := GetKey()
+	if err != nil {
+		return nil, err
 	}
 
 	c := api.NewClient(key)
