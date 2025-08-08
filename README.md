@@ -23,7 +23,8 @@ There are two ways for configuring your API key:
 1. `URLSCAN_API_KEY` environment variable
 2. Keyring (e.g., macOS Keychain, GNOME Keyring)
 
-NOTE: Ordered by the higher precedence.
+> [!NOTE]
+> Ordered by the higher precedence.
 
 If you want to use the keyring, you can set it via the terminal or via standard input:
 
@@ -33,6 +34,9 @@ Enter a urlscan.io API key:
 # or
 $ echo "<api_key>" | urlscan key set -
 ```
+
+> [!NOTE]
+> Keyring suport for Linux depends on [GNOME Keyring](https://wiki.gnome.org/Projects/GnomeKeyring). See [troubleshooting](./docs/troubleshooting.md#keyring) for details.
 
 ### Basic Commands
 
