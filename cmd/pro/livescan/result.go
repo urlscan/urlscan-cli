@@ -42,12 +42,12 @@ var resultCmd = &cobra.Command{
 			return err
 		}
 
-		result, err := client.Get(api.URL("/api/v1/livescan/%s/result/%s", scannerId, scanId))
+		resp, err := client.NewRequest().Get(api.PrefixedPath(fmt.Sprintf("/livescan/%s/result/%s", scannerId, scanId)))
 		if err != nil {
 			return err
 		}
 
-		fmt.Print(result.PrettyJSON())
+		fmt.Print(resp.PrettyJSON())
 
 		return nil
 	},

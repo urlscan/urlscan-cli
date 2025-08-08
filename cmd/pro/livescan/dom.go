@@ -48,7 +48,7 @@ var domCmd = &cobra.Command{
 			return err
 		}
 
-		url := api.URL("/api/v1/livescan/%s/dom/%s", scannerId, scanId)
+		url := api.PrefixedPath(fmt.Sprintf("/livescan/%s/dom/%s", scannerId, scanId))
 		opts := utils.NewDownloadOptions(
 			utils.WithDownloadClient(client),
 			utils.WithDownloadURL(url),

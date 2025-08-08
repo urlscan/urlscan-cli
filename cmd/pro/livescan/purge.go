@@ -42,12 +42,12 @@ var purgeCmd = &cobra.Command{
 			return err
 		}
 
-		result, err := client.Delete(api.URL("/api/v1/livescan/%s/%s/", scannerId, scanId))
+		resp, err := client.NewRequest().Delete(api.PrefixedPath(fmt.Sprintf("/livescan/%s/%s/", scannerId, scanId)))
 		if err != nil {
 			return err
 		}
 
-		fmt.Print(result.PrettyJSON())
+		fmt.Print(resp.PrettyJSON())
 
 		return nil
 	},

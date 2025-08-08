@@ -22,23 +22,14 @@ func TestBatch(t *testing.T) {
 
 	c := newTestClient()
 
-	requests := make([]*http.Request, 2)
-	req1, err := http.NewRequest("GET", URL("bar").String(), nil)
-	assert.NoError(t, err)
-	requests[0] = req1
-
-	req2, err := http.NewRequest("GET", URL("baz").String(), nil)
-	assert.NoError(t, err)
-	requests[1] = req2
-
-	tasks := make([]BatchTask[*http.Response], len(requests))
-	for i, req := range requests {
-		tasks[i] = func(cli *Client, ctx context.Context) mo.Result[*http.Response] {
-			resp, err := cli.Do(req)
+	paths := []string{"/bar", "/baz"}
+	tasks := make([]BatchTask[*Response], len(paths))
+	for i, path := range paths {
+		tasks[i] = func(c *Client, ctx context.Context) mo.Result[*Response] {
+			resp, err := c.NewRequest().Get(path)
 			if err != nil {
-				return mo.Err[*http.Response](err)
+				return mo.Err[*Response](err)
 			}
-			defer resp.Body.Close() // nolint:errcheck
 			return mo.Ok(resp)
 		}
 	}

@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	api "github.com/urlscan/urlscan-cli/api"
 
+	"github.com/urlscan/urlscan-cli/api"
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
@@ -67,7 +67,7 @@ var updateCmd = &cobra.Command{
 			return err
 		}
 
-		result, err := client.UpdateSavedSearch(
+		resp, err := client.UpdateSavedSearch(
 			api.WithSavedSearchID(id),
 			api.WithSavedSearchDatasource(datasource),
 			api.WithSavedSearchName(name),
@@ -85,7 +85,7 @@ var updateCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Print(result.PrettyJSON())
+		fmt.Print(resp.PrettyJSON())
 
 		return nil
 	},

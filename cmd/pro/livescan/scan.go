@@ -57,19 +57,19 @@ var scanCmd = &cobra.Command{
 		}
 
 		if blocking {
-			result, err := client.TriggerLiveScan(scannerId, opts...)
+			resp, err := client.TriggerLiveScan(scannerId, opts...)
 			if err != nil {
 				return err
 			}
-			fmt.Print(result.PrettyJSON())
+			fmt.Print(resp.PrettyJSON())
 			return nil
 		}
 
-		result, err := client.TriggerNonBlockingLiveScan(scannerId, opts...)
+		resp, err := client.TriggerNonBlockingLiveScan(scannerId, opts...)
 		if err != nil {
 			return err
 		}
-		fmt.Print(result.PrettyJSON())
+		fmt.Print(resp.PrettyJSON())
 
 		return nil
 	},

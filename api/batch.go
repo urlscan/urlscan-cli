@@ -42,9 +42,9 @@ func newBatchOptions(opts ...BatchOption) *BatchOptions {
 	return batchOpts
 }
 
-type BatchTask[T any] func(cli *Client, ctx context.Context) mo.Result[T]
+type BatchTask[T any] func(c *Client, ctx context.Context) mo.Result[T]
 
-func Batch[T any](cli *Client, tasks []BatchTask[T], opts ...BatchOption) ([]mo.Result[T], error) {
+func Batch[T any](c *Client, tasks []BatchTask[T], opts ...BatchOption) ([]mo.Result[T], error) {
 	var timeoutCtx context.Context
 	var timeoutCancel context.CancelFunc
 	var mu sync.Mutex
@@ -63,8 +63,9 @@ func Batch[T any](cli *Client, tasks []BatchTask[T], opts ...BatchOption) ([]mo.
 	g.SetLimit(batchOpts.MaxConcurrency)
 	for i, task := range tasks {
 		i, task := i, task // capture loop variables
+
 		g.Go(func() error {
-			result := task(cli, ctx)
+			result := task(c, ctx)
 
 			mu.Lock()
 			results[i] = result
@@ -82,15 +83,21 @@ func Batch[T any](cli *Client, tasks []BatchTask[T], opts ...BatchOption) ([]mo.
 	return results, nil
 }
 
-func BatchJSONResultToRaw(r *mo.Result[*json.RawMessage]) *json.RawMessage {
+func BatchResultToRaw(r mo.Result[*Response]) *json.RawMessage {
 	if r.IsError() {
 		err := r.Error()
 		var jsonErr *JSONError
 		if errors.As(err, &jsonErr) {
 			return &jsonErr.Raw
 		}
-		raw := json.RawMessage(fmt.Sprintf(`{"error": "%s"}`, err.Error()))
-		return &raw
+		errRaw := json.RawMessage(fmt.Sprintf(`{"error": "%s"}`, err.Error()))
+		return &errRaw
 	}
-	return r.MustGet()
+	resp := r.MustGet()
+	raw, err := resp.ToJSON()
+	if err != nil {
+		errRaw := json.RawMessage(fmt.Sprintf(`{"error": "%s"}`, err.Error()))
+		return &errRaw
+	}
+	return raw
 }

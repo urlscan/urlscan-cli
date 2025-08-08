@@ -1,6 +1,9 @@
 package api
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type LiveScanOptions struct {
 	Task struct {
@@ -94,41 +97,30 @@ func newLiveScanStoreOptions(opts ...LiveScanStoreOption) *LiveScanStoreOptions 
 	return options
 }
 
-func (cli *Client) TriggerNonBlockingLiveScan(id string, opts ...LiveScanOption) (*JSONResponse, error) {
+func (c *Client) TriggerNonBlockingLiveScan(id string, opts ...LiveScanOption) (*Response, error) {
+	liveScanOpts := newLiveScanOptions(opts...)
+	marshalled, err := json.Marshal(liveScanOpts)
+	if err != nil {
+		return nil, err
+	}
+	return c.NewRequest().SetBodyJSONBytes(marshalled).Post(PrefixedPath(fmt.Sprintf("/livescan/%s/task/", id)))
+}
+
+func (c *Client) TriggerLiveScan(id string, opts ...LiveScanOption) (*Response, error) {
 	liveScanOpts := newLiveScanOptions(opts...)
 	marshalled, err := json.Marshal(liveScanOpts)
 	if err != nil {
 		return nil, err
 	}
 
-	url := URL("/api/v1/livescan/%s/task/", id)
-	return cli.Post(url, &JSONRequest{
-		Raw: json.RawMessage(marshalled),
-	})
+	return c.NewRequest().SetBodyJSONBytes(marshalled).Post(PrefixedPath(fmt.Sprintf("/livescan/%s/scan/", id)))
 }
 
-func (cli *Client) TriggerLiveScan(id string, opts ...LiveScanOption) (*JSONResponse, error) {
-	liveScanOpts := newLiveScanOptions(opts...)
-	marshalled, err := json.Marshal(liveScanOpts)
-	if err != nil {
-		return nil, err
-	}
-
-	url := URL("/api/v1/livescan/%s/scan/", id)
-	return cli.Post(url, &JSONRequest{
-		Raw: json.RawMessage(marshalled),
-	})
-}
-
-func (cli *Client) StoreLiveScanResult(scannerId string, scanId string, opts ...LiveScanStoreOption) (*JSONResponse, error) {
+func (c *Client) StoreLiveScanResult(scannerId string, scanId string, opts ...LiveScanStoreOption) (*Response, error) {
 	liveScanStoreOpts := newLiveScanStoreOptions(opts...)
 	marshalled, err := json.Marshal(liveScanStoreOpts)
 	if err != nil {
 		return nil, err
 	}
-
-	url := URL("/api/v1/livescan/%s/%s/", scannerId, scanId)
-	return cli.Put(url, &JSONRequest{
-		Raw: json.RawMessage(marshalled),
-	})
+	return c.NewRequest().SetBodyJSONBytes(marshalled).Put(PrefixedPath(fmt.Sprintf("/livescan/%s/%s/", scannerId, scanId)))
 }

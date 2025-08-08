@@ -37,8 +37,7 @@ var deleteCmd = &cobra.Command{
 			return err
 		}
 
-		url := api.URL("/api/v1/user/subscriptions/%s/", id)
-		result, err := client.Delete(url)
+		result, err := client.NewRequest().Delete(api.PrefixedPath(fmt.Sprintf("/user/subscriptions/%s/", id)))
 		if err != nil {
 			return err
 		}

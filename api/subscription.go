@@ -1,6 +1,9 @@
 package api
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type SubscriptionOptions struct {
 	Subscription struct {
@@ -75,27 +78,26 @@ func newSubscriptionOptions(opts ...SubscriptionOption) *SubscriptionOptions {
 	return subscriptionOptions
 }
 
-func (cli *Client) CreateSubscription(opts ...SubscriptionOption) (*JSONResponse, error) {
+func (c *Client) CreateSubscription(opts ...SubscriptionOption) (*Response, error) {
 	subscriptionOptions := newSubscriptionOptions(opts...)
 	marshalled, err := json.Marshal(subscriptionOptions)
 	if err != nil {
 		return nil, err
 	}
 
-	return cli.Post(URL("/api/v1/user/subscriptions/"), &JSONRequest{
-		Raw: json.RawMessage(marshalled),
-	})
+	return c.NewRequest().SetBodyJSONBytes(marshalled).Post(
+		PrefixedPath("/user/subscriptions/"),
+	)
 }
 
-func (cli *Client) UpdateSubscription(opts ...SubscriptionOption) (*JSONResponse, error) {
+func (c *Client) UpdateSubscription(opts ...SubscriptionOption) (*Response, error) {
 	subscriptionOptions := newSubscriptionOptions(opts...)
 	marshalled, err := json.Marshal(subscriptionOptions)
 	if err != nil {
 		return nil, err
 	}
 
-	url := URL("/api/v1/user/subscriptions/%s/", subscriptionOptions.Subscription.ID)
-	return cli.Put(url, &JSONRequest{
-		Raw: json.RawMessage(marshalled),
-	})
+	return c.NewRequest().SetBodyJSONBytes(marshalled).Put(
+		PrefixedPath(fmt.Sprintf("/user/subscriptions/%s/", subscriptionOptions.Subscription.ID)),
+	)
 }

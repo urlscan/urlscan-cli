@@ -5,7 +5,6 @@ import (
 
 	"github.com/spf13/cobra"
 
-	api "github.com/urlscan/urlscan-cli/api"
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
@@ -39,15 +38,11 @@ var fileCmd = &cobra.Command{
 			return err
 		}
 
-		url := api.URL("/downloads/%s", hash)
-		query := url.Query()
-		query.Add("filename", filename)
-		query.Add("password", password)
-		url.RawQuery = query.Encode()
+		path := fmt.Sprintf("/downloads/%s?filename=%s&password=%s", hash, filename, password)
 
 		opts := utils.NewDownloadOptions(
 			utils.WithDownloadClient(client),
-			utils.WithDownloadURL(url),
+			utils.WithDownloadURL(path),
 			utils.WithDownloadOutput(filename),
 			utils.WithDownloadForce(force),
 		)
