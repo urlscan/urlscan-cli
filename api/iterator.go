@@ -88,6 +88,13 @@ func IteratorQuery(q string) IteratorOption {
 	}
 }
 
+func IteratorDatasource(datasource string) IteratorOption {
+	return func(it *Iterator) error {
+		it.datasource = datasource
+		return nil
+	}
+}
+
 type Iterator struct {
 	client      *Client
 	limit       int
@@ -95,6 +102,7 @@ type Iterator struct {
 	size        int
 	q           string
 	searchAfter string
+	datasource  string
 	link        *url.URL
 	count       int
 	HasMore     bool
@@ -123,6 +131,10 @@ func newIterator(cli *Client, u *url.URL, options ...IteratorOption) (*Iterator,
 
 	if it.searchAfter != "" {
 		query.Add("search_after", it.searchAfter)
+	}
+
+	if it.datasource != "" {
+		query.Add("datasource", it.datasource)
 	}
 
 	if it.size > 0 {

@@ -27,6 +27,7 @@ var searchCmd = &cobra.Command{
 		all, _ := cmd.Flags().GetBool("all")
 		size, _ := cmd.Flags().GetInt("size")
 		searchAfter, _ := cmd.Flags().GetString("search-after")
+		datasource, _ := cmd.Flags().GetString("datasource")
 
 		reader := utils.StringReaderFromCmdArgs(args)
 		q, err := reader.ReadString()
@@ -38,7 +39,13 @@ var searchCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		it, err := client.Search(q, api.IteratorSize(size), api.IteratorLimit(limit), api.IteratorSearchAfter(searchAfter), api.IteratorAll(all))
+		it, err := client.Search(q,
+			api.IteratorSize(size),
+			api.IteratorLimit(limit),
+			api.IteratorSearchAfter(searchAfter),
+			api.IteratorAll(all),
+			api.IteratorDatasource(datasource),
+		)
 		if err != nil {
 			return err
 		}
@@ -70,6 +77,7 @@ func init() {
 	flags.AddLimitFlag(searchCmd)
 	flags.AddAllFlag(searchCmd)
 	searchCmd.Flags().String("search-after", "", "For retrieving the next batch of results, value of the sort attribute of the last (oldest) result you received (comma-separated)")
+	searchCmd.Flags().StringP("datasource", "D", "scans", "Datasources to search: scans (urlscan.io), hostnames, incidents, notifications, certificates (urlscan Pro)")
 
 	RootCmd.AddCommand(searchCmd)
 }
