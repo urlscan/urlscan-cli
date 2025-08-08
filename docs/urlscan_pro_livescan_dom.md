@@ -1,16 +1,16 @@
-## urlscan pro live-scan dom
+## urlscan pro livescan dom
 
 Get dom of a live scan
 
 ```
-urlscan pro live-scan dom [flags]
+urlscan pro livescan dom [flags]
 ```
 
 ### Examples
 
 ```
-  urlscan pro live-scan dom <scan-id> -s <scanner-id>
-  echo <scan-id> | urlscan pro live-scan dom - -s <scanner-id>
+  urlscan pro livescan dom <scan-id> -s <scanner-id>
+  echo <scan-id> | urlscan pro livescan dom - -s <scanner-id>
 ```
 
 ### Options
@@ -24,5 +24,5 @@ urlscan pro live-scan dom [flags]
 
 ### SEE ALSO
 
-* [urlscan pro live-scan](urlscan_pro_live-scan.md)	 - Live-scan sub-commands
+* [urlscan pro livescan](urlscan_pro_livescan.md)	 - Livescan sub-commands
 

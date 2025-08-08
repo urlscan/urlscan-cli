@@ -1,16 +1,16 @@
-## urlscan pro live-scan store
+## urlscan pro livescan store
 
 Store the temporary scan as a permanent snapshot
 
 ```
-urlscan pro live-scan store [flags]
+urlscan pro livescan store [flags]
 ```
 
 ### Examples
 
 ```
-  urlscan pro live-scan store <scan-id> -S <scanner-id>
-  echo <scan-id> | urlscan pro live-scan store - -s <scanner-id>
+  urlscan pro livescan store <scan-id> -S <scanner-id>
+  echo <scan-id> | urlscan pro livescan store - -s <scanner-id>
 ```
 
 ### Options
@@ -23,5 +23,5 @@ urlscan pro live-scan store [flags]
 
 ### SEE ALSO
 
-* [urlscan pro live-scan](urlscan_pro_live-scan.md)	 - Live-scan sub-commands
+* [urlscan pro livescan](urlscan_pro_livescan.md)	 - Livescan sub-commands
 

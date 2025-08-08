@@ -9,7 +9,7 @@ import (
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
-var scannersCmdExample = `  urlscan pro live-scan scanners`
+var scannersCmdExample = `  urlscan pro livescan scanners`
 
 var scannersCmd = &cobra.Command{
 	Use:     "scanners",
