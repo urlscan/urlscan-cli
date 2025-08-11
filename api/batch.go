@@ -84,8 +84,8 @@ func Batch[T any](c *Client, tasks []BatchTask[T], opts ...BatchOption) ([]mo.Re
 }
 
 func BatchResultToRaw(r mo.Result[*Response]) *json.RawMessage {
-	if r.IsError() {
-		err := r.Error()
+	err := r.Error()
+	if err != nil {
 		var jsonErr *JSONError
 		if errors.As(err, &jsonErr) {
 			return &jsonErr.Raw
