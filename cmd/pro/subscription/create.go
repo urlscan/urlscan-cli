@@ -5,8 +5,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/spf13/cobra"
-	api "github.com/urlscan/urlscan-cli/api"
 
+	"github.com/urlscan/urlscan-cli/api"
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
@@ -38,14 +38,14 @@ var createCmd = &cobra.Command{
 			return err
 		}
 
-		result, err := client.CreateSubscription(
+		resp, err := client.CreateSubscription(
 			append([]api.SubscriptionOption{api.WithSubscriptionID(id)}, opts...)...,
 		)
 		if err != nil {
 			return err
 		}
 
-		fmt.Print(result.PrettyJSON())
+		fmt.Print(resp.PrettyJSON())
 
 		return nil
 	},

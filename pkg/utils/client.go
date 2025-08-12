@@ -3,14 +3,13 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
-	"net/url"
 	"os"
 	"time"
 
 	"github.com/briandowns/spinner"
 	"github.com/samber/lo"
 	"github.com/samber/mo"
-	api "github.com/urlscan/urlscan-cli/api"
+	"github.com/urlscan/urlscan-cli/api"
 	"github.com/urlscan/urlscan-cli/pkg/version"
 )
 
@@ -39,7 +38,7 @@ func NewAPIClient() (*APIClient, error) {
 
 type DownloadOptions struct {
 	client *APIClient
-	url    *url.URL
+	path   string
 	output string
 	force  bool
 	silent bool
@@ -53,9 +52,9 @@ func WithDownloadClient(client *APIClient) DownloadOption {
 	}
 }
 
-func WithDownloadURL(url *url.URL) DownloadOption {
+func WithDownloadURL(path string) DownloadOption {
 	return func(opts *DownloadOptions) {
-		opts.url = url
+		opts.path = path
 	}
 }
 
@@ -73,13 +72,13 @@ func WithDownloadForce(force bool) DownloadOption {
 
 func WithDownloadDOM(uuid string) DownloadOption {
 	return func(opts *DownloadOptions) {
-		opts.url = api.URL("%s", fmt.Sprintf("/dom/%s/", uuid))
+		opts.path = fmt.Sprintf("/dom/%s/", uuid)
 	}
 }
 
 func WithDownloadScreenshot(uuid string) DownloadOption {
 	return func(opts *DownloadOptions) {
-		opts.url = api.URL("%s", fmt.Sprintf("/screenshots/%s.png", uuid))
+		opts.path = fmt.Sprintf("/screenshots/%s.png", uuid)
 	}
 }
 
@@ -98,12 +97,12 @@ func NewDownloadOptions(opts ...DownloadOption) *DownloadOptions {
 }
 
 func Download(opts *DownloadOptions) error {
-	_, err := opts.client.Download(opts.url, opts.output)
+	_, err := opts.client.Download(opts.path, opts.output)
 	if err != nil {
 		return err
 	}
 
-	msg := fmt.Sprintf("Downloaded: %s from %s\n", opts.output, opts.url.String())
+	msg := fmt.Sprintf("Downloaded: %s from %s\n", opts.output, opts.path)
 	if opts.silent {
 		// output it to stderr to make the rest of stdout clean (for piping with jq, etc.)
 		fmt.Fprint(os.Stderr, msg)
@@ -132,11 +131,11 @@ type BatchJSONResultPair struct {
 	Result json.RawMessage `json:"result"`
 }
 
-func NewBatchJSONResultPairs(keys []string, results []mo.Result[*json.RawMessage]) []*BatchJSONResultPair {
-	return lo.ZipBy2(keys, results, func(url string, result mo.Result[*json.RawMessage]) *BatchJSONResultPair {
+func NewBatchJSONResultPairs(keys []string, results []mo.Result[*api.Response]) []*BatchJSONResultPair {
+	return lo.ZipBy2(keys, results, func(url string, result mo.Result[*api.Response]) *BatchJSONResultPair {
 		return &BatchJSONResultPair{
 			Key:    url,
-			Result: *api.BatchJSONResultToRaw(&result),
+			Result: *api.BatchResultToRaw(result),
 		}
 	})
 }

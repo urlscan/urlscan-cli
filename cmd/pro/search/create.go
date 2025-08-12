@@ -5,8 +5,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/spf13/cobra"
-	api "github.com/urlscan/urlscan-cli/api"
 
+	"github.com/urlscan/urlscan-cli/api"
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
@@ -61,7 +61,7 @@ var createCmd = &cobra.Command{
 			return err
 		}
 
-		result, err := client.CreateSavedSearch(
+		resp, err := client.CreateSavedSearch(
 			api.WithSavedSearchID(id),
 			api.WithSavedSearchDatasource(datasource),
 			api.WithSavedSearchName(name),
@@ -79,7 +79,7 @@ var createCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Print(result.PrettyJSON())
+		fmt.Print(resp.PrettyJSON())
 
 		return nil
 	},

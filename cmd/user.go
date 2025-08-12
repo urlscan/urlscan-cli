@@ -5,7 +5,6 @@ import (
 
 	"github.com/spf13/cobra"
 
-	api "github.com/urlscan/urlscan-cli/api"
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
@@ -21,13 +20,12 @@ var userCmd = &cobra.Command{
 			return err
 		}
 
-		url := api.URL("/user/username")
-		result, err := client.Get(url)
+		resp, err := client.NewRequest().Get("/user/username")
 		if err != nil {
 			return err
 		}
 
-		fmt.Print(result.PrettyJSON())
+		fmt.Print(resp.PrettyJSON())
 
 		return nil
 	},

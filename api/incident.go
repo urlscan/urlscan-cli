@@ -1,6 +1,9 @@
 package api
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type IncidentOptions struct {
 	Incident struct {
@@ -148,27 +151,20 @@ func newIncidentOptions(opts ...IncidentOption) *IncidentOptions {
 	return options
 }
 
-func (cli *Client) CreateIncident(opts ...IncidentOption) (*JSONResponse, error) {
+func (c *Client) CreateIncident(opts ...IncidentOption) (*Response, error) {
 	incidentOpts := newIncidentOptions(opts...)
 	marshalled, err := json.Marshal(incidentOpts)
 	if err != nil {
 		return nil, err
 	}
-
-	return cli.Post(URL("/api/v1/user/incidents/"), &JSONRequest{
-		Raw: json.RawMessage(marshalled),
-	})
+	return c.NewRequest().SetBodyJSONBytes(marshalled).Post(PrefixedPath("/user/incidents/"))
 }
 
-func (cli *Client) UpdateIncident(id string, opts ...IncidentOption) (*JSONResponse, error) {
+func (c *Client) UpdateIncident(id string, opts ...IncidentOption) (*Response, error) {
 	incidentOpts := newIncidentOptions(opts...)
 	marshalled, err := json.Marshal(incidentOpts)
 	if err != nil {
 		return nil, err
 	}
-
-	url := URL("/api/v1/user/incidents/%s/", id)
-	return cli.Put(url, &JSONRequest{
-		Raw: json.RawMessage(marshalled),
-	})
+	return c.NewRequest().SetBodyJSONBytes(marshalled).Put(PrefixedPath(fmt.Sprintf("/user/incidents/%s/", id)))
 }

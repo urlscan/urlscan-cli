@@ -1,6 +1,9 @@
 package api
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type SavedSearchOptions struct {
 	Search struct {
@@ -101,27 +104,23 @@ func newSavedSearchOptions(opts ...SavedSearchOption) *SavedSearchOptions {
 	return options
 }
 
-func (cli *Client) CreateSavedSearch(opts ...SavedSearchOption) (*JSONResponse, error) {
+func (c *Client) CreateSavedSearch(opts ...SavedSearchOption) (*Response, error) {
 	savedSearchOptions := newSavedSearchOptions(opts...)
 	marshalled, err := json.Marshal(savedSearchOptions)
 	if err != nil {
 		return nil, err
 	}
 
-	return cli.Post(URL("/api/v1/user/searches/"), &JSONRequest{
-		Raw: json.RawMessage(marshalled),
-	})
+	return c.NewRequest().SetBodyJSONBytes(marshalled).Get(PrefixedPath("/user/searches/"))
 }
 
-func (cli *Client) UpdateSavedSearch(opts ...SavedSearchOption) (*JSONResponse, error) {
+func (c *Client) UpdateSavedSearch(opts ...SavedSearchOption) (*Response, error) {
 	savedSearchOptions := newSavedSearchOptions(opts...)
 	marshalled, err := json.Marshal(savedSearchOptions)
 	if err != nil {
 		return nil, err
 	}
-
-	url := URL("/api/v1/user/searches/%s/", savedSearchOptions.Search.ID)
-	return cli.Put(url, &JSONRequest{
-		Raw: json.RawMessage(marshalled),
-	})
+	return c.NewRequest().SetBodyJSONBytes(marshalled).Put(
+		PrefixedPath(fmt.Sprintf("/user/searches/%s/", savedSearchOptions.Search.ID)),
+	)
 }

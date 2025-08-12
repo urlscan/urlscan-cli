@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
 
 	"github.com/samber/mo"
 )
@@ -113,23 +114,28 @@ func newScanOptions(url string, opts ...ScanOption) *ScanOptions {
 	return opt
 }
 
-func (cli *Client) Scan(url string, options ...ScanOption) (*ScanResult, error) {
-	scanOptions := newScanOptions(url, options...)
-
+func (c *Client) NewScanRequest(url string, opts ...ScanOption) *Request {
+	scanOptions := newScanOptions(url, opts...)
 	marshalled, err := json.Marshal(scanOptions)
 	if err != nil {
-		return nil, err
+		panic(fmt.Sprintf("error marshalling scan options: %s", err))
 	}
 
-	resp, err := cli.Post(URL("/api/v1/scan/"), &JSONRequest{
-		Raw: json.RawMessage(marshalled),
-	})
+	return c.NewRequest().
+		SetPath(PrefixedPath("/scan/")).
+		SetMethod(http.MethodPost).
+		SetBodyJSONBytes(marshalled)
+}
+
+func (c *Client) Scan(url string, options ...ScanOption) (*ScanResult, error) {
+	req := c.NewScanRequest(url, options...)
+	resp, err := req.Do()
 	if err != nil {
 		return nil, err
 	}
 
 	r := &ScanResult{}
-	err = json.Unmarshal(resp.Raw, r)
+	err = resp.Unmarshal(r)
 	if err != nil {
 		return nil, err
 	}
@@ -137,27 +143,36 @@ func (cli *Client) Scan(url string, options ...ScanOption) (*ScanResult, error) 
 	return r, nil
 }
 
-func (cli *Client) NewBatchScanTask(url string, opts ...ScanOption) BatchTask[*json.RawMessage] {
-	return func(cli *Client, ctx context.Context) mo.Result[*json.RawMessage] {
-		r, err := cli.Scan(url, opts...)
+func (c *Client) NewBatchScanTask(url string, opts ...ScanOption) BatchTask[*Response] {
+	return func(c *Client, ctx context.Context) mo.Result[*Response] {
+		req := c.NewScanRequest(url, opts...)
+		resp, err := req.Do()
 		if err != nil {
-			return mo.Err[*json.RawMessage](err)
+			return mo.Err[*Response](err)
 		}
-		return mo.Ok(&r.Raw)
+		return mo.Ok(resp)
 	}
 }
 
-func (cli *Client) NewBatchScanWithWaitTask(url string, maxWait int, opts ...ScanOption) BatchTask[*json.RawMessage] {
-	return func(cli *Client, ctx context.Context) mo.Result[*json.RawMessage] {
-		scanResult, err := cli.Scan(url, opts...)
+func (c *Client) NewBatchScanWithWaitTask(url string, maxWait int, opts ...ScanOption) BatchTask[*Response] {
+	return func(c *Client, ctx context.Context) mo.Result[*Response] {
+		scanReq := c.NewScanRequest(url, opts...)
+		scanResp, err := scanReq.Do()
 		if err != nil {
-			return mo.Err[*json.RawMessage](err)
+			return mo.Err[*Response](err)
 		}
 
-		waitResult, err := cli.WaitAndGetResult(ctx, scanResult.UUID, maxWait)
+		scanResult := &ScanResult{}
+		err = scanResp.Unmarshal(scanResult)
 		if err != nil {
-			return mo.Err[*json.RawMessage](err)
+			return mo.Err[*Response](err)
 		}
-		return mo.Ok(&waitResult.Raw)
+
+		waitResp, err := c.WaitAndGetResult(ctx, scanResult.UUID, maxWait)
+		if err != nil {
+			return mo.Err[*Response](err)
+		}
+
+		return mo.Ok(waitResp)
 	}
 }

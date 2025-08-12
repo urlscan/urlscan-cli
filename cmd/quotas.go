@@ -21,13 +21,12 @@ var quotasCmd = &cobra.Command{
 			return err
 		}
 
-		url := api.URL("/api/v1/quotas/")
-		result, err := client.Get(url)
+		resp, err := client.NewRequest().Get(api.PrefixedPath("/quotas"))
 		if err != nil {
 			return err
 		}
 
-		fmt.Print(result.PrettyJSON())
+		fmt.Print(resp.PrettyJSON())
 
 		return nil
 	},

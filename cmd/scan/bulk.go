@@ -8,7 +8,7 @@ import (
 
 	"github.com/samber/mo"
 	"github.com/spf13/cobra"
-	api "github.com/urlscan/urlscan-cli/api"
+	"github.com/urlscan/urlscan-cli/api"
 	"github.com/urlscan/urlscan-cli/cmd/flags"
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
@@ -25,16 +25,22 @@ type scanner struct {
 	ctx        context.Context
 }
 
-func (s *scanner) newBatchScanWithDownloadTask(url string) api.BatchTask[*json.RawMessage] {
-	return func(cli *api.Client, ctx context.Context) mo.Result[*json.RawMessage] {
-		scanResult, err := cli.Scan(url, s.scanOpts...)
+func (s *scanner) newBatchScanWithDownloadTask(url string) api.BatchTask[*api.Response] {
+	return func(c *api.Client, ctx context.Context) mo.Result[*api.Response] {
+		req := c.NewScanRequest(url, s.scanOpts...)
+		resp, err := req.Do()
 		if err != nil {
-			return mo.Err[*json.RawMessage](err)
+			return mo.Err[*api.Response](err)
 		}
 
-		_, err = cli.WaitAndGetResult(ctx, scanResult.UUID, s.maxWait)
+		scanResult := &api.ScanResult{}
+		err = resp.Unmarshal(scanResult)
 		if err != nil {
-			return mo.Err[*json.RawMessage](err)
+			return mo.Err[*api.Response](err)
+		}
+		_, err = c.WaitAndGetResult(ctx, scanResult.UUID, s.maxWait)
+		if err != nil {
+			return mo.Err[*api.Response](err)
 		}
 
 		if s.screenshot {
@@ -65,12 +71,12 @@ func (s *scanner) newBatchScanWithDownloadTask(url string) api.BatchTask[*json.R
 			}
 		}
 
-		return mo.Ok(&scanResult.Raw)
+		return mo.Ok(resp)
 	}
 }
 
 func (s *scanner) do(urls []string) error {
-	tasks := make([]api.BatchTask[*json.RawMessage], len(urls))
+	tasks := make([]api.BatchTask[*api.Response], len(urls))
 	for i, url := range urls {
 		if s.wait {
 			tasks[i] = s.newBatchScanWithDownloadTask(url)
