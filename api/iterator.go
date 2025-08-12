@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"iter"
-	"net/url"
 	"strconv"
 )
 
@@ -97,21 +96,23 @@ func IteratorDatasource(datasource string) IteratorOption {
 
 type Iterator struct {
 	client      *Client
+	path        string
+	request     *Request
 	limit       int
 	all         bool
 	size        int
 	q           string
 	searchAfter string
 	datasource  string
-	link        *url.URL
 	count       int
 	HasMore     bool
 	Total       int
 }
 
-func newIterator(cli *Client, u *url.URL, options ...IteratorOption) (*Iterator, error) {
+func newIterator(c *Client, path string, options ...IteratorOption) (*Iterator, error) {
 	it := &Iterator{
-		client:  cli,
+		client:  c,
+		path:    path,
 		HasMore: true,
 		count:   0,
 		Total:   0,
@@ -123,38 +124,37 @@ func newIterator(cli *Client, u *url.URL, options ...IteratorOption) (*Iterator,
 		}
 	}
 
-	query := u.Query()
+	request := c.NewRequest().SetPath(path)
 
 	if it.q != "" {
-		query.Add("q", it.q)
+		request.SetQueryParam("q", it.q)
 	}
 
 	if it.searchAfter != "" {
-		query.Add("search_after", it.searchAfter)
+		request.SetQueryParam("search_after", it.searchAfter)
 	}
 
 	if it.datasource != "" {
-		query.Add("datasource", it.datasource)
+		request.SetQueryParam("datasource", it.datasource)
 	}
 
 	if it.size > 0 {
-		query.Add("size", strconv.Itoa(it.size))
+		request.SetQueryParam("size", strconv.Itoa(it.size))
 	}
 
-	u.RawQuery = query.Encode()
-	it.link = u
+	it.request = request
 
 	return it, nil
 }
 
 func (it *Iterator) getMoreResults() (results []*SearchResult, err error) {
-	resp, err := it.client.Get(it.link)
+	resp, err := it.request.Get(it.path)
 	if err != nil {
 		return nil, err
 	}
 
 	r := &SearchResults{}
-	err = json.Unmarshal(resp.Raw, r)
+	err = resp.Unmarshal(r)
 	if err != nil {
 		return nil, err
 	}
@@ -185,10 +185,7 @@ func (it *Iterator) getMoreResults() (results []*SearchResult, err error) {
 		}
 	}
 
-	q := it.link.Query()
-	q.Set("search_after", it.searchAfter)
-
-	it.link.RawQuery = q.Encode()
+	it.request.SetQueryParam("search_after", it.searchAfter)
 
 	// set HasMore
 	if r.Total != MaxTotal {
@@ -225,4 +222,13 @@ func (it *Iterator) Iterate() iter.Seq2[*SearchResult, error] {
 			}
 		}
 	}
+}
+
+func (c *Client) Search(q string, options ...IteratorOption) (*Iterator, error) {
+	options = append(options, IteratorQuery(q))
+	return newIterator(c, PrefixedPath("/search"), options...)
+}
+
+func (c *Client) StructureSearch(uuid string, options ...IteratorOption) (*Iterator, error) {
+	return newIterator(c, PrefixedPath(fmt.Sprintf("/pro/result/%s/similar/", uuid)), options...)
 }

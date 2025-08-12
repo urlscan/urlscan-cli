@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	api "github.com/urlscan/urlscan-cli/api"
+	"github.com/urlscan/urlscan-cli/api"
 	"github.com/urlscan/urlscan-cli/cmd/flags"
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )

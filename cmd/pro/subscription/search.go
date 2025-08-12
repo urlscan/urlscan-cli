@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	api "github.com/urlscan/urlscan-cli/api"
 
+	"github.com/urlscan/urlscan-cli/api"
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
@@ -39,13 +39,12 @@ var searchCmd = &cobra.Command{
 			return err
 		}
 
-		url := api.URL("/api/v1/user/subscriptions/%s/results/%s/", id, datasource)
-		result, err := client.Get(url)
+		resp, err := client.NewRequest().Get(api.PrefixedPath(fmt.Sprintf("/user/subscriptions/%s/results/%s/", id, datasource)))
 		if err != nil {
 			return err
 		}
 
-		fmt.Print(result.PrettyJSON())
+		fmt.Print(resp.PrettyJSON())
 
 		return nil
 	},

@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	api "github.com/urlscan/urlscan-cli/api"
 
+	"github.com/urlscan/urlscan-cli/api"
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
@@ -21,13 +21,12 @@ var availableCmd = &cobra.Command{
 			return err
 		}
 
-		url := api.URL("/api/v1/pro/availableBrands")
-		result, err := client.Get(url)
+		resp, err := client.NewRequest().Get(api.PrefixedPath(("/pro/availableBrands")))
 		if err != nil {
 			return err
 		}
 
-		fmt.Print(result.PrettyJSON())
+		fmt.Print(resp.PrettyJSON())
 
 		return nil
 	},

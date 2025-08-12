@@ -2,9 +2,6 @@ package api
 
 import (
 	"bytes"
-	"context"
-	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"log/slog"
@@ -12,7 +9,6 @@ import (
 	"net/url"
 	"os"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -27,88 +23,13 @@ var baseURL = url.URL{
 	Host:   "urlscan.io",
 }
 
-type JSONRequest struct {
-	Raw json.RawMessage `json:"-"`
-}
-
-type JSONResponse struct {
-	Raw json.RawMessage `json:"-"`
-}
-
-type JSONError struct {
-	Status      int             `json:"status"`
-	Message     string          `json:"message"`
-	Description string          `json:"description,omitempty"`
-	Raw         json.RawMessage `json:"-"`
-}
-
-func (r *JSONError) UnmarshalJSON(data []byte) error {
-	type result JSONError
-	var dst result
-
-	err := json.Unmarshal(data, &dst)
-	if err != nil {
-		return err
-	}
-	*r = JSONError(dst)
-	r.Raw = data
-	return err
-}
-
-func (e JSONError) Error() string {
-	return e.Message
-}
-
-func URL(pathFmt string, a ...any) *url.URL {
-	path := fmt.Sprintf(pathFmt, a...)
-	url, err := url.Parse(path)
-	if err != nil {
-		msg := fmt.Sprintf("error formatting URL \"%s\": %s", pathFmt, err)
-		panic(msg)
-	}
-	return baseURL.ResolveReference(url)
-}
-
-func (r *JSONResponse) PrettyJSON() string {
-	var jsonBody bytes.Buffer
-	err := json.Indent(&jsonBody, r.Raw, "", "  ")
-	if err != nil {
-		log.Info("error formatting JSON response, fallback to the original", "error", err)
-		return string(r.Raw)
-	}
-	return jsonBody.String()
-}
-
-func SetHost(host string) {
-	if strings.HasPrefix(host, "https://") {
-		baseURL.Scheme = "https"
-		baseURL.Host = strings.TrimPrefix(host, "https://")
-		return
-	}
-
-	if strings.HasPrefix(host, "http://") {
-		baseURL.Scheme = "http"
-		baseURL.Host = strings.TrimPrefix(host, "http://")
-		return
-	}
-
-	baseURL.Host = host
-}
-
-type requestOptions struct {
-	headers map[string]string
-}
-
-type RequestOption func(*requestOptions)
-
 type RetryTransport struct {
 	Transport http.RoundTripper
 }
 
 func (t *RetryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	res, err := t.Transport.RoundTrip(req)
-
-	if res.StatusCode == http.StatusTooManyRequests {
+	if err == nil && res.StatusCode == http.StatusTooManyRequests {
 		// rate limit headers: https://urlscan.io/docs/api/#ratelimit
 		limitAction := res.Header.Get("X-Rate-Limit-Action")
 		limitLimit := res.Header.Get("X-Rate-Limit-Limit")
@@ -133,253 +54,139 @@ func (t *RetryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 		}
 		res, err = t.Transport.RoundTrip(req)
 	}
-
 	return res, err
-}
-
-type APIClient interface {
-	Get(url *url.URL, options ...RequestOption) (any, error)
-	Post(url *url.URL, req *JSONRequest, options ...RequestOption) (any, error)
 }
 
 type Client struct {
 	APIKey     string
 	Agent      string
+	Err        error
+	BaseURL    *url.URL
 	httpClient *http.Client
-	headers    map[string]string
 }
 
-func WithHeader(header, value string) RequestOption {
-	return func(opts *requestOptions) {
-		if opts.headers == nil {
-			opts.headers = make(map[string]string)
-		}
-		opts.headers[header] = value
-	}
+func SetHost(host string) {
+	baseURL.Host = host
 }
 
-func opts(opts ...RequestOption) *requestOptions {
-	o := &requestOptions{}
-	for _, opt := range opts {
-		opt(o)
-	}
-	return o
-}
-
-type ClientOption func(*Client)
-
-func WithHTTPClient(httpClient *http.Client) ClientOption {
-	return func(c *Client) {
-		c.httpClient = httpClient
-	}
-}
-
-func NewClient(APIKey string, opts ...ClientOption) *Client {
-	c := &Client{APIKey: APIKey, httpClient: &http.Client{
-		Transport: &RetryTransport{
-			Transport: http.DefaultTransport,
-		},
-	}}
-	for _, o := range opts {
-		o(c)
-	}
+func (c *Client) SetBaseURL(url *url.URL) *Client {
+	c.BaseURL = url
 	return c
 }
 
-func (cli *Client) NewRequest(method string, url *url.URL, body io.Reader, headers map[string]string) (*http.Request, error) {
-	req, err := http.NewRequest(method, url.String(), body)
-	if err != nil {
-		return nil, err
+func (c *Client) SetTransport(transport http.RoundTripper) *Client {
+	if c.httpClient == nil || c.httpClient.Transport == nil {
+		c.httpClient = &http.Client{}
 	}
-
-	req.Header.Set("User-Agent", fmt.Sprintf("urlscan-go/%s", version))
-	req.Header.Set("API-Key", cli.APIKey)
-
-	for k, v := range cli.headers {
-		req.Header.Set(k, v)
-	}
-
-	for k, v := range headers {
-		req.Header.Set(k, v)
-	}
-
-	return req, nil
+	c.httpClient.Transport = transport
+	return c
 }
 
-func (cli *Client) Do(req *http.Request) (*http.Response, error) {
-	resp, err := cli.httpClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close() //nolint:errcheck
+func (c *Client) SetRetryTransport() *Client {
+	c.SetTransport(&RetryTransport{
+		Transport: http.DefaultTransport,
+	})
+	return c
 
-	return resp, nil
 }
 
-func (cli *Client) parseResponse(resp *http.Response) (*JSONResponse, error) {
-	jsonResp := &JSONResponse{}
-
-	if !strings.HasPrefix(resp.Header.Get("Content-Type"), "application/json") {
-		return nil, fmt.Errorf("expecting JSON response from %s %s",
-			resp.Request.Method, resp.Request.URL.String())
-	}
-
-	var reader = resp.Body
-	read, err := io.ReadAll(reader)
-	if err != nil {
-		return nil, err
-	}
-	// consider 2xx response as successful
-	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
-		jsonResp.Raw = json.RawMessage(read)
-		return jsonResp, nil
-	}
-
-	jsonErr := &JSONError{}
-	err = json.Unmarshal(read, jsonErr)
-	if err != nil {
-		return nil, err
-	}
-	return nil, jsonErr
+func (c *Client) SetAPIKey(key string) *Client {
+	c.APIKey = key
+	return c
 }
 
-func (cli *Client) DoWithJSONParse(req *http.Request) (*JSONResponse, error) {
-	resp, err := cli.httpClient.Do(req)
+func (c *Client) SetAgent(agent string) *Client {
+	c.Agent = agent
+	return c
+}
+
+func NewClient(APIKey string) *Client {
+	c := &Client{httpClient: &http.Client{}, BaseURL: &baseURL}
+	c.SetAPIKey(APIKey)
+	c.SetAgent(fmt.Sprintf("urlscan-go/%s", version))
+	c.SetRetryTransport()
+	return c
+}
+
+func (c *Client) NewRequest() *Request {
+	headers := make(http.Header)
+	if c.APIKey != "" {
+		headers.Set("API-Key", c.APIKey)
+	}
+	if c.Agent != "" {
+		headers.Set("User-Agent", c.Agent)
+	}
+	return &Request{client: c, Headers: headers}
+}
+
+func (c *Client) URL(path string) (*url.URL, error) {
+	url, err := url.Parse(path)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close() //nolint:errcheck
 
-	return cli.parseResponse(resp)
+	return c.BaseURL.ResolveReference(url), nil
 }
 
-func (cli *Client) Get(url *url.URL, options ...RequestOption) (*JSONResponse, error) {
-	o := opts(options...)
-	req, err := cli.NewRequest("GET", url, nil, o.headers)
-	if err != nil {
-		return nil, err
-	}
-	return cli.DoWithJSONParse(req)
-}
-
-func (cli *Client) Post(url *url.URL, req *JSONRequest, options ...RequestOption) (*JSONResponse, error) {
-	b := []byte(req.Raw)
-	defaultContentTypeOptions := append(
-		[]RequestOption{WithHeader("Content-Type", "application/json")},
-		options...)
-	o := opts(defaultContentTypeOptions...)
-
-	httpReq, err := cli.NewRequest("POST", url, bytes.NewReader(b), o.headers)
-	if err != nil {
-		return nil, err
-	}
-	return cli.DoWithJSONParse(httpReq)
-}
-
-func (cli *Client) Delete(url *url.URL, options ...RequestOption) (*JSONResponse, error) {
-	o := opts(options...)
-	req, err := cli.NewRequest("DELETE", url, nil, o.headers)
-	if err != nil {
-		return nil, err
-	}
-	return cli.DoWithJSONParse(req)
-}
-
-func (cli *Client) Put(url *url.URL, req *JSONRequest, options ...RequestOption) (*JSONResponse, error) {
-	b := []byte(req.Raw)
-	defaultContentTypeOptions := append(
-		[]RequestOption{WithHeader("Content-Type", "application/json")},
-		options...)
-	o := opts(defaultContentTypeOptions...)
-	httpReq, err := cli.NewRequest("PUT", url, bytes.NewReader(b), o.headers)
-	if err != nil {
-		return nil, err
-	}
-	return cli.DoWithJSONParse(httpReq)
-}
-
-func (cli *Client) Download(url *url.URL, output string) (int64, error) {
-	req, err := cli.NewRequest("GET", url, nil, nil)
-	if err != nil {
-		return 0, err
-	}
-
-	resp, err := cli.httpClient.Do(req)
-	if err != nil {
-		return 0, err
-	}
-	defer resp.Body.Close() //nolint:errcheck
-
-	if resp.StatusCode == http.StatusOK {
-		w, err := os.Create(output)
+func (c *Client) Do(r *Request) (resp *Response, err error) {
+	resp = &Response{Request: r}
+	defer func() {
 		if err != nil {
-			return 0, err
+			resp.err = err
+		} else {
+			err = resp.err
 		}
-		defer func() {
-			closeErr := w.Close()
+	}()
 
-			if closeErr != nil {
-				err = closeErr
-			}
-		}()
-
-		return io.Copy(w, resp.Body)
-	}
-
-	return 0, fmt.Errorf("unknown error downloading %q, HTTP response code: %d", url, resp.StatusCode)
-}
-
-func (cli *Client) Search(q string, options ...IteratorOption) (*Iterator, error) {
-	u := URL("/api/v1/search/")
-	query := u.Query()
-	query.Add("q", q)
-	u.RawQuery = query.Encode()
-
-	return newIterator(cli, u, options...)
-}
-
-func (cli *Client) StructureSearch(uuid string, options ...IteratorOption) (*Iterator, error) {
-	u := URL("/api/v1/pro/result/%s/similar/", uuid)
-	return newIterator(cli, u, options...)
-}
-
-func (cli *Client) GetResult(uuid string) (*JSONResponse, error) {
-	url := URL("%s", fmt.Sprintf("/api/v1/result/%s/", uuid))
-	result, err := cli.Get(url)
+	url, err := c.URL(r.Path)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error formatting URL: %w", err)
 	}
-	return result, nil
-}
 
-func (cli *Client) WaitAndGetResult(ctx context.Context, uuid string, maxWait int) (*JSONResponse, error) {
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(maxWait)*time.Second)
-	defer cancel()
-
-	log.Info("Waiting for scan to finish", "uuid", uuid)
-
-	delay := 1 * time.Second
-
-	for {
-		result, err := cli.GetResult(uuid)
-		if err == nil {
-			return result, nil
-		}
-
-		// raise an error if it's not 404 error
-		var jsonErr *JSONError
-		if errors.As(err, &jsonErr) {
-			if jsonErr.Status != http.StatusNotFound {
-				return nil, err
-			}
-		}
-
-		select {
-		case <-time.After(delay):
-			delay += 1 * time.Second
-			log.Info("Got 404 error, waiting for a scan result...", "delay", delay, "error", err.Error(), "uuid", uuid)
-		case <-ctx.Done():
-			return nil, ctx.Err()
+	var reqBody io.ReadCloser
+	if r.GetBody != nil {
+		reqBody, resp.err = r.GetBody()
+		if resp.err != nil {
+			return
 		}
 	}
+
+	req, err := http.NewRequest(r.Method, url.String(), reqBody)
+	if err != nil {
+		return nil, fmt.Errorf("error creating HTTP request: %w", err)
+	}
+
+	// set headers
+	headers := r.Headers
+	if headers == nil {
+		headers = make(http.Header)
+	}
+	req.Header = headers
+	req.Header.Set("User-Agent", c.Agent)
+	req.Header.Set("API-Key", c.APIKey)
+
+	// set query parameters
+	if r.QueryParams != nil {
+		query := req.URL.Query()
+		for k, v := range r.QueryParams {
+			query.Set(k, v)
+		}
+		req.URL.RawQuery = query.Encode()
+	}
+
+	ctx := r.ctx
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+	r.RawRequest = req
+
+	resp.Response, resp.err = c.httpClient.Do(req)
+	if resp.err == nil && resp.StatusCode >= 200 {
+		// set resp.body
+		resp.ToBytes() //nolint:errcheck
+		// restore body for re-reading
+		resp.Body = io.NopCloser(bytes.NewReader(resp.body))
+	}
+
+	return
 }

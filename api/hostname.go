@@ -2,8 +2,8 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"iter"
-	"net/url"
 	"strconv"
 )
 
@@ -62,18 +62,20 @@ func HostnameIteratorPageState(pageState string) HostnameIteratorOption {
 
 type HostnameIterator struct {
 	client    *Client
+	path      string
+	request   *Request
 	limit     int
 	all       bool
 	size      int
 	count     int
 	PageState string
-	link      *url.URL
 	HasMore   bool
 }
 
-func newHostnameIterator(cli *Client, u *url.URL, options ...HostnameIteratorOption) (*HostnameIterator, error) {
+func newHostnameIterator(c *Client, path string, options ...HostnameIteratorOption) (*HostnameIterator, error) {
 	it := &HostnameIterator{
-		client:  cli,
+		client:  c,
+		path:    path,
 		HasMore: true,
 		count:   0,
 	}
@@ -84,31 +86,27 @@ func newHostnameIterator(cli *Client, u *url.URL, options ...HostnameIteratorOpt
 		}
 	}
 
-	query := u.Query()
-
+	request := c.NewRequest().SetPath(path)
 	// size (number of results per batch) is "limit" in this API endpoint
 	if it.size > 0 {
-		query.Add("limit", strconv.Itoa(it.size))
+		request.SetQueryParam("limit", strconv.Itoa(it.size))
 	}
 
 	if it.PageState != "" {
-		query.Add("pageState", it.PageState)
+		request.SetQueryParam("pageState", it.PageState)
 	}
-
-	u.RawQuery = query.Encode()
-	it.link = u
 
 	return it, nil
 }
 
 func (it *HostnameIterator) getMoreResults() (results []*json.RawMessage, err error) {
-	resp, err := it.client.Get(it.link)
+	resp, err := it.request.Get(it.path)
 	if err != nil {
 		return nil, err
 	}
 
 	r := &HostnameResults{}
-	err = json.Unmarshal(resp.Raw, r)
+	err = resp.Unmarshal(r)
 	if err != nil {
 		return nil, err
 	}
@@ -118,9 +116,7 @@ func (it *HostnameIterator) getMoreResults() (results []*json.RawMessage, err er
 	}
 
 	// update pageState for the next request
-	q := it.link.Query()
-	q.Set("pageState", r.PageState)
-	it.link.RawQuery = q.Encode()
+	it.request.SetQueryParam("pageState", r.PageState)
 
 	// update HasMore based on the number of results
 	it.HasMore = len(r.Results) >= it.size
@@ -156,6 +152,5 @@ func (it *HostnameIterator) Iterate() iter.Seq2[*json.RawMessage, error] {
 }
 
 func (c *Client) IterateHostname(hostname string, opts ...HostnameIteratorOption) (*HostnameIterator, error) {
-	u := URL("/api/v1/hostname/%s", hostname)
-	return newHostnameIterator(c, u, opts...)
+	return newHostnameIterator(c, PrefixedPath(fmt.Sprintf("/hostname/%s", hostname)), opts...)
 }

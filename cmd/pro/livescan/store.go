@@ -44,7 +44,7 @@ var storeCmd = &cobra.Command{
 			return err
 		}
 
-		result, err := client.StoreLiveScanResult(
+		resp, err := client.StoreLiveScanResult(
 			scannerId, scanId,
 			api.WithLiveScanStoreTaskVisibility(visibility),
 		)
@@ -52,7 +52,7 @@ var storeCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Print(result.PrettyJSON())
+		fmt.Print(resp.PrettyJSON())
 
 		return nil
 	},

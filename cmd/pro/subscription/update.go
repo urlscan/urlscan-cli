@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	api "github.com/urlscan/urlscan-cli/api"
 
+	"github.com/urlscan/urlscan-cli/api"
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
@@ -40,14 +40,14 @@ var updateCmd = &cobra.Command{
 			return err
 		}
 
-		result, err := client.UpdateSubscription(
+		resp, err := client.UpdateSubscription(
 			append([]api.SubscriptionOption{api.WithSubscriptionID(id)}, opts...)...,
 		)
 		if err != nil {
 			return err
 		}
 
-		fmt.Print(result.PrettyJSON())
+		fmt.Print(resp.PrettyJSON())
 
 		return nil
 	},

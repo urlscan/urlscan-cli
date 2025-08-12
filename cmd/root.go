@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 
-	api "github.com/urlscan/urlscan-cli/api"
+	"github.com/urlscan/urlscan-cli/api"
 	"github.com/urlscan/urlscan-cli/cmd/pro"
 	"github.com/urlscan/urlscan-cli/cmd/scan"
 )
