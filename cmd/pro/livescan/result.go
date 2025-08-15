@@ -9,8 +9,8 @@ import (
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
-var resultCmdExample = `  urlscan pro live-scan result <scan-id> -s <scanner-id>
-  echo <scan-id> | urlscan pro live-scan result - -s <scanner-id>`
+var resultCmdExample = `  urlscan pro livescan result <scan-id> -s <scanner-id>
+  echo <scan-id> | urlscan pro livescan result - -s <scanner-id>`
 
 var resultCmd = &cobra.Command{
 	Use:     "result",

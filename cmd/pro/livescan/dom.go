@@ -10,8 +10,8 @@ import (
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
-var domCmdExample = `  urlscan pro live-scan dom <scan-id> -s <scanner-id>
-  echo <scan-id> | urlscan pro live-scan dom - -s <scanner-id>`
+var domCmdExample = `  urlscan pro livescan dom <scan-id> -s <scanner-id>
+  echo <scan-id> | urlscan pro livescan dom - -s <scanner-id>`
 
 var domCmd = &cobra.Command{
 	Use:     "dom",

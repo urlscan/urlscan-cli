@@ -1,16 +1,16 @@
-## urlscan pro live-scan scan
+## urlscan pro livescan scan
 
 Task a URL to be scanned
 
 ```
-urlscan pro live-scan scan [flags]
+urlscan pro livescan scan [flags]
 ```
 
 ### Examples
 
 ```
-  urlscan pro live-scan scan <url>
-  echo <url> | urlscan pro live-scan scan
+  urlscan pro livescan scan <url>
+  echo <url> | urlscan pro livescan scan
 ```
 
 ### Options
@@ -29,5 +29,5 @@ urlscan pro live-scan scan [flags]
 
 ### SEE ALSO
 
-* [urlscan pro live-scan](urlscan_pro_live-scan.md)	 - Live-scan sub-commands
+* [urlscan pro livescan](urlscan_pro_livescan.md)	 - Livescan sub-commands
 

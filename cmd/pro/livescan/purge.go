@@ -9,8 +9,8 @@ import (
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
-var purgeCmdExample = `  urlscan pro live-scan purge <scan-id> -s <scanner-id>
-  echo <scan-id> | urlscan pro live-scan purge - -s <scanner-id>`
+var purgeCmdExample = `  urlscan pro livescan purge <scan-id> -s <scanner-id>
+  echo <scan-id> | urlscan pro livescan purge - -s <scanner-id>`
 
 var purgeCmd = &cobra.Command{
 	Use:     "purge",

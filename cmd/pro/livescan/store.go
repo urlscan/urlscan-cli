@@ -9,8 +9,8 @@ import (
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
-var storeCmdExample = `  urlscan pro live-scan store <scan-id> -S <scanner-id>
-  echo <scan-id> | urlscan pro live-scan store - -s <scanner-id>`
+var storeCmdExample = `  urlscan pro livescan store <scan-id> -S <scanner-id>
+  echo <scan-id> | urlscan pro livescan store - -s <scanner-id>`
 
 var storeCmd = &cobra.Command{
 	Use:     "store",

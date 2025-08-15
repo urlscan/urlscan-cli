@@ -5,6 +5,6 @@ import (
 )
 
 var RootCmd = &cobra.Command{
-	Use:   "live-scan",
-	Short: "Live-scan sub-commands",
+	Use:   "livescan",
+	Short: "Livescan sub-commands",
 }
