@@ -14,7 +14,7 @@ var getCmdExample = `  urlscan pro incident get <incident-id>
 
 var getCmd = &cobra.Command{
 	Use:     "get",
-	Short:   "Get a list of subscriptions for the current user",
+	Short:   "Get details for a specific incident",
 	Example: getCmdExample,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {

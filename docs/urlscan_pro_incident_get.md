@@ -1,6 +1,6 @@
 ## urlscan pro incident get
 
-Get a list of subscriptions for the current user
+Get details for a specific incident
 
 ```
 urlscan pro incident get [flags]
