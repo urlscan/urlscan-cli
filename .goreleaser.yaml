@@ -53,3 +53,10 @@ homebrew_casks:
       owner: urlscan
       name: homebrew-tap
       token: "{{ .Env.TAP_GITHUB_TOKEN }}"
+    # ref. https://goreleaser.com/customization/homebrew_casks/#signing-and-notarizing
+    hooks:
+      post:
+        install: |
+          if OS.mac?
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/urlscan"]
+          end
