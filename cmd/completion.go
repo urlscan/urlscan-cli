@@ -11,7 +11,7 @@ var longCompletionCmd = `To load completions:
 
 Bash:
 
-    # for Linux
+    # for Linux (make sure you have bash-completion package)
     $ urlscan completion bash > /etc/bash_completion.d/urlscan
     # for macOS
     $ urlscan completion bash > "$(brew --prefix)/etc/bash_completion.d/urlscan"
