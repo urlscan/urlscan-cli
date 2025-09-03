@@ -96,6 +96,7 @@ func newHostnameIterator(c *Client, path string, options ...HostnameIteratorOpti
 		request.SetQueryParam("pageState", it.PageState)
 	}
 
+	it.request = request
 	return it, nil
 }
 
