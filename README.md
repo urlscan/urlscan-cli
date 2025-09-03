@@ -9,7 +9,7 @@ The official urlscan CLI.
 The built binaries can be found on [the releases page](https://github.com/urlscan/urlscan-cli/releases).
 
 > [!NOTE]
-> Apple's [Gatekeeper](https://support.apple.com/guide/security/gatekeeper-and-runtime-protection-sec5599b66df/web) may block the binary to run.
+> Apple's [Gatekeeper](https://support.apple.com/guide/security/gatekeeper-and-runtime-protection-sec5599b66df/web) may prevent the binary from running.
 > Please do `xattr -c urlscan` to unblock it. Or use Homebrew Cask (see the blow). The Homebrew Cask installed binary is Gatekeeper-free.
 
 ### macOS/Linux
