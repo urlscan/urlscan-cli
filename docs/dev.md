@@ -39,8 +39,7 @@ golangci-lint run --fix
 ## Build
 
 ```bash
-# build the CLI for testing
-go build main.go
+make build
 ```
 
 ```bash
