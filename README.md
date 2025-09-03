@@ -8,11 +8,21 @@ The official urlscan CLI.
 
 The built binaries can be found on [the releases page](https://github.com/urlscan/urlscan-cli/releases).
 
-### macOS
+> [!NOTE]
+> Apple's [Gatekeeper](https://support.apple.com/guide/security/gatekeeper-and-runtime-protection-sec5599b66df/web) may prevent the binary from running.
+> Use `xattr -c urlscan` to unblock it or install via Homebrew Cask (see below).
+
+### macOS/Linux
+
+[Homebrew](https://brew.sh/) Cask is supported for macOS/Linux:
 
 ```sh
 brew install --cask urlscan/tap/urlscan-cli
 ```
+
+### Manual Build
+
+See [the docs](./docs/dev.md#build).
 
 ## Usage
 
