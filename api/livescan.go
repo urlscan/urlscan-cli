@@ -64,13 +64,11 @@ func WithLiveScanScannerDisableFeatures(features []string) LiveScanOption {
 }
 
 func newLiveScanOptions(opts ...LiveScanOption) *LiveScanOptions {
-	options := &LiveScanOptions{}
-
-	for _, opt := range opts {
-		opt(options)
+	var o LiveScanOptions
+	for _, fn := range opts {
+		fn(&o)
 	}
-
-	return options
+	return &o
 }
 
 type LiveScanStoreOptions struct {
@@ -88,13 +86,11 @@ func WithLiveScanStoreTaskVisibility(visibility string) LiveScanStoreOption {
 }
 
 func newLiveScanStoreOptions(opts ...LiveScanStoreOption) *LiveScanStoreOptions {
-	options := &LiveScanStoreOptions{}
-
+	var options LiveScanStoreOptions
 	for _, opt := range opts {
-		opt(options)
+		opt(&options)
 	}
-
-	return options
+	return &options
 }
 
 func (c *Client) TriggerNonBlockingLiveScan(id string, opts ...LiveScanOption) (*Response, error) {

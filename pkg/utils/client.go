@@ -97,11 +97,11 @@ func WithDownloadSilent(silent bool) DownloadOption {
 }
 
 func NewDownloadOptions(opts ...DownloadOption) *DownloadOptions {
-	downloadOpts := &DownloadOptions{}
-	for _, o := range opts {
-		o(downloadOpts)
+	var o DownloadOptions
+	for _, fn := range opts {
+		fn(&o)
 	}
-	return downloadOpts
+	return &o
 }
 
 func Download(opts *DownloadOptions) error {

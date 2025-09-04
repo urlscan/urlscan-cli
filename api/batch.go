@@ -33,13 +33,11 @@ func WithBatchTimeout(timeout int) BatchOption {
 }
 
 func newBatchOptions(opts ...BatchOption) *BatchOptions {
-	batchOpts := &BatchOptions{}
-
-	for _, opt := range opts {
-		opt(batchOpts)
+	var o BatchOptions
+	for _, fn := range opts {
+		fn(&o)
 	}
-
-	return batchOpts
+	return &o
 }
 
 type BatchTask[T any] func(c *Client, ctx context.Context) mo.Result[T]

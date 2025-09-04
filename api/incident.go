@@ -142,13 +142,11 @@ func WithIncidentObservable(observable string) IncidentOption {
 }
 
 func newIncidentOptions(opts ...IncidentOption) *IncidentOptions {
-	options := &IncidentOptions{}
-
-	for _, opt := range opts {
-		opt(options)
+	var o IncidentOptions
+	for _, fn := range opts {
+		fn(&o)
 	}
-
-	return options
+	return &o
 }
 
 func (c *Client) CreateIncident(opts ...IncidentOption) (*Response, error) {

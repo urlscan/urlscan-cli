@@ -23,7 +23,7 @@ type StringArrayReader struct {
 }
 
 func NewStringArrayReader(strings []string) *StringArrayReader {
-	return &StringArrayReader{strings: strings}
+	return &StringArrayReader{strings: strings, pos: 0, value: "", err: nil}
 }
 
 func (sar *StringArrayReader) Next() bool {
@@ -58,7 +58,7 @@ type StringIOReader struct {
 }
 
 func NewStringIOReader(r io.Reader) *StringIOReader {
-	return &StringIOReader{scanner: bufio.NewScanner(r)}
+	return &StringIOReader{scanner: bufio.NewScanner(r), value: "", err: nil}
 }
 
 func (sir *StringIOReader) Next() bool {
@@ -99,7 +99,7 @@ type MappedStringReader struct {
 }
 
 func NewMappedStringReader(r StringReader, mapFn func(string) ([]string, error)) *MappedStringReader {
-	return &MappedStringReader{r: r, mapFn: mapFn}
+	return &MappedStringReader{r: r, mapFn: mapFn, q: make([]string, 0), value: "", err: nil}
 }
 
 func (msr *MappedStringReader) Pop() (string, error) {

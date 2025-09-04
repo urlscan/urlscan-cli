@@ -101,7 +101,7 @@ func (c *Client) SetAgent(agent string) *Client {
 }
 
 func NewClient(APIKey string) *Client {
-	c := &Client{httpClient: &http.Client{}, BaseURL: &baseURL}
+	c := &Client{httpClient: &http.Client{}, BaseURL: &baseURL, APIKey: "", Agent: "", Err: nil}
 	c.SetAPIKey(APIKey)
 	c.SetAgent(fmt.Sprintf("urlscan-go/%s", version))
 	c.SetRetryTransport()
@@ -116,7 +116,18 @@ func (c *Client) NewRequest() *Request {
 	if c.Agent != "" {
 		headers.Set("User-Agent", c.Agent)
 	}
-	return &Request{client: c, Headers: headers}
+	return &Request{
+		client:  c,
+		Headers: headers,
+		// default values
+		Body:        nil,
+		ctx:         nil,
+		GetBody:     nil,
+		Method:      "",
+		Path:        "",
+		QueryParams: make(map[string]string),
+		RawRequest:  nil,
+	}
 }
 
 func (c *Client) URL(path string) (*url.URL, error) {
@@ -129,7 +140,7 @@ func (c *Client) URL(path string) (*url.URL, error) {
 }
 
 func (c *Client) Do(r *Request) (resp *Response, err error) {
-	resp = &Response{Request: r}
+	resp = &Response{Request: r, err: nil, body: nil, Response: nil}
 	defer func() {
 		if err != nil {
 			resp.err = err

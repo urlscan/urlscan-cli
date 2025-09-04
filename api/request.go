@@ -69,7 +69,7 @@ func (r *Request) SetContext(ctx context.Context) *Request {
 func (r *Request) Do() (resp *Response, err error) {
 	defer func() {
 		if resp == nil {
-			resp = &Response{Request: r}
+			resp = &Response{Request: r, err: nil, body: nil, Response: nil}
 		}
 	}()
 
