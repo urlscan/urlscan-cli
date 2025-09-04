@@ -33,7 +33,7 @@ func (c *Counter) Count() int {
 func TestRetry(t *testing.T) {
 	defer gock.Off()
 
-	retryCounter := &Counter{}
+	retryCounter := &Counter{count: 0}
 
 	gock.New("http://testserver/").
 		Get("/bar").
@@ -132,8 +132,10 @@ func TestJSONError(t *testing.T) {
 	defer gock.Off()
 
 	jsonErr := JSONError{
-		Status:  400,
-		Message: "Bad Request",
+		Status:      400,
+		Message:     "Bad Request",
+		Raw:         nil,
+		Description: "Dummy",
 	}
 	marshalled, err := json.Marshal(jsonErr)
 	assert.NoError(t, err)

@@ -1,0 +1,11 @@
+version: "2"
+linters:
+  default: standard
+  enable:
+    - exhaustruct
+  settings:
+    exhaustruct:
+      exclude:
+        - '.+/cobra\.Command$'
+        - '.+/http\.Client$'
+        - '.+/url\.URL$'

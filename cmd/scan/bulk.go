@@ -33,7 +33,7 @@ func (s *scanner) newBatchScanWithDownloadTask(url string) api.BatchTask[*api.Re
 			return mo.Err[*api.Response](err)
 		}
 
-		scanResult := &api.ScanResult{}
+		scanResult := &api.ScanResult{} // nolint: exhaustruct
 		err = resp.Unmarshal(scanResult)
 		if err != nil {
 			return mo.Err[*api.Response](err)

@@ -59,7 +59,7 @@ func (r *Response) Error() error {
 		return nil
 	}
 
-	jsonErr := &JSONError{}
+	jsonErr := &JSONError{} // nolint: exhaustruct
 	err := json.Unmarshal(r.body, jsonErr)
 	if err != nil {
 		return err

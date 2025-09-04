@@ -97,11 +97,11 @@ func WithSavedSearchUserTags(userTags []string) SavedSearchOption {
 }
 
 func newSavedSearchOptions(opts ...SavedSearchOption) *SavedSearchOptions {
-	options := &SavedSearchOptions{}
-	for _, opt := range opts {
-		opt(options)
+	var o SavedSearchOptions
+	for _, fn := range opts {
+		fn(&o)
 	}
-	return options
+	return &o
 }
 
 func (c *Client) CreateSavedSearch(opts ...SavedSearchOption) (*Response, error) {

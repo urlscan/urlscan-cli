@@ -73,11 +73,19 @@ type HostnameIterator struct {
 }
 
 func newHostnameIterator(c *Client, path string, options ...HostnameIteratorOption) (*HostnameIterator, error) {
+	request := c.NewRequest().SetPath(path)
+
 	it := &HostnameIterator{
 		client:  c,
 		path:    path,
-		HasMore: true,
-		count:   0,
+		request: request,
+		// default values
+		all:       false,
+		count:     0,
+		HasMore:   true,
+		limit:     0,
+		PageState: "",
+		size:      0,
 	}
 
 	for _, opt := range options {
@@ -86,17 +94,15 @@ func newHostnameIterator(c *Client, path string, options ...HostnameIteratorOpti
 		}
 	}
 
-	request := c.NewRequest().SetPath(path)
 	// size (number of results per batch) is "limit" in this API endpoint
 	if it.size > 0 {
-		request.SetQueryParam("limit", strconv.Itoa(it.size))
+		it.request.SetQueryParam("limit", strconv.Itoa(it.size))
 	}
 
 	if it.PageState != "" {
-		request.SetQueryParam("pageState", it.PageState)
+		it.request.SetQueryParam("pageState", it.PageState)
 	}
 
-	it.request = request
 	return it, nil
 }
 
@@ -106,7 +112,7 @@ func (it *HostnameIterator) getMoreResults() (results []*json.RawMessage, err er
 		return nil, err
 	}
 
-	r := &HostnameResults{}
+	r := &HostnameResults{} // nolint: exhaustruct
 	err = resp.Unmarshal(r)
 	if err != nil {
 		return nil, err

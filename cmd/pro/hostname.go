@@ -20,6 +20,7 @@ func newHostnameResults() HostnameResults {
 	return HostnameResults{
 		Results:   make([]json.RawMessage, 0),
 		PageState: "",
+		HasMore:   false,
 	}
 }
 

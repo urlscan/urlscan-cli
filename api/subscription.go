@@ -69,13 +69,11 @@ func WithSubscriptionIgnoreTime(ignoreTime bool) SubscriptionOption {
 }
 
 func newSubscriptionOptions(opts ...SubscriptionOption) *SubscriptionOptions {
-	subscriptionOptions := &SubscriptionOptions{}
-
-	for _, opt := range opts {
-		opt(subscriptionOptions)
+	var o SubscriptionOptions
+	for _, fn := range opts {
+		fn(&o)
 	}
-
-	return subscriptionOptions
+	return &o
 }
 
 func (c *Client) CreateSubscription(opts ...SubscriptionOption) (*Response, error) {

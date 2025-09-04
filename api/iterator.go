@@ -110,12 +110,22 @@ type Iterator struct {
 }
 
 func newIterator(c *Client, path string, options ...IteratorOption) (*Iterator, error) {
+	request := c.NewRequest().SetPath(path)
+
 	it := &Iterator{
 		client:  c,
 		path:    path,
-		HasMore: true,
-		count:   0,
-		Total:   0,
+		request: request,
+		// default values
+		all:         false,
+		count:       0,
+		datasource:  "",
+		HasMore:     true,
+		limit:       0,
+		q:           "",
+		searchAfter: "",
+		size:        0,
+		Total:       0,
 	}
 
 	for _, opt := range options {
@@ -124,25 +134,21 @@ func newIterator(c *Client, path string, options ...IteratorOption) (*Iterator, 
 		}
 	}
 
-	request := c.NewRequest().SetPath(path)
-
 	if it.q != "" {
-		request.SetQueryParam("q", it.q)
+		it.request.SetQueryParam("q", it.q)
 	}
 
 	if it.searchAfter != "" {
-		request.SetQueryParam("search_after", it.searchAfter)
+		it.request.SetQueryParam("search_after", it.searchAfter)
 	}
 
 	if it.datasource != "" {
-		request.SetQueryParam("datasource", it.datasource)
+		it.request.SetQueryParam("datasource", it.datasource)
 	}
 
 	if it.size > 0 {
-		request.SetQueryParam("size", strconv.Itoa(it.size))
+		it.request.SetQueryParam("size", strconv.Itoa(it.size))
 	}
-
-	it.request = request
 
 	return it, nil
 }
@@ -153,7 +159,7 @@ func (it *Iterator) getMoreResults() (results []*SearchResult, err error) {
 		return nil, err
 	}
 
-	r := &SearchResults{}
+	r := &SearchResults{} // nolint: exhaustruct
 	err = resp.Unmarshal(r)
 	if err != nil {
 		return nil, err
