@@ -23,7 +23,7 @@ func TestPrefixedPath(t *testing.T) {
 			expected: "/api/v1/foo",
 		},
 		{
-			name:     "without starting / & with trailing /",
+			name:     "without leading /, with trailing /",
 			input:    "foo/",
 			expected: "/api/v1/foo/",
 		},
