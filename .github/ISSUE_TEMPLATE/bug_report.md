@@ -7,7 +7,7 @@ labels: bug
 
 <!--
 Thank you for taking the time to report a bug.
-Please make sure there is no existing issue about this kind of bug.
+Please check other open issues in this repository before submitting to avoid duplicates.
 -->
 
 ### Describe the Bug
