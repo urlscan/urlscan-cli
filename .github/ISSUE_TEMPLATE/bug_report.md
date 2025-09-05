@@ -14,6 +14,10 @@ Please check other open issues in this repository before submitting to avoid dup
 
 A clear and concise description of what the bug is.
 
+Please provide command output as code (surround with ```) instead of a screenshot.
+
+Remember to remove any sensitive information (e.g. ID of private submission) before submitting the issue!
+
 ### Steps to Reproduce
 
 - ...
