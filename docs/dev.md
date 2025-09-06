@@ -6,6 +6,7 @@
 - [golangci-lint](https://github.com/golangci/golangci-lint) as a linter
 - [Lefthook](https://github.com/evilmartians/lefthook) as a pre-commit hook manager
 - [GoReleaser](https://github.com/goreleaser/goreleaser) as a release manager
+- [Bats](https://github.com/bats-core/bats-core) as a integration test framework
 
 ## Setup
 
@@ -26,8 +27,19 @@ go mod tidy
 
 ## Test
 
+### Unit Test
+
 ```bash
 go test ./...
+```
+
+### Integration Test
+
+> [!NOTE]
+> Make sure to install [bats-assert](https://github.com/ztombol/bats-assert) in addition to `bats-core`.
+
+```bash
+bats test
 ```
 
 ## Lint
