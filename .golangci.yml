@@ -9,3 +9,8 @@ linters:
         - '.+/cobra\.Command$'
         - '.+/http\.Client$'
         - '.+/url\.URL$'
+formatters:
+  enable:
+    - gofmt
+    - goimports
+    - gofumpt
