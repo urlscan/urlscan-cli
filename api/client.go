@@ -87,7 +87,6 @@ func (c *Client) SetRetryTransport() *Client {
 		Transport: http.DefaultTransport,
 	})
 	return c
-
 }
 
 func (c *Client) SetAPIKey(key string) *Client {

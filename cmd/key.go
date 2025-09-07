@@ -3,7 +3,6 @@ package cmd
 import (
 	"errors"
 	"fmt"
-
 	"io"
 	"strings"
 	"syscall"
