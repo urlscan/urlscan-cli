@@ -36,7 +36,7 @@ go test ./...
 ### Integration Test
 
 > [!NOTE]
-> Make sure to install [bats-assert](https://github.com/ztombol/bats-assert) in addition to `bats-core`.
+> Make sure to install [bats-assert](https://github.com/bats-core/bats-assert) in addition to `bats-core`.
 
 ```bash
 bats test
