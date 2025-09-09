@@ -2,7 +2,6 @@ package api
 
 import "encoding/json"
 
-
 type JSONError struct {
 	Status      int             `json:"status"`
 	Message     string          `json:"message"`

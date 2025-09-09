@@ -55,5 +55,4 @@ func mapCmdToSubscriptionOptions(cmd *cobra.Command) (opts []api.SubscriptionOpt
 		api.WithSubscriptionIsActive(isActive),
 		api.WithSubscriptionIgnoreTime(ignoreTime),
 	}, nil
-
 }

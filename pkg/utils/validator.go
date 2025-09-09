@@ -6,8 +6,10 @@ import (
 	"regexp"
 )
 
-var re_ULID = regexp.MustCompile(`^[0-9A-HJKMNPQRSTVWXYZ]{26}$`)
-var re_UUID = regexp.MustCompile(`^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$`)
+var (
+	re_ULID = regexp.MustCompile(`^[0-9A-HJKMNPQRSTVWXYZ]{26}$`)
+	re_UUID = regexp.MustCompile(`^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$`)
+)
 
 func ValidateULID(s string) error {
 	// A ULID is a 26-character string using Crockford's Base32 (0-9, A-Z except I, L, O, U)

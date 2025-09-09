@@ -35,5 +35,4 @@ func TestPrefixedPath(t *testing.T) {
 			assert.Equal(t, tt.expected, result)
 		})
 	}
-
 }
