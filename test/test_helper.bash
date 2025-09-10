@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-type brew &>/dev/null && export BATS_LIB_PATH="${BATS_LIB_PATH}:$(brew --prefix)/lib"
+BATS_LOCATION=`which bats`;
+BATS_LOCATION="${BATS_LOCATION%/*/*/*/*}"
 
-bats_load_library bats-support
-bats_load_library bats-assert
+load "$BATS_LOCATION/bats-assert/load.bash"
+load "$BATS_LOCATION/bats-support/load.bash"

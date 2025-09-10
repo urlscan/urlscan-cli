@@ -36,7 +36,7 @@ go test ./...
 ### Integration Test
 
 > [!NOTE]
-> Make sure to install [bats-assert](https://github.com/bats-core/bats-assert) in addition to `bats-core`.
+> Make sure to install [bats-core](https://github.com/bats-core/bats-core), [bats-assert](https://github.com/bats-core/bats-assert) and [bats-support](https://github.com/bats-core/bats-support) (by `npm install -g bats bats-assert bats-support`).
 
 ```bash
 bats test
