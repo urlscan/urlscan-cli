@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"runtime"
 
 	"github.com/spf13/cobra"
 )
@@ -36,6 +37,10 @@ var completionCmd = &cobra.Command{
 			return cmd.Usage()
 		}
 		shell := args[0]
+
+		if runtime.GOOS == "windows" {
+			return fmt.Errorf("shell completion is not supported on Windows")
+		}
 
 		var err error
 		switch shell {
