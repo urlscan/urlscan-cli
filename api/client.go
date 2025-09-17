@@ -193,7 +193,10 @@ func (c *Client) Do(r *Request) (resp *Response, err error) {
 	resp.Response, resp.err = c.httpClient.Do(req)
 	if resp.err == nil && resp.StatusCode >= 200 {
 		// set resp.body
-		resp.ToBytes() //nolint:errcheck
+		_, err = resp.ToBytes()
+		if err != nil {
+			return nil, err
+		}
 		// restore body for re-reading
 		resp.Body = io.NopCloser(bytes.NewReader(resp.body))
 	}

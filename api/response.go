@@ -30,7 +30,11 @@ func (r *Response) ToBytes() (body []byte, err error) {
 	}
 
 	defer func() {
-		r.Body.Close() //nolint:errcheck
+		closeErr := r.Body.Close()
+		if closeErr != nil && err == nil {
+			err = closeErr
+		}
+
 		if err != nil {
 			r.err = err
 		}
@@ -59,8 +63,8 @@ func (r *Response) Error() error {
 		return nil
 	}
 
-	jsonErr := &JSONError{} // nolint: exhaustruct
-	err := json.Unmarshal(r.body, jsonErr)
+	var jsonErr JSONError
+	err := json.Unmarshal(r.body, &jsonErr)
 	if err != nil {
 		return err
 	}
