@@ -134,13 +134,13 @@ func (c *Client) Scan(url string, options ...ScanOption) (*ScanResult, error) {
 		return nil, err
 	}
 
-	r := &ScanResult{} // nolint: exhaustruct
-	err = resp.Unmarshal(r)
+	var r ScanResult
+	err = resp.Unmarshal(&r)
 	if err != nil {
 		return nil, err
 	}
 
-	return r, nil
+	return &r, nil
 }
 
 func (c *Client) NewBatchScanTask(url string, opts ...ScanOption) BatchTask[*Response] {
@@ -162,8 +162,8 @@ func (c *Client) NewBatchScanWithWaitTask(url string, maxWait int, opts ...ScanO
 			return mo.Err[*Response](err)
 		}
 
-		scanResult := &ScanResult{} // nolint: exhaustruct
-		err = scanResp.Unmarshal(scanResult)
+		var scanResult ScanResult
+		err = scanResp.Unmarshal(&scanResult)
 		if err != nil {
 			return mo.Err[*Response](err)
 		}

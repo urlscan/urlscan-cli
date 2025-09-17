@@ -159,8 +159,8 @@ func (it *Iterator) getMoreResults() (results []*SearchResult, err error) {
 		return nil, err
 	}
 
-	r := &SearchResults{} // nolint: exhaustruct
-	err = resp.Unmarshal(r)
+	var r SearchResults
+	err = resp.Unmarshal(&r)
 	if err != nil {
 		return nil, err
 	}

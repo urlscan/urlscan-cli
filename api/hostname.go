@@ -112,8 +112,8 @@ func (it *HostnameIterator) getMoreResults() (results []*json.RawMessage, err er
 		return nil, err
 	}
 
-	r := &HostnameResults{} // nolint: exhaustruct
-	err = resp.Unmarshal(r)
+	var r HostnameResults
+	err = resp.Unmarshal(&r)
 	if err != nil {
 		return nil, err
 	}
