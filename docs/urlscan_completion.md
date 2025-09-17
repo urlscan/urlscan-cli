@@ -6,21 +6,21 @@ Output shell completion code for the specified shell (bash, zsh, fish)
 
 To load completions:
 
-Bash:
+Bash (Linux or macOS):
 
     # for Linux (make sure you have bash-completion package)
     $ urlscan completion bash > /etc/bash_completion.d/urlscan
     # for macOS
     $ urlscan completion bash > "$(brew --prefix)/etc/bash_completion.d/urlscan"
 
-ZSH:
+ZSH (Linux or macOS):
 
     $ urlscan completion zsh > "${fpath[1]}/_urlscan"
     # for oh-my-zsh
     $ mkdir -p "$ZSH/completions/"
     $ urlscan completion zsh > "$ZSH/completions/_urlscan"
 
-Fish:
+Fish (Linux or macOS):
 
     $ urlscan completion fish > ~/.config/fish/completions/urlscan.fish
 
