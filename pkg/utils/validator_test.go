@@ -84,6 +84,7 @@ func TestValidateURL(t *testing.T) {
 		{"https://sub.domain.com:8080/path/to/resource", false},
 		{"http://example.com/#fragment", false},
 		{"https://example.com/?q=test#frag", false},
+		{"https://1.1.1.1", false},
 		// Invalid URLs
 		{"example.com", true},
 		{"htp://example.com", true},
@@ -96,12 +97,110 @@ func TestValidateURL(t *testing.T) {
 		{"https://", true},
 		{"ftp:/example.com", true},
 		{"http://exa mple.com", true},
+		{"invalid-input", true},
 	}
 
 	for _, tt := range tests {
 		err := ValidateURL(tt.input)
 		if (err != nil) != tt.wantErr {
 			t.Errorf("ValidateURL(%q) error = %v, wantErr %v", tt.input, err, tt.wantErr)
+		}
+	}
+}
+
+func TestValidateDomain(t *testing.T) {
+	tests := []struct {
+		input   string
+		wantErr bool
+	}{
+		// Valid domains
+		{"example.com", false},
+		{"sub.domain.com", false},
+		{"example.co.uk", false},
+		{"my-site.org", false},
+		// Invalid domains
+		{"example .com", true},
+		{" example.com", true},
+		{"example.com ", true},
+		{"exa mple.com", true},
+		{"", true},
+		{".com", true},
+		{"com.", true},
+		{"invalid-input", true},
+		{"192.168.1", true},
+	}
+
+	for _, tt := range tests {
+		err := ValidateDomain(tt.input)
+		if (err != nil) != tt.wantErr {
+			t.Errorf("ValidateDomain(%q) error = %v, wantErr %v", tt.input, err, tt.wantErr)
+		}
+	}
+}
+
+func TestValidateIP(t *testing.T) {
+	tests := []struct {
+		input   string
+		wantErr bool
+	}{
+		// Valid IPv4
+		{"192.168.1.1", false},
+		{"255.255.255.255", false},
+		{"0.0.0.0", false},
+		// Invalid IPv4
+		{"192.168.1.256", true},
+		{"192.168.1", true},
+		{"192.168.1.1.1", true},
+		{"192.168.1.-1", true},
+		{"192.168.1.1a", true},
+		{"", true},
+		{"invalid-ip", true},
+		// Valid IPv6
+		{"2001:0db8:85a3:0000:0000:8a2e:0370:7334", false},
+		{"2001:db8:85a3::8a2e:370:7334", false},
+		{"::1", false},
+		// Invalid IPv6
+		{"2001:0db8:85a3:0000:0000:8a2e:0370:7334:1234", true},
+		{"2001:db8:85a3::8a2e::7334", true},
+		{"2001:db8:85a3::8a2e:370g:7334", true},
+	}
+
+	for _, tt := range tests {
+		err := ValidateIP(tt.input)
+		if (err != nil) != tt.wantErr {
+			t.Errorf("ValidateIP(%q) error = %v, wantErr %v", tt.input, err, tt.wantErr)
+		}
+	}
+}
+
+func TestValidateNetworkIndicator(t *testing.T) {
+	tests := []struct {
+		input   string
+		wantErr bool
+	}{
+		// Valid IPs
+		{"192.168.1.1", false},
+		{"2001:0db8:85a3:0000:0000:8a2e:0370:7334", false},
+		// Valid Domains
+		{"example.com", false},
+		{"sub.domain.com", false},
+		// Valid URLs
+		{"http://example.com", false},
+		{"https://example.com/path?query=1", false},
+		{"https://sub.domain.com:8080/path/to/resource", false},
+		{"http://example.com/#fragment", false},
+		{"https://example.com/?q=test#frag", false},
+		// Invalid inputs
+		{"192.168.1", true},
+		{"example .com", true},
+		{"", true},
+		{"invalid-input", true},
+	}
+
+	for _, tt := range tests {
+		err := ValidateNetworkIndicator(tt.input)
+		if (err != nil) != tt.wantErr {
+			t.Errorf("ValidateNetworkIndicator(%q) error = %v, wantErr %v", tt.input, err, tt.wantErr)
 		}
 	}
 }

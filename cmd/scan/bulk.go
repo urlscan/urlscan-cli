@@ -160,7 +160,7 @@ var bulkSubmitCmd = &cobra.Command{
 			return cmd.Usage()
 		}
 
-		reader := utils.NewFilteredStringReader(utils.NewMappedStringReader(utils.StringReaderFromCmdArgs(args), utils.ResolveFileOrValue), utils.ValidateURL)
+		reader := utils.NewFilteredStringReader(utils.NewMappedStringReader(utils.StringReaderFromCmdArgs(args), utils.ResolveFileOrValue), utils.ValidateNetworkIndicator)
 		urls, err := utils.ReadAllFromReader(reader)
 		if err != nil {
 			return err
