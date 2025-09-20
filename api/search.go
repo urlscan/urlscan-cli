@@ -111,7 +111,7 @@ func (c *Client) CreateSavedSearch(opts ...SavedSearchOption) (*Response, error)
 		return nil, err
 	}
 
-	return c.NewRequest().SetBodyJSONBytes(marshalled).Get(PrefixedPath("/user/searches/"))
+	return c.NewRequest().SetBodyJSONBytes(marshalled).Post(PrefixedPath("/user/searches/"))
 }
 
 func (c *Client) UpdateSavedSearch(opts ...SavedSearchOption) (*Response, error) {

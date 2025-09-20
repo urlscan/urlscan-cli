@@ -37,7 +37,7 @@ var copyCmd = &cobra.Command{
 			return err
 		}
 
-		result, err := client.NewRequest().Put(api.PrefixedPath(fmt.Sprintf("/user/incidents/%s/copy", id)))
+		result, err := client.NewRequest().Post(api.PrefixedPath(fmt.Sprintf("/user/incidents/%s/copy", id)))
 		if err != nil {
 			return err
 		}
