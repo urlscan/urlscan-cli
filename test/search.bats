@@ -13,6 +13,6 @@ load test_helper
 }
 
 @test "search with all" {
-  run ./dist/urlscan search 'page.domain:example.com AND date:>now-1d'
+  run ./dist/urlscan search 'page.domain:example.com AND date:>now-1d' --all
   assert_success
 }
