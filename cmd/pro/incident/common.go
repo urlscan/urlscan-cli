@@ -75,6 +75,7 @@ func mapCmdToIncidentOptions(cmd *cobra.Command) (opts []api.IncidentOption, err
 		api.WithIncidentVisibility(visibility),
 		api.WithIncidentExpireAt(expireAt),
 		api.WithIncidentProfile(incidentProfile),
+		api.WithIncidentObservable(observable),
 	)
 
 	return opts, nil
