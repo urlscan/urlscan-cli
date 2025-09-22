@@ -100,6 +100,18 @@ func newChannelOptions(opts ...ChannelOption) *ChannelOptions {
 
 func (c *Client) CreateChannel(opts ...ChannelOption) (*Response, error) {
 	channelOpts := newChannelOptions(opts...)
+	switch channelOpts.Channel.Type {
+	case "webhook":
+		if len(channelOpts.Channel.WebhookURL) == 0 {
+			err := errors.New("missing webhook URL")
+			return nil, err
+		}
+	case "email":
+		if len(channelOpts.Channel.EmailAddresses) == 0 {
+			err := errors.New("missing email addresses")
+			return nil, err
+		}
+	}
 	marshalled, err := json.Marshal(channelOpts)
 	if err != nil {
 		return nil, err
