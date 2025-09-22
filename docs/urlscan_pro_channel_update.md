@@ -16,16 +16,16 @@ urlscan pro channel update [flags]
 ### Options
 
 ```
-      --email-addresses strings   Email addresses receiving the notifications
+      --email-addresses strings   Email addresses receiving the notifications (required for type: email)
       --frequency string          Frequency of notifications (live, hourly or daily) (optional)
   -h, --help                      help for update
       --ignore-time               Whether to ignore time constraints (default false)
       --is-active                 Whether the channel is active (default true)
       --is-default                Whether the channel is the default channel (default false)
   -n, --name string               Channel name (required)
-      --permissions strings       Permissions
+      --permissions strings       Permissions (optional; team:read, team:write)
       --type string               Type of channel (webhook or email) (default "webhook")
-      --utc-time string           24 hour UTC time that daily emails are sent (optional)
+      --utc-time string           24 hour UTC time that daily emails are sent at (optional)
       --webhook-url string        Webhook URL (required for type: webhook)
       --week-days strings         Days of the week alerts will be generated (Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday)
 ```
