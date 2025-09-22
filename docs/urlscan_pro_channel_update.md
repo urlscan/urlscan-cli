@@ -26,7 +26,7 @@ urlscan pro channel update [flags]
       --permissions strings       Permissions
       --type string               Type of channel (webhook or email) (default "webhook")
       --utc-time string           24 hour UTC time that daily emails are sent (optional)
-      --webhook-url string        Webhook URL (optional)
+      --webhook-url string        Webhook URL (required for type: webhook)
       --week-days strings         Days of the week alerts will be generated (Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday)
 ```
 
