@@ -90,28 +90,32 @@ func WithChannelPermissions(permissions []string) ChannelOption {
 	}
 }
 
-func newChannelOptions(opts ...ChannelOption) *ChannelOptions {
+func newChannelOptions(opts ...ChannelOption) (*ChannelOptions, error) {
 	var o ChannelOptions
 	for _, fn := range opts {
 		fn(&o)
 	}
-	return &o
+
+	switch o.Channel.Type {
+	case "webhook":
+		if len(o.Channel.WebhookURL) == 0 {
+			return nil, errors.New("missing webhook URL")
+		}
+	case "email":
+		if len(o.Channel.EmailAddresses) == 0 {
+			return nil, errors.New("missing email addresses")
+		}
+	}
+
+	return &o, nil
 }
 
 func (c *Client) CreateChannel(opts ...ChannelOption) (*Response, error) {
-	channelOpts := newChannelOptions(opts...)
-	switch channelOpts.Channel.Type {
-	case "webhook":
-		if len(channelOpts.Channel.WebhookURL) == 0 {
-			err := errors.New("missing webhook URL")
-			return nil, err
-		}
-	case "email":
-		if len(channelOpts.Channel.EmailAddresses) == 0 {
-			err := errors.New("missing email addresses")
-			return nil, err
-		}
+	channelOpts, err := newChannelOptions(opts...)
+	if err != nil {
+		return nil, err
 	}
+
 	marshalled, err := json.Marshal(channelOpts)
 	if err != nil {
 		return nil, err
@@ -123,7 +127,11 @@ func (c *Client) CreateChannel(opts ...ChannelOption) (*Response, error) {
 }
 
 func (c *Client) UpdateChannel(id string, opts ...ChannelOption) (*Response, error) {
-	channelOpts := newChannelOptions(opts...)
+	channelOpts, err := newChannelOptions(opts...)
+	if err != nil {
+		return nil, err
+	}
+
 	marshalled, err := json.Marshal(channelOpts)
 	if err != nil {
 		return nil, err
