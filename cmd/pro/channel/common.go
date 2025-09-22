@@ -21,7 +21,7 @@ func setCreateOrUpdateFlags(cmd *cobra.Command) {
 	cmd.Flags().Bool("ignore-time", false, "Whether to ignore time constraints (default false)")
 	cmd.Flags().StringSlice("email-addresses", []string{}, "Email addresses receiving the notifications (required for type: email)")
 	cmd.Flags().StringSlice("week-days", []string{}, "Days of the week alerts will be generated (Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday)")
-	cmd.Flags().StringSlice("permissions", []string{}, "Permissions")
+	cmd.Flags().StringSlice("permissions", []string{}, "Permissions (optional; team:read, team:write)")
 }
 
 func mapCmdToChannelOptions(cmd *cobra.Command) (opts []api.ChannelOption, err error) {
