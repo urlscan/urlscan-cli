@@ -15,7 +15,7 @@ func setCreateOrUpdateFlags(cmd *cobra.Command) {
 	cmd.Flags().String("type", "webhook", "Type of channel (webhook or email)")
 	cmd.Flags().String("webhook-url", "", "Webhook URL (required for type: webhook)")
 	cmd.Flags().String("frequency", "", "Frequency of notifications (live, hourly or daily) (optional)")
-	cmd.Flags().String("utc-time", "", "24 hour UTC time that daily emails are sent (optional)")
+	cmd.Flags().String("utc-time", "", "24 hour UTC time that daily emails are sent at (optional)")
 	cmd.Flags().Bool("is-active", true, "Whether the channel is active")
 	cmd.Flags().Bool("is-default", false, "Whether the channel is the default channel (default false)")
 	cmd.Flags().Bool("ignore-time", false, "Whether to ignore time constraints (default false)")
