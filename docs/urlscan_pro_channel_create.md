@@ -18,9 +18,9 @@ urlscan pro channel create [flags]
       --email-addresses strings   Email addresses receiving the notifications (required for type: email)
       --frequency string          Frequency of notifications (live, hourly or daily) (optional)
   -h, --help                      help for create
-      --ignore-time               Whether to ignore time constraints (default false)
-      --is-active                 Whether the channel is active (default true)
-      --is-default                Whether the channel is the default channel (default false)
+      --ignore-time               Ignore time constraints (default false)
+      --is-active                 Set channel active (default true)
+      --is-default                Set channel as default (default false)
   -n, --name string               Channel name (required)
       --permissions strings       Permissions (optional; team:read, team:write)
       --type string               Type of channel (webhook or email) (default "webhook")
