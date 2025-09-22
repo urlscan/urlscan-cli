@@ -19,7 +19,7 @@ func setCreateOrUpdateFlags(cmd *cobra.Command) {
 	cmd.Flags().Bool("is-active", true, "Whether the channel is active")
 	cmd.Flags().Bool("is-default", false, "Whether the channel is the default channel (default false)")
 	cmd.Flags().Bool("ignore-time", false, "Whether to ignore time constraints (default false)")
-	cmd.Flags().StringSlice("email-addresses", []string{}, "Email addresses receiving the notifications")
+	cmd.Flags().StringSlice("email-addresses", []string{}, "Email addresses receiving the notifications (required for type: email)")
 	cmd.Flags().StringSlice("week-days", []string{}, "Days of the week alerts will be generated (Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday)")
 	cmd.Flags().StringSlice("permissions", []string{}, "Permissions")
 }
