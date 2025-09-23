@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 )
 
@@ -68,16 +69,43 @@ func WithSubscriptionIgnoreTime(ignoreTime bool) SubscriptionOption {
 	}
 }
 
-func newSubscriptionOptions(opts ...SubscriptionOption) *SubscriptionOptions {
+func validateSubscriptionOptions(o *SubscriptionOptions) error {
+	if len(o.Subscription.SearchIds) == 0 {
+		return errors.New("search IDs are required")
+	}
+	if o.Subscription.Frequency == "" {
+		return errors.New("frequency is required")
+	}
+	if len(o.Subscription.EmailAddresses) == 0 {
+		return errors.New("email addresses are required")
+	}
+	if o.Subscription.Name == "" {
+		return errors.New("name is required")
+	}
+
+	return nil
+}
+
+func newSubscriptionOptions(opts ...SubscriptionOption) (*SubscriptionOptions, error) {
 	var o SubscriptionOptions
 	for _, fn := range opts {
 		fn(&o)
 	}
-	return &o
+
+	err := validateSubscriptionOptions(&o)
+	if err != nil {
+		return nil, err
+	}
+
+	return &o, nil
 }
 
 func (c *Client) CreateSubscription(opts ...SubscriptionOption) (*Response, error) {
-	subscriptionOptions := newSubscriptionOptions(opts...)
+	subscriptionOptions, err := newSubscriptionOptions(opts...)
+	if err != nil {
+		return nil, err
+	}
+
 	marshalled, err := json.Marshal(subscriptionOptions)
 	if err != nil {
 		return nil, err
@@ -89,7 +117,11 @@ func (c *Client) CreateSubscription(opts ...SubscriptionOption) (*Response, erro
 }
 
 func (c *Client) UpdateSubscription(opts ...SubscriptionOption) (*Response, error) {
-	subscriptionOptions := newSubscriptionOptions(opts...)
+	subscriptionOptions, err := newSubscriptionOptions(opts...)
+	if err != nil {
+		return nil, err
+	}
+
 	marshalled, err := json.Marshal(subscriptionOptions)
 	if err != nil {
 		return nil, err

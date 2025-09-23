@@ -90,21 +90,34 @@ func WithChannelPermissions(permissions []string) ChannelOption {
 	}
 }
 
+func validateChannelOptions(o *ChannelOptions) error {
+	if o.Channel.Name == "" {
+		return errors.New("name is required")
+	}
+
+	switch o.Channel.Type {
+	case "webhook":
+		if len(o.Channel.WebhookURL) == 0 {
+			return errors.New("webhook URL is required")
+		}
+	case "email":
+		if len(o.Channel.EmailAddresses) == 0 {
+			return errors.New("email addresses are required")
+		}
+	}
+
+	return nil
+}
+
 func newChannelOptions(opts ...ChannelOption) (*ChannelOptions, error) {
 	var o ChannelOptions
 	for _, fn := range opts {
 		fn(&o)
 	}
 
-	switch o.Channel.Type {
-	case "webhook":
-		if len(o.Channel.WebhookURL) == 0 {
-			return nil, errors.New("missing webhook URL")
-		}
-	case "email":
-		if len(o.Channel.EmailAddresses) == 0 {
-			return nil, errors.New("missing email addresses")
-		}
+	err := validateChannelOptions(&o)
+	if err != nil {
+		return nil, err
 	}
 
 	return &o, nil
