@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 )
 
@@ -141,16 +142,34 @@ func WithIncidentObservable(observable string) IncidentOption {
 	}
 }
 
-func newIncidentOptions(opts ...IncidentOption) *IncidentOptions {
+func validateIncidentOptions(o *IncidentOptions) error {
+	if o.Incident.Observable == "" {
+		return errors.New("observable is required")
+	}
+
+	return nil
+}
+
+func newIncidentOptions(opts ...IncidentOption) (*IncidentOptions, error) {
 	var o IncidentOptions
 	for _, fn := range opts {
 		fn(&o)
 	}
-	return &o
+
+	err := validateIncidentOptions(&o)
+	if err != nil {
+		return nil, err
+	}
+
+	return &o, nil
 }
 
 func (c *Client) CreateIncident(opts ...IncidentOption) (*Response, error) {
-	incidentOpts := newIncidentOptions(opts...)
+	incidentOpts, err := newIncidentOptions(opts...)
+	if err != nil {
+		return nil, err
+	}
+
 	marshalled, err := json.Marshal(incidentOpts)
 	if err != nil {
 		return nil, err
@@ -159,7 +178,11 @@ func (c *Client) CreateIncident(opts ...IncidentOption) (*Response, error) {
 }
 
 func (c *Client) UpdateIncident(id string, opts ...IncidentOption) (*Response, error) {
-	incidentOpts := newIncidentOptions(opts...)
+	incidentOpts, err := newIncidentOptions(opts...)
+	if err != nil {
+		return nil, err
+	}
+
 	marshalled, err := json.Marshal(incidentOpts)
 	if err != nil {
 		return nil, err

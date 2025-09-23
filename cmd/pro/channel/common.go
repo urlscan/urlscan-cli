@@ -1,8 +1,6 @@
 package channel
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 	"github.com/urlscan/urlscan-cli/api"
 )
@@ -26,10 +24,6 @@ func setCreateOrUpdateFlags(cmd *cobra.Command) {
 
 func mapCmdToChannelOptions(cmd *cobra.Command) (opts []api.ChannelOption, err error) {
 	name, _ := cmd.Flags().GetString("name")
-	if name == "" {
-		return nil, fmt.Errorf("name is required")
-	}
-
 	channelType, _ := cmd.Flags().GetString("type")
 	webhookURL, _ := cmd.Flags().GetString("webhook-url")
 	frequency, _ := cmd.Flags().GetString("frequency")
