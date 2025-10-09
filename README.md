@@ -24,7 +24,7 @@ brew install --cask urlscan/tap/urlscan-cli
 
 > [!NOTE]
 > There is a [WinGet package](https://winstall.app/apps/Urlscan.urlscan-cli) but it's not maintained by urlscan.
-> Thus please don't report an issue about this package to us.
+> For any issues regarding the WinGet package, please report them to the [winget-pkgs repository](https://github.com/microsoft/winget-pkgs/) and not here.
 
 ### Manual Build
 
