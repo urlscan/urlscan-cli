@@ -20,6 +20,12 @@ The built binaries can be found on [the releases page](https://github.com/urlsca
 brew install --cask urlscan/tap/urlscan-cli
 ```
 
+### Windows
+
+> [!NOTE]
+> There is a [WinGet package](https://winstall.app/apps/Urlscan.urlscan-cli) but it's not maintained by urlscan.
+> Use at your own risk. For any issues regarding the WinGet package, please report them to the winget-pkgs repository and not here
+
 ### Manual Build
 
 See [the docs](./docs/dev.md#build).
