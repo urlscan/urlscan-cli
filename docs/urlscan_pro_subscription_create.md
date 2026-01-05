@@ -23,7 +23,6 @@ urlscan pro subscription create [flags]
   -a, --is-active                 Whether the subscription is active (default true)
   -n, --name string               Name of the subscription (required)
   -s, --search-ids strings        Array of search IDs associated with this subscription (required)
-  -i, --subscription-id string    Subscription ID (optional, if not provided a new id will be generated)
 ```
 
 ### SEE ALSO
