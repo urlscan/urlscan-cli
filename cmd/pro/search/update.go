@@ -68,7 +68,7 @@ var updateCmd = &cobra.Command{
 		}
 
 		resp, err := client.UpdateSavedSearch(
-			api.WithSavedSearchID(id),
+			id,
 			api.WithSavedSearchDatasource(datasource),
 			api.WithSavedSearchName(name),
 			api.WithSavedSearchQuery(query),
