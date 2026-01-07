@@ -3,7 +3,6 @@ package search
 import (
 	"fmt"
 
-	"github.com/google/uuid"
 	"github.com/spf13/cobra"
 
 	"github.com/urlscan/urlscan-cli/api"
@@ -47,22 +46,12 @@ var createCmd = &cobra.Command{
 		tags, _ := cmd.Flags().GetStringSlice("tags")
 		userTags, _ := cmd.Flags().GetStringSlice("user-tags")
 
-		id, _ := cmd.Flags().GetString("search-id")
-		if id == "" {
-			id = uuid.New().String()
-		}
-		err := utils.ValidateUUID(id)
-		if err != nil {
-			return err
-		}
-
 		client, err := utils.NewAPIClient()
 		if err != nil {
 			return err
 		}
 
 		resp, err := client.CreateSavedSearch(
-			api.WithSavedSearchID(id),
 			api.WithSavedSearchDatasource(datasource),
 			api.WithSavedSearchName(name),
 			api.WithSavedSearchQuery(query),
@@ -87,8 +76,6 @@ var createCmd = &cobra.Command{
 
 func init() {
 	setCreateOrUpdateFlags(createCmd)
-	// optional flag, only for create command
-	createCmd.Flags().StringP("search-id", "i", "", "Search ID (optional, if not provided a new ID will be generated)")
 
 	RootCmd.AddCommand(createCmd)
 }
