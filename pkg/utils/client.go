@@ -107,7 +107,7 @@ func NewDownloadOptions(opts ...DownloadOption) *DownloadOptions {
 func Download(opts *DownloadOptions) error {
 	if !opts.force {
 		if fileExists(opts.output) {
-			return fmt.Errorf("%s already exists", opts.output)
+			return fmt.Errorf("%s already exists, use --force to overwrite", opts.output)
 		}
 	}
 
