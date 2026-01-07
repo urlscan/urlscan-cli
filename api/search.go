@@ -7,7 +7,6 @@ import (
 
 type SavedSearchOptions struct {
 	Search struct {
-		ID               string   `json:"_id"`
 		Datasource       string   `json:"datasource"`
 		Name             string   `json:"name"`
 		Query            string   `json:"query"`
@@ -23,12 +22,6 @@ type SavedSearchOptions struct {
 }
 
 type SavedSearchOption func(*SavedSearchOptions)
-
-func WithSavedSearchID(id string) SavedSearchOption {
-	return func(opts *SavedSearchOptions) {
-		opts.Search.ID = id
-	}
-}
 
 func WithSavedSearchDatasource(datasource string) SavedSearchOption {
 	return func(opts *SavedSearchOptions) {
@@ -114,13 +107,13 @@ func (c *Client) CreateSavedSearch(opts ...SavedSearchOption) (*Response, error)
 	return c.NewRequest().SetBodyJSONBytes(marshalled).Post(PrefixedPath("/user/searches/"))
 }
 
-func (c *Client) UpdateSavedSearch(opts ...SavedSearchOption) (*Response, error) {
+func (c *Client) UpdateSavedSearch(id string, opts ...SavedSearchOption) (*Response, error) {
 	savedSearchOptions := newSavedSearchOptions(opts...)
 	marshalled, err := json.Marshal(savedSearchOptions)
 	if err != nil {
 		return nil, err
 	}
 	return c.NewRequest().SetBodyJSONBytes(marshalled).Put(
-		PrefixedPath(fmt.Sprintf("/user/searches/%s/", savedSearchOptions.Search.ID)),
+		PrefixedPath(fmt.Sprintf("/user/searches/%s/", id)),
 	)
 }

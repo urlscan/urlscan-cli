@@ -8,7 +8,6 @@ import (
 
 type SubscriptionOptions struct {
 	Subscription struct {
-		ID             string   `json:"_id"`
 		SearchIds      []string `json:"searchIds"`
 		Frequency      string   `json:"frequency"`
 		EmailAddresses []string `json:"emailAddresses"`
@@ -20,12 +19,6 @@ type SubscriptionOptions struct {
 }
 
 type SubscriptionOption func(*SubscriptionOptions)
-
-func WithSubscriptionID(id string) SubscriptionOption {
-	return func(opts *SubscriptionOptions) {
-		opts.Subscription.ID = id
-	}
-}
 
 func WithSubscriptionSearchIds(searchIds []string) SubscriptionOption {
 	return func(opts *SubscriptionOptions) {
@@ -116,7 +109,7 @@ func (c *Client) CreateSubscription(opts ...SubscriptionOption) (*Response, erro
 	)
 }
 
-func (c *Client) UpdateSubscription(opts ...SubscriptionOption) (*Response, error) {
+func (c *Client) UpdateSubscription(id string, opts ...SubscriptionOption) (*Response, error) {
 	subscriptionOptions, err := newSubscriptionOptions(opts...)
 	if err != nil {
 		return nil, err
@@ -128,6 +121,6 @@ func (c *Client) UpdateSubscription(opts ...SubscriptionOption) (*Response, erro
 	}
 
 	return c.NewRequest().SetBodyJSONBytes(marshalled).Put(
-		PrefixedPath(fmt.Sprintf("/user/subscriptions/%s/", subscriptionOptions.Subscription.ID)),
+		PrefixedPath(fmt.Sprintf("/user/subscriptions/%s/", id)),
 	)
 }

@@ -48,7 +48,7 @@ release:
     Released by [GoReleaser](https://github.com/goreleaser/goreleaser).
 
 homebrew_casks:
-  - binary: urlscan
+  - binaries: [urlscan]
     repository:
       owner: urlscan
       name: homebrew-tap
