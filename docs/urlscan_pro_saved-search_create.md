@@ -24,7 +24,6 @@ urlscan pro saved-search create [flags]
   -P, --pass int                   2 for inline-matching, 10 for bookmark-only (default 2)
   -p, --permissions strings        Permissions of the saved search (optional)
   -q, --query string               Search query of the saved search (required)
-  -i, --search-id string           Search ID (optional, if not provided a new ID will be generated)
   -T, --tags strings               Tags of the saved search (optional)
   -t, --tlp string                 TLP (Traffic Light Protocol) of the saved search (default "red")
   -u, --user-tags strings          User tags of the saved search (optional)

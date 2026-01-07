@@ -3,10 +3,8 @@ package subscription
 import (
 	"fmt"
 
-	"github.com/google/uuid"
 	"github.com/spf13/cobra"
 
-	"github.com/urlscan/urlscan-cli/api"
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
@@ -23,23 +21,13 @@ var createCmd = &cobra.Command{
 			return cmd.Usage()
 		}
 
-		id, _ := cmd.Flags().GetString("subscription-id")
-		if id == "" {
-			id = uuid.New().String()
-		}
-
-		err = utils.ValidateUUID(id)
-		if err != nil {
-			return err
-		}
-
 		client, err := utils.NewAPIClient()
 		if err != nil {
 			return err
 		}
 
 		resp, err := client.CreateSubscription(
-			append([]api.SubscriptionOption{api.WithSubscriptionID(id)}, opts...)...,
+			opts...,
 		)
 		if err != nil {
 			return err
@@ -53,8 +41,6 @@ var createCmd = &cobra.Command{
 
 func init() {
 	setCreateOrUpdateFlags(createCmd)
-	// optional flag, only for create command
-	createCmd.Flags().StringP("subscription-id", "i", "", "Subscription ID (optional, if not provided a new id will be generated)")
 
 	RootCmd.AddCommand(createCmd)
 }

@@ -26,7 +26,6 @@ func TestNewSubscriptionOptions(t *testing.T) {
 		{
 			name: "missing searchIds",
 			opts: []SubscriptionOption{
-				WithSubscriptionID("subid"),
 				WithSubscriptionSearchIds([]string{}),
 				WithSubscriptionFrequency("daily"),
 				WithSubscriptionEmailAddresses([]string{"test@example.com"}),
@@ -37,7 +36,6 @@ func TestNewSubscriptionOptions(t *testing.T) {
 		{
 			name: "missing frequency",
 			opts: []SubscriptionOption{
-				WithSubscriptionID("subid"),
 				WithSubscriptionSearchIds([]string{"search1"}),
 				WithSubscriptionFrequency(""),
 				WithSubscriptionEmailAddresses([]string{"test@example.com"}),
@@ -48,7 +46,6 @@ func TestNewSubscriptionOptions(t *testing.T) {
 		{
 			name: "missing emailAddresses",
 			opts: []SubscriptionOption{
-				WithSubscriptionID("subid"),
 				WithSubscriptionSearchIds([]string{"search1"}),
 				WithSubscriptionFrequency("daily"),
 				WithSubscriptionEmailAddresses([]string{}),
@@ -59,7 +56,6 @@ func TestNewSubscriptionOptions(t *testing.T) {
 		{
 			name: "missing name",
 			opts: []SubscriptionOption{
-				WithSubscriptionID("subid"),
 				WithSubscriptionSearchIds([]string{"search1"}),
 				WithSubscriptionFrequency("daily"),
 				WithSubscriptionEmailAddresses([]string{"test@example.com"}),
