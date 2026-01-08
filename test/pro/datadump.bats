@@ -2,13 +2,16 @@
 
 load ../test_helper
 
+TODAY=$(date +%Y%m%d)
+
 @test "list" {
-  run bash -c "./dist/urlscan pro datadump list --time-window days --file-type api --date 20260101 | jq ."
+  run bash -c "./dist/urlscan pro datadump list hours/api/$TODAY | jq ."
   assert_success
 }
 
 @test "download" {
-  run bash -c "./dist/urlscan pro datadump download hours/search/20260101/20260101-00.gz --output /tmp/20260101.gz "
+  # NOTE: this can be flaky depending on the time of the day the test is run...
+  run bash -c "./dist/urlscan pro datadump download hours/search/$TODAY/$TODAY-00.gz --output /tmp/$TODAY.gz "
   assert_success
 }
 
