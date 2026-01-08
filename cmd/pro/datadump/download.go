@@ -25,6 +25,7 @@ var downloadCmd = &cobra.Command{
 
 		output, _ := cmd.Flags().GetString("output")
 		force, _ := cmd.Flags().GetBool("force")
+		unpack, _ := cmd.Flags().GetBool("unpack")
 
 		reader := utils.StringReaderFromCmdArgs(args)
 		path, err := reader.ReadString()
@@ -51,6 +52,13 @@ var downloadCmd = &cobra.Command{
 			return err
 		}
 
+		if unpack {
+			err = utils.Unpack(output)
+			if err != nil {
+				return err
+			}
+		}
+
 		return nil
 	},
 }
@@ -58,6 +66,8 @@ var downloadCmd = &cobra.Command{
 func init() {
 	flags.AddOutputFlag(downloadCmd, "<path>.gz")
 	flags.AddForceFlag(downloadCmd)
+
+	downloadCmd.Flags().BoolP("unpack", "u", false, "Unpack the downloaded file")
 
 	RootCmd.AddCommand(downloadCmd)
 }
