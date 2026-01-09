@@ -9,11 +9,11 @@ import (
 	"time"
 )
 
-func TestUnpackGzip(t *testing.T) {
+func TestExtractGzip(t *testing.T) {
 	// setup fixture
 	tempDir := t.TempDir()
 
-	testContent := []byte("This is test content for gzip unpacking")
+	testContent := []byte("This is test content for gzip extracting")
 	gzFilePath := filepath.Join(tempDir, "test.gz")
 
 	gzFile, err := os.Create(gzFilePath)
@@ -35,17 +35,17 @@ func TestUnpackGzip(t *testing.T) {
 		t.Fatalf("Failed to close gzip file: %v", err)
 	}
 
-	// test unpacking
-	err = Unpack(gzFilePath)
+	// test extracting
+	err = Extract(gzFilePath)
 	if err != nil {
-		t.Fatalf("Unpack failed: %v", err)
+		t.Fatalf("Extract failed: %v", err)
 	}
 
-	// verify the unpacked file exists and has correct content
-	unpackedPath := filepath.Join(tempDir, "test")
-	content, err := os.ReadFile(unpackedPath)
+	// verify the extracted file exists and has correct content
+	extractedPath := filepath.Join(tempDir, "test")
+	content, err := os.ReadFile(extractedPath)
 	if err != nil {
-		t.Fatalf("Failed to read unpacked file: %v", err)
+		t.Fatalf("Failed to read extracted file: %v", err)
 	}
 
 	if string(content) != string(testContent) {
@@ -53,7 +53,7 @@ func TestUnpackGzip(t *testing.T) {
 	}
 }
 
-func TestUnpackTar(t *testing.T) {
+func TestExtractTar(t *testing.T) {
 	// setup fixture
 	tempDir := t.TempDir()
 
@@ -137,10 +137,10 @@ func TestUnpackTar(t *testing.T) {
 		t.Fatalf("Failed to close tar file: %v", err)
 	}
 
-	// test unpacking
-	err = Unpack(tarFilePath)
+	// test extracting
+	err = Extract(tarFilePath)
 	if err != nil {
-		t.Fatalf("Unpack failed for tar: %v", err)
+		t.Fatalf("Extract failed for tar: %v", err)
 	}
 
 	// verify all files were extracted with correct content
@@ -167,7 +167,7 @@ func TestUnpackTar(t *testing.T) {
 	}
 }
 
-func TestUnpackTarGzip(t *testing.T) {
+func TestExtractTarGzip(t *testing.T) {
 	// setup fixture
 	tempDir := t.TempDir()
 
@@ -253,10 +253,10 @@ func TestUnpackTarGzip(t *testing.T) {
 		t.Fatalf("Failed to close tar.gz file: %v", err)
 	}
 
-	// test unpacking
-	err = Unpack(tarGzFilePath)
+	// test extracting
+	err = Extract(tarGzFilePath)
 	if err != nil {
-		t.Fatalf("Unpack failed for tar.gz: %v", err)
+		t.Fatalf("Extract failed for tar.gz: %v", err)
 	}
 
 	// verify all files were extracted with correct content
@@ -283,7 +283,7 @@ func TestUnpackTarGzip(t *testing.T) {
 	}
 }
 
-func TestUnpackTarWithZeroBlocks(t *testing.T) {
+func TestExtractTarWithZeroBlocks(t *testing.T) {
 	// setup fixture - create a tar file with zero blocks inserted
 	tempDir := t.TempDir()
 
@@ -382,10 +382,10 @@ func TestUnpackTarWithZeroBlocks(t *testing.T) {
 		t.Fatalf("Failed to close tar file: %v", err)
 	}
 
-	// test unpacking - should succeed with zero block skipping
-	err = Unpack(tarFilePath)
+	// test extracting - should succeed with zero block skipping
+	err = Extract(tarFilePath)
 	if err != nil {
-		t.Fatalf("Unpack failed for tar with zero blocks: %v", err)
+		t.Fatalf("Extract failed for tar with zero blocks: %v", err)
 	}
 
 	// verify both files were extracted with correct content
@@ -403,7 +403,7 @@ func TestUnpackTarWithZeroBlocks(t *testing.T) {
 	}
 }
 
-func TestUnpackTarGzipWithZeroBlocks(t *testing.T) {
+func TestExtractTarGzipWithZeroBlocks(t *testing.T) {
 	// setup fixture - create a tar.gz file with zero blocks inserted in the tar stream
 	tempDir := t.TempDir()
 
@@ -502,10 +502,10 @@ func TestUnpackTarGzipWithZeroBlocks(t *testing.T) {
 		t.Fatalf("Failed to close tar.gz file: %v", err)
 	}
 
-	// test unpacking - should succeed with zero block skipping
-	err = Unpack(tarGzFilePath)
+	// test extracting - should succeed with zero block skipping
+	err = Extract(tarGzFilePath)
 	if err != nil {
-		t.Fatalf("Unpack failed for tar.gz with zero blocks: %v", err)
+		t.Fatalf("Extract failed for tar.gz with zero blocks: %v", err)
 	}
 
 	// verify both files were extracted with correct content

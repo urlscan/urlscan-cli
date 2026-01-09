@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-func Unpack(path string) error {
+func Extract(path string) error {
 	file, err := os.Open(path)
 	if err != nil {
 		return fmt.Errorf("failed to open file: %w", err)
@@ -84,12 +84,12 @@ func Unpack(path string) error {
 
 		_, err = io.Copy(outFile, bufReader)
 		if err != nil {
-			return fmt.Errorf("failed to write unpacked file: %w", err)
+			return fmt.Errorf("failed to write extracted file: %w", err)
 		}
 		return nil
 	}
 
-	return fmt.Errorf("unsupported file format for unpacking")
+	return fmt.Errorf("unsupported file format for extracting")
 }
 
 func isGzip(reader io.Reader) (bool, error) {
