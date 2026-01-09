@@ -106,9 +106,11 @@ func isGzip(reader io.Reader) (bool, error) {
 	return buf[0] == 0x1f && buf[1] == 0x8b, nil
 }
 
+const tarBlockSize = 512
+
 func isTarFromBuffered(reader *bufio.Reader) (bool, error) {
 	// Peek at first 512 bytes without consuming them
-	buf, err := reader.Peek(512)
+	buf, err := reader.Peek(tarBlockSize)
 	if err != nil && err != io.EOF {
 		return false, err
 	}
@@ -131,8 +133,6 @@ type zeroBlockSkippingReader struct {
 	offset int    // current offset in buffer
 	valid  int    // valid bytes in buffer
 }
-
-const tarBlockSize = 512
 
 func (z *zeroBlockSkippingReader) Read(p []byte) (n int, err error) {
 	// if we have buffered data, return it first
