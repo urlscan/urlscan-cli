@@ -3,6 +3,7 @@ package utils
 import (
 	"archive/tar"
 	"bufio"
+	"bytes"
 	"compress/gzip"
 	"fmt"
 	"io"
@@ -119,10 +120,65 @@ func isTarFromBuffered(reader *bufio.Reader) (bool, error) {
 	return string(buf[257:262]) == "ustar", nil
 }
 
-func extractTar(reader io.Reader, outputDir string) error {
-	tarReader := tar.NewReader(reader)
+func isZeroBlock(b []byte) bool {
+	return bytes.Count(b, []byte{0}) == len(b)
+}
 
-	// Clean and resolve the output directory to an absolute path
+// zeroBlockSkippingReader wraps an io.Reader and skips over zero-filled 512-byte blocks
+type zeroBlockSkippingReader struct {
+	r      io.Reader
+	buffer []byte // buffer for checking/skipping zero blocks
+	offset int    // current offset in buffer
+	valid  int    // valid bytes in buffer
+}
+
+const tarBlockSize = 512
+
+func (z *zeroBlockSkippingReader) Read(p []byte) (n int, err error) {
+	// if we have buffered data, return it first
+	if z.offset < z.valid {
+		n = copy(p, z.buffer[z.offset:z.valid])
+		z.offset += n
+		return n, nil
+	}
+
+	// read next block
+	if z.buffer == nil {
+		z.buffer = make([]byte, tarBlockSize)
+	}
+	z.valid = 0
+	z.offset = 0
+
+	// read full block
+	for z.valid < tarBlockSize {
+		rn, rerr := z.r.Read(z.buffer[z.valid:tarBlockSize])
+		z.valid += rn
+		if rerr != nil {
+			if rerr == io.EOF && z.valid > 0 {
+				break
+			}
+			return 0, rerr
+		}
+	}
+
+	// if we read full block and it's all zeros, skip it and try again
+	if z.valid == tarBlockSize && isZeroBlock(z.buffer) {
+		z.valid = 0
+		z.offset = 0
+		return z.Read(p)
+	}
+
+	// return data from buffer
+	n = copy(p, z.buffer[z.offset:z.valid])
+	z.offset += n
+	return n, nil
+}
+
+func extractTar(reader io.Reader, outputDir string) error {
+	zeroSkippingReader := &zeroBlockSkippingReader{r: reader, buffer: nil, offset: 0, valid: 0}
+	tarReader := tar.NewReader(zeroSkippingReader)
+
+	// clean and resolve the output directory to an absolute path
 	cleanOutputDir, err := filepath.Abs(filepath.Clean(outputDir))
 	if err != nil {
 		return fmt.Errorf("failed to resolve output directory: %w", err)

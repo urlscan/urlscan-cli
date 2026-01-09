@@ -282,3 +282,243 @@ func TestUnpackTarGzip(t *testing.T) {
 		t.Error("'dir' is not a directory")
 	}
 }
+
+func TestUnpackTarWithZeroBlocks(t *testing.T) {
+	// setup fixture - create a tar file with zero blocks inserted
+	tempDir := t.TempDir()
+
+	testFiles := map[string][]byte{
+		"file1.txt": []byte("Content of file 1"),
+		"file2.txt": []byte("Content of file 2"),
+	}
+
+	tarFilePath := filepath.Join(tempDir, "test_with_zeros.tar")
+
+	tarFile, err := os.Create(tarFilePath)
+	if err != nil {
+		t.Fatalf("Failed to create test tar file: %v", err)
+	}
+
+	tarWriter := tar.NewWriter(tarFile)
+
+	// write first file
+	header1 := &tar.Header{
+		Name:       "file1.txt",
+		Mode:       0o644,
+		Size:       int64(len(testFiles["file1.txt"])),
+		Typeflag:   tar.TypeReg,
+		Format:     tar.FormatPAX,
+		Linkname:   "",
+		Uid:        0,
+		Gid:        0,
+		Uname:      "",
+		Gname:      "",
+		ModTime:    time.Time{},
+		AccessTime: time.Time{},
+		ChangeTime: time.Time{},
+		Devmajor:   0,
+		Devminor:   0,
+		PAXRecords: nil,
+		Xattrs:     nil,
+	}
+	if err := tarWriter.WriteHeader(header1); err != nil {
+		t.Fatalf("Failed to write file1 header: %v", err)
+	}
+	if _, err := tarWriter.Write(testFiles["file1.txt"]); err != nil {
+		t.Fatalf("Failed to write file1 content: %v", err)
+	}
+
+	// close tar writer to flush buffers
+	if err := tarWriter.Close(); err != nil {
+		t.Fatalf("Failed to close tar writer: %v", err)
+	}
+
+	// manually append zero blocks (this simulates corrupted or padded tar files)
+	zeroBlock := make([]byte, tarBlockSize)
+	for range 3 {
+		_, err := tarFile.Write(zeroBlock)
+		if err != nil {
+			t.Fatalf("Failed to write zero block: %v", err)
+		}
+	}
+
+	// now write second file by creating a new tar writer
+	tarWriter2 := tar.NewWriter(tarFile)
+	header2 := &tar.Header{
+		Name:       "file2.txt",
+		Mode:       0o644,
+		Size:       int64(len(testFiles["file2.txt"])),
+		Typeflag:   tar.TypeReg,
+		Format:     tar.FormatPAX,
+		Linkname:   "",
+		Uid:        0,
+		Gid:        0,
+		Uname:      "",
+		Gname:      "",
+		ModTime:    time.Time{},
+		AccessTime: time.Time{},
+		ChangeTime: time.Time{},
+		Devmajor:   0,
+		Devminor:   0,
+		PAXRecords: nil,
+		Xattrs:     nil,
+	}
+	err = tarWriter2.WriteHeader(header2)
+	if err != nil {
+		t.Fatalf("Failed to write file2 header: %v", err)
+	}
+	_, err = tarWriter2.Write(testFiles["file2.txt"])
+	if err != nil {
+		t.Fatalf("Failed to write file2 content: %v", err)
+	}
+
+	err = tarWriter2.Close()
+	if err != nil {
+		t.Fatalf("Failed to close second tar writer: %v", err)
+	}
+
+	err = tarFile.Close()
+	if err != nil {
+		t.Fatalf("Failed to close tar file: %v", err)
+	}
+
+	// test unpacking - should succeed with zero block skipping
+	err = Unpack(tarFilePath)
+	if err != nil {
+		t.Fatalf("Unpack failed for tar with zero blocks: %v", err)
+	}
+
+	// verify both files were extracted with correct content
+	for filename, expectedContent := range testFiles {
+		extractedPath := filepath.Join(tempDir, filename)
+		content, err := os.ReadFile(extractedPath)
+		if err != nil {
+			t.Errorf("Failed to read extracted file %s: %v", filename, err)
+			continue
+		}
+
+		if string(content) != string(expectedContent) {
+			t.Errorf("Content mismatch for %s: got %q, want %q", filename, string(content), string(expectedContent))
+		}
+	}
+}
+
+func TestUnpackTarGzipWithZeroBlocks(t *testing.T) {
+	// setup fixture - create a tar.gz file with zero blocks inserted in the tar stream
+	tempDir := t.TempDir()
+
+	testFiles := map[string][]byte{
+		"file1.txt": []byte("Content of file 1"),
+		"file2.txt": []byte("Content of file 2"),
+	}
+
+	tarGzFilePath := filepath.Join(tempDir, "test_with_zeros.tar.gz")
+
+	tarGzFile, err := os.Create(tarGzFilePath)
+	if err != nil {
+		t.Fatalf("Failed to create test tar.gz file: %v", err)
+	}
+
+	gzWriter := gzip.NewWriter(tarGzFile)
+	tarWriter := tar.NewWriter(gzWriter)
+
+	// write first file
+	header1 := &tar.Header{
+		Name:       "file1.txt",
+		Mode:       0o644,
+		Size:       int64(len(testFiles["file1.txt"])),
+		Typeflag:   tar.TypeReg,
+		Format:     tar.FormatPAX,
+		Linkname:   "",
+		Uid:        0,
+		Gid:        0,
+		Uname:      "",
+		Gname:      "",
+		ModTime:    time.Time{},
+		AccessTime: time.Time{},
+		ChangeTime: time.Time{},
+		Devmajor:   0,
+		Devminor:   0,
+		PAXRecords: nil,
+		Xattrs:     nil,
+	}
+	if err := tarWriter.WriteHeader(header1); err != nil {
+		t.Fatalf("Failed to write file1 header: %v", err)
+	}
+	if _, err := tarWriter.Write(testFiles["file1.txt"]); err != nil {
+		t.Fatalf("Failed to write file1 content: %v", err)
+	}
+
+	// flush and close tar writer
+	if err := tarWriter.Close(); err != nil {
+		t.Fatalf("Failed to close tar writer: %v", err)
+	}
+
+	// manually append zero blocks through the gzip writer
+	zeroBlock := make([]byte, tarBlockSize)
+	for range 3 {
+		if _, err := gzWriter.Write(zeroBlock); err != nil {
+			t.Fatalf("Failed to write zero block: %v", err)
+		}
+	}
+
+	// write second file with a new tar writer
+	tarWriter2 := tar.NewWriter(gzWriter)
+	header2 := &tar.Header{
+		Name:       "file2.txt",
+		Mode:       0o644,
+		Size:       int64(len(testFiles["file2.txt"])),
+		Typeflag:   tar.TypeReg,
+		Format:     tar.FormatPAX,
+		Linkname:   "",
+		Uid:        0,
+		Gid:        0,
+		Uname:      "",
+		Gname:      "",
+		ModTime:    time.Time{},
+		AccessTime: time.Time{},
+		ChangeTime: time.Time{},
+		Devmajor:   0,
+		Devminor:   0,
+		PAXRecords: nil,
+		Xattrs:     nil,
+	}
+	if err := tarWriter2.WriteHeader(header2); err != nil {
+		t.Fatalf("Failed to write file2 header: %v", err)
+	}
+	if _, err := tarWriter2.Write(testFiles["file2.txt"]); err != nil {
+		t.Fatalf("Failed to write file2 content: %v", err)
+	}
+
+	if err := tarWriter2.Close(); err != nil {
+		t.Fatalf("Failed to close second tar writer: %v", err)
+	}
+
+	if err := gzWriter.Close(); err != nil {
+		t.Fatalf("Failed to close gzip writer: %v", err)
+	}
+
+	if err := tarGzFile.Close(); err != nil {
+		t.Fatalf("Failed to close tar.gz file: %v", err)
+	}
+
+	// test unpacking - should succeed with zero block skipping
+	err = Unpack(tarGzFilePath)
+	if err != nil {
+		t.Fatalf("Unpack failed for tar.gz with zero blocks: %v", err)
+	}
+
+	// verify both files were extracted with correct content
+	for filename, expectedContent := range testFiles {
+		extractedPath := filepath.Join(tempDir, filename)
+		content, err := os.ReadFile(extractedPath)
+		if err != nil {
+			t.Errorf("Failed to read extracted file %s: %v", filename, err)
+			continue
+		}
+
+		if string(content) != string(expectedContent) {
+			t.Errorf("Content mismatch for %s: got %q, want %q", filename, string(content), string(expectedContent))
+		}
+	}
+}
