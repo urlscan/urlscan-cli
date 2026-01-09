@@ -20,7 +20,13 @@ func Unpack(path string) error {
 	if err != nil {
 		return fmt.Errorf("failed to open file: %w", err)
 	}
-	defer func() { _ = file.Close() }()
+	defer func() {
+		closeErr := file.Close()
+
+		if closeErr != nil {
+			err = closeErr
+		}
+	}()
 
 	isTarGzipped, err := isTarGzipFile(path)
 	if err != nil {
@@ -120,7 +126,13 @@ func isTarGzipFile(path string) (bool, error) {
 	if err != nil {
 		return false, fmt.Errorf("failed to open file: %w", err)
 	}
-	defer func() { _ = file.Close() }()
+	defer func() {
+		closeErr := file.Close()
+
+		if closeErr != nil {
+			err = closeErr
+		}
+	}()
 
 	// first check if it's gzipped
 	isGzipped, err := isGzipFile(file)
@@ -142,7 +154,13 @@ func isTarGzipFile(path string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	defer func() { _ = gzReader.Close() }()
+	defer func() {
+		closeErr := gzReader.Close()
+
+		if closeErr != nil {
+			err = closeErr
+		}
+	}()
 
 	// read the first 512 bytes from the decompressed content
 	header := make([]byte, 512)
@@ -164,13 +182,25 @@ func unpackGzip(file *os.File, outputPath string) error {
 	if err != nil {
 		return fmt.Errorf("failed to create gzip reader: %w", err)
 	}
-	defer func() { _ = gzReader.Close() }()
+	defer func() {
+		closeErr := gzReader.Close()
+
+		if closeErr != nil {
+			err = closeErr
+		}
+	}()
 
 	outFile, err := os.Create(outputPath)
 	if err != nil {
 		return fmt.Errorf("failed to create output file: %w", err)
 	}
-	defer func() { _ = outFile.Close() }()
+	defer func() {
+		closeErr := outFile.Close()
+
+		if closeErr != nil {
+			err = closeErr
+		}
+	}()
 
 	_, err = io.Copy(outFile, gzReader)
 	if err != nil {
@@ -236,7 +266,13 @@ func unpackTarGzip(file *os.File, outputDir string) error {
 	if err != nil {
 		return fmt.Errorf("failed to create gzip reader: %w", err)
 	}
-	defer func() { _ = gzReader.Close() }()
+	defer func() {
+		closeErr := gzReader.Close()
+
+		if closeErr != nil {
+			err = closeErr
+		}
+	}()
 
 	tarReader := tar.NewReader(gzReader)
 	return extractTar(tarReader, outputDir)
