@@ -70,17 +70,16 @@ func Unpack(path string) error {
 		return fmt.Errorf("failed to reset file pointer: %w", err)
 	}
 
-	if !isTar {
-		return fmt.Errorf("unsupported file format for unpacking")
+	if isTar {
+		outputDir := filepath.Dir(path)
+		err = unpackTar(file, outputDir)
+		if err != nil {
+			return fmt.Errorf("failed to extract tar: %w", err)
+		}
+		return nil
 	}
 
-	outputDir := filepath.Dir(path)
-	err = unpackTar(file, outputDir)
-	if err != nil {
-		return fmt.Errorf("failed to extract tar: %w", err)
-	}
-
-	return nil
+	return fmt.Errorf("unsupported file format for unpacking")
 }
 
 func isGzipFile(file *os.File) (bool, error) {
