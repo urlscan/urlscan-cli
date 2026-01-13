@@ -12,6 +12,7 @@ import (
 )
 
 var DownloadCmdExample = `  urlscan pro datadump download days/api/20260101.gz
+  urlscan pro datadump download hours/api/20260101/20260101-01.gz
   echo "<path>" | urlscan pro datadump download -`
 
 var downloadCmd = &cobra.Command{
