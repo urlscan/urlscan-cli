@@ -36,7 +36,7 @@ func TestExtractGzip(t *testing.T) {
 	}
 
 	// test extracting
-	err = Extract(gzFilePath)
+	err = Extract(gzFilePath, NewExtractOptions())
 	if err != nil {
 		t.Fatalf("Extract failed: %v", err)
 	}
@@ -138,7 +138,7 @@ func TestExtractTar(t *testing.T) {
 	}
 
 	// test extracting
-	err = Extract(tarFilePath)
+	err = Extract(tarFilePath, NewExtractOptions())
 	if err != nil {
 		t.Fatalf("Extract failed for tar: %v", err)
 	}
@@ -254,7 +254,7 @@ func TestExtractTarGzip(t *testing.T) {
 	}
 
 	// test extracting
-	err = Extract(tarGzFilePath)
+	err = Extract(tarGzFilePath, NewExtractOptions())
 	if err != nil {
 		t.Fatalf("Extract failed for tar.gz: %v", err)
 	}
@@ -383,7 +383,7 @@ func TestExtractTarWithZeroBlocks(t *testing.T) {
 	}
 
 	// test extracting - should succeed with zero block skipping
-	err = Extract(tarFilePath)
+	err = Extract(tarFilePath, NewExtractOptions())
 	if err != nil {
 		t.Fatalf("Extract failed for tar with zero blocks: %v", err)
 	}
@@ -400,6 +400,71 @@ func TestExtractTarWithZeroBlocks(t *testing.T) {
 		if string(content) != string(expectedContent) {
 			t.Errorf("Content mismatch for %s: got %q, want %q", filename, string(content), string(expectedContent))
 		}
+	}
+}
+
+func TestExtractWithForceOption(t *testing.T) {
+	// test that extraction fails when file exists and force is false
+	tempDir := t.TempDir()
+
+	testContent := []byte("Original content")
+	gzFilePath := filepath.Join(tempDir, "test.gz")
+	extractedPath := filepath.Join(tempDir, "test")
+
+	// create gzip file
+	gzFile, err := os.Create(gzFilePath)
+	if err != nil {
+		t.Fatalf("Failed to create test gzip file: %v", err)
+	}
+
+	gzWriter := gzip.NewWriter(gzFile)
+	_, err = gzWriter.Write(testContent)
+	if err != nil {
+		t.Fatalf("Failed to write test content: %v", err)
+	}
+	err = gzWriter.Close()
+	if err != nil {
+		t.Fatalf("Failed to close gzip writer: %v", err)
+	}
+	err = gzFile.Close()
+	if err != nil {
+		t.Fatalf("Failed to close gzip file: %v", err)
+	}
+
+	// create existing file
+	err = os.WriteFile(extractedPath, []byte("Existing content"), 0o644)
+	if err != nil {
+		t.Fatalf("Failed to create existing file: %v", err)
+	}
+
+	// test extraction with force=false should fail
+	err = Extract(gzFilePath, NewExtractOptions(WithExtractForce(false)))
+	if err == nil {
+		t.Fatal("Expected error when extracting with existing file and force=false, got nil")
+	}
+
+	// verify the existing file was not overwritten
+	content, err := os.ReadFile(extractedPath)
+	if err != nil {
+		t.Fatalf("Failed to read existing file: %v", err)
+	}
+	if string(content) != "Existing content" {
+		t.Errorf("Existing file was modified: got %q, want %q", string(content), "Existing content")
+	}
+
+	// test extraction with force=true should succeed
+	err = Extract(gzFilePath, NewExtractOptions(WithExtractForce(true)))
+	if err != nil {
+		t.Fatalf("Extract failed with force=true: %v", err)
+	}
+
+	// verify the file was overwritten with new content
+	content, err = os.ReadFile(extractedPath)
+	if err != nil {
+		t.Fatalf("Failed to read extracted file: %v", err)
+	}
+	if string(content) != string(testContent) {
+		t.Errorf("Content mismatch after forced extraction: got %q, want %q", string(content), string(testContent))
 	}
 }
 
@@ -503,7 +568,7 @@ func TestExtractTarGzipWithZeroBlocks(t *testing.T) {
 	}
 
 	// test extracting - should succeed with zero block skipping
-	err = Extract(tarGzFilePath)
+	err = Extract(tarGzFilePath, NewExtractOptions())
 	if err != nil {
 		t.Fatalf("Extract failed for tar.gz with zero blocks: %v", err)
 	}

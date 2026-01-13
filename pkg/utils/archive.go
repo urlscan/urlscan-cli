@@ -11,7 +11,27 @@ import (
 	"strings"
 )
 
-func Extract(path string) error {
+type ExtractOptions struct {
+	force bool
+}
+
+type ExtractOption func(*ExtractOptions)
+
+func WithExtractForce(force bool) ExtractOption {
+	return func(opts *ExtractOptions) {
+		opts.force = force
+	}
+}
+
+func NewExtractOptions(opts ...ExtractOption) *ExtractOptions {
+	var o ExtractOptions
+	for _, fn := range opts {
+		fn(&o)
+	}
+	return &o
+}
+
+func Extract(path string, opts *ExtractOptions) error {
 	file, err := os.Open(path)
 	if err != nil {
 		return fmt.Errorf("failed to open file: %w", err)
@@ -47,7 +67,7 @@ func Extract(path string) error {
 
 	if isTared {
 		outputDir := filepath.Dir(path)
-		err = extractTar(reader, outputDir)
+		err = extractTar(reader, outputDir, opts)
 		if err != nil {
 			return fmt.Errorf("failed to extract tar: %w", err)
 		}
@@ -56,6 +76,15 @@ func Extract(path string) error {
 
 	if isGzipped {
 		outputPath := strings.TrimSuffix(path, ".gz")
+
+		// check if file exists and force is false
+		if !opts.force {
+			err := checkFileExists(outputPath)
+			if err != nil {
+				return err
+			}
+		}
+
 		outFile, err := os.OpenFile(outputPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0o644)
 		if err != nil {
 			return fmt.Errorf("failed to create output file: %w", err)
@@ -131,7 +160,7 @@ func (z *zeroBlockSkippingReader) Read(p []byte) (n int, err error) {
 	return n, nil
 }
 
-func extractTar(reader io.Reader, outputDir string) error {
+func extractTar(reader io.Reader, outputDir string, opts *ExtractOptions) error {
 	zeroSkippingReader := &zeroBlockSkippingReader{r: reader, buffer: nil, offset: 0, valid: 0}
 	tarReader := tar.NewReader(zeroSkippingReader)
 
@@ -165,6 +194,14 @@ func extractTar(reader io.Reader, outputDir string) error {
 				return fmt.Errorf("failed to create directory %s: %w", target, err)
 			}
 		case tar.TypeReg:
+			// check if file exists and force is false
+			if !opts.force {
+				err := checkFileExists(target)
+				if err != nil {
+					return err
+				}
+			}
+
 			// ensure parent directory exists
 			err := os.MkdirAll(filepath.Dir(target), 0o755)
 			if err != nil {

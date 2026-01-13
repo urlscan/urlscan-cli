@@ -2,12 +2,20 @@ package utils
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 )
 
 func fileExists(path string) bool {
 	_, err := os.Stat(path)
 	return !os.IsNotExist(err)
+}
+
+func checkFileExists(path string) error {
+	if fileExists(path) {
+		return fmt.Errorf("%s already exists, use --force to overwrite", path)
+	}
+	return nil
 }
 
 func resolveFile(s string) ([]string, error) {

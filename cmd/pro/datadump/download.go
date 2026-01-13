@@ -56,7 +56,7 @@ var downloadCmd = &cobra.Command{
 		}
 
 		if extract {
-			err = utils.Extract(output)
+			err = utils.Extract(output, utils.NewExtractOptions(utils.WithExtractForce(force)))
 			if err != nil {
 				return err
 			}
