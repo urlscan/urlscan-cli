@@ -70,7 +70,7 @@ func init() {
 	flags.AddOutputFlag(downloadCmd, "<path>.gz")
 	flags.AddForceFlag(downloadCmd)
 
-	downloadCmd.Flags().BoolP("extract", "e", false, "Extract the downloaded file")
+	downloadCmd.Flags().BoolP("extract", "x", false, "Extract the downloaded file")
 
 	RootCmd.AddCommand(downloadCmd)
 }

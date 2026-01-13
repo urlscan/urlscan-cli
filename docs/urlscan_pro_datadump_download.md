@@ -17,7 +17,7 @@ urlscan pro datadump download [flags]
 ### Options
 
 ```
-  -e, --extract         Extract the downloaded file
+  -x, --extract         Extract the downloaded file
   -f, --force           Force overwrite an existing file
   -h, --help            help for download
   -o, --output string   Output file name (default <path>.gz)
