@@ -2,7 +2,6 @@ package utils
 
 import (
 	"archive/tar"
-	"bufio"
 	"bytes"
 	"compress/gzip"
 	"fmt"
@@ -25,16 +24,9 @@ func Extract(path string) error {
 		}
 	}()
 
-	// check if gzipped
-	isGzipped, err := isGzip(file)
-	if err != nil {
-		return fmt.Errorf("failed to check file format: %w", err)
-	}
-	// reset file pointer
-	_, err = file.Seek(0, 0)
-	if err != nil {
-		return err
-	}
+	// check if gzipped and/or tarred
+	isGzipped := strings.HasSuffix(path, ".gz")
+	isTared := strings.HasSuffix(path, ".tar") || strings.HasSuffix(path, ".tar.gz")
 
 	// create reader chain based on compression
 	var reader io.Reader = file
@@ -53,16 +45,9 @@ func Extract(path string) error {
 		reader = gzReader
 	}
 
-	// use buffered reader to peek at content
-	bufReader := bufio.NewReader(reader)
-	isTared, err := isTarFromBuffered(bufReader)
-	if err != nil {
-		return fmt.Errorf("failed to check tar format: %w", err)
-	}
-
 	if isTared {
 		outputDir := filepath.Dir(path)
-		err = extractTar(bufReader, outputDir)
+		err = extractTar(reader, outputDir)
 		if err != nil {
 			return fmt.Errorf("failed to extract tar: %w", err)
 		}
@@ -82,7 +67,7 @@ func Extract(path string) error {
 			}
 		}()
 
-		_, err = io.Copy(outFile, bufReader)
+		_, err = io.Copy(outFile, reader)
 		if err != nil {
 			return fmt.Errorf("failed to write extracted file: %w", err)
 		}
@@ -92,35 +77,7 @@ func Extract(path string) error {
 	return fmt.Errorf("unsupported file format for extracting")
 }
 
-func isGzip(reader io.Reader) (bool, error) {
-	buf := make([]byte, 2)
-	n, err := reader.Read(buf)
-	if err != nil && err != io.EOF {
-		return false, err
-	}
-	if n < 2 {
-		return false, nil
-	}
-
-	// check for gzip magic number (0x1f 0x8b)
-	return buf[0] == 0x1f && buf[1] == 0x8b, nil
-}
-
 const tarBlockSize = 512
-
-func isTarFromBuffered(reader *bufio.Reader) (bool, error) {
-	// Peek at first 512 bytes without consuming them
-	buf, err := reader.Peek(tarBlockSize)
-	if err != nil && err != io.EOF {
-		return false, err
-	}
-	if len(buf) < 512 {
-		return false, nil
-	}
-
-	// check for tar magic number ("ustar" at offset 257)
-	return string(buf[257:262]) == "ustar", nil
-}
 
 func isZeroBlock(b []byte) bool {
 	return bytes.Count(b, []byte{0}) == len(b)
