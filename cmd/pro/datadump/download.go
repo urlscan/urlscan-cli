@@ -38,7 +38,7 @@ var downloadCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
-		// disable auto gzip decompression for streamline extraction process
+		// disable auto gzip decompression to streamline extraction process
 		client.SetDisableCompression(true)
 
 		if output == "" {
