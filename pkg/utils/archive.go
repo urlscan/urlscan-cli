@@ -162,12 +162,6 @@ func extractTarFile(reader *tar.Reader, outputDir string, opts *ExtractOptions) 
 
 	target := filepath.Join(outputDir, header.Name)
 
-	// validate path doesn't escape outputDir (path traversal protection for just in case)
-	cleanTarget := filepath.Clean(target)
-	if !strings.HasPrefix(cleanTarget, outputDir+string(filepath.Separator)) && cleanTarget != outputDir {
-		return fmt.Errorf("illegal file path: %s (attempted path traversal)", header.Name)
-	}
-
 	switch header.Typeflag {
 	case tar.TypeDir:
 		err := os.MkdirAll(target, os.FileMode(header.Mode))
