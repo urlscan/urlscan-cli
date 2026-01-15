@@ -99,6 +99,25 @@ func (c *Client) SetAgent(agent string) *Client {
 	return c
 }
 
+func (c *Client) SetDisableCompression(disable bool) *Client {
+	if c.httpClient == nil {
+		c.httpClient = &http.Client{}
+	}
+	transport, ok := c.httpClient.Transport.(*http.Transport)
+	if ok {
+		transport.DisableCompression = disable
+	} else {
+		transport, ok := c.httpClient.Transport.(*RetryTransport)
+		if ok {
+			innerTransport, ok := transport.Transport.(*http.Transport)
+			if ok {
+				innerTransport.DisableCompression = disable
+			}
+		}
+	}
+	return c
+}
+
 func NewClient(APIKey string) *Client {
 	c := &Client{httpClient: &http.Client{}, BaseURL: &baseURL, APIKey: "", Agent: "", Err: nil}
 	c.SetAPIKey(APIKey)

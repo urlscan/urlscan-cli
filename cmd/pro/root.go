@@ -4,6 +4,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/urlscan/urlscan-cli/cmd/pro/brand"
 	"github.com/urlscan/urlscan-cli/cmd/pro/channel"
+	"github.com/urlscan/urlscan-cli/cmd/pro/datadump"
 	"github.com/urlscan/urlscan-cli/cmd/pro/incident"
 	"github.com/urlscan/urlscan-cli/cmd/pro/livescan"
 	"github.com/urlscan/urlscan-cli/cmd/pro/search"
@@ -22,4 +23,5 @@ func init() {
 	RootCmd.AddCommand(search.RootCmd)
 	RootCmd.AddCommand(incident.RootCmd)
 	RootCmd.AddCommand(livescan.RootCmd)
+	RootCmd.AddCommand(datadump.RootCmd)
 }
