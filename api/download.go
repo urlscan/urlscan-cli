@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func (c *Client) Download(path, output string) (int64, error) {
+func (c *Client) Download(path, output string) (n int64, err error) {
 	resp, err := c.NewRequest().Get(path)
 	if err != nil {
 		return 0, err
@@ -19,8 +19,7 @@ func (c *Client) Download(path, output string) (int64, error) {
 		}
 		defer func() {
 			closeErr := w.Close()
-
-			if closeErr != nil {
+			if closeErr != nil && err == nil {
 				err = closeErr
 			}
 		}()

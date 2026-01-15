@@ -18,14 +18,17 @@ func checkFileExists(path string) error {
 	return nil
 }
 
-func resolveFile(s string) ([]string, error) {
-	var outputs []string
-
+func resolveFile(s string) (outputs []string, err error) {
 	file, err := os.Open(s)
 	if err != nil {
 		return nil, err
 	}
-	defer file.Close() // nolint:errcheck
+	defer func() {
+		closeErr := file.Close()
+		if closeErr != nil && err == nil {
+			err = closeErr
+		}
+	}()
 
 	scanner := bufio.NewScanner(file)
 	scanner.Split(bufio.ScanWords)
