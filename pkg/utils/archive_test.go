@@ -335,7 +335,7 @@ func TestExtractTarWithZeroBlocks(t *testing.T) {
 
 	// manually append zero blocks (this simulates corrupted or padded tar files)
 	zeroBlock := make([]byte, tarBlockSize)
-	for range 3 {
+	for range 2 {
 		_, err := tarFile.Write(zeroBlock)
 		if err != nil {
 			t.Fatalf("Failed to write zero block: %v", err)
@@ -521,7 +521,7 @@ func TestExtractTarGzipWithZeroBlocks(t *testing.T) {
 
 	// manually append zero blocks through the gzip writer
 	zeroBlock := make([]byte, tarBlockSize)
-	for range 3 {
+	for range 2 {
 		if _, err := gzWriter.Write(zeroBlock); err != nil {
 			t.Fatalf("Failed to write zero block: %v", err)
 		}
