@@ -44,7 +44,7 @@ func Extract(path string, opts *ExtractOptions) error {
 		}
 	}()
 
-	// check if gzipped and/or tarred
+	// check if gzipped and/or tared
 	isGzipped := strings.HasSuffix(path, ".gz")
 	isTared := strings.HasSuffix(path, ".tar") || strings.HasSuffix(path, ".tar.gz")
 
