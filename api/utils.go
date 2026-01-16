@@ -1,7 +1,7 @@
 package api
 
 import (
-	"strings"
+	"net/url"
 )
 
 const (
@@ -9,8 +9,9 @@ const (
 )
 
 func PrefixedPath(path string) string {
-	// drop leading slashes to avoid double slashes in the URL
-	trimmed := strings.TrimPrefix(path, "/")
-	joined := strings.Join([]string{apiPrefix, trimmed}, "/")
-	return strings.ReplaceAll(joined, "//", "/")
+	result, err := url.JoinPath(apiPrefix, path)
+	if err != nil {
+		panic(err)
+	}
+	return result
 }

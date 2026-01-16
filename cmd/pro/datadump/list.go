@@ -5,7 +5,6 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/urlscan/urlscan-cli/api"
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
@@ -38,12 +37,12 @@ var listCmd = &cobra.Command{
 			return err
 		}
 
-		resp, err := client.NewRequest().Get(api.PrefixedPath(fmt.Sprintf("/datadump/list/%s", path)))
+		result, err := client.GetDataDumpList(path)
 		if err != nil {
 			return err
 		}
 
-		fmt.Print(resp.PrettyJSON())
+		fmt.Print(result.PrettyJSON())
 
 		return nil
 	},
