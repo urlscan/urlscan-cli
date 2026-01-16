@@ -14,7 +14,7 @@ const (
 )
 
 type Database struct {
-	db *bbolt.DB
+	*bbolt.DB
 }
 
 func getDatabaseFile() (string, error) {
@@ -46,15 +46,15 @@ func NewDatabase() (d *Database, err error) {
 		return nil, err
 	}
 
-	return &Database{db: db}, nil
+	return &Database{db}, nil
 }
 
 func (d *Database) Close() error {
-	return d.db.Close()
+	return d.DB.Close()
 }
 
 func (d *Database) GetDataDump(path string) (localPath string, exists bool, err error) {
-	err = d.db.View(func(tx *bbolt.Tx) error {
+	err = d.View(func(tx *bbolt.Tx) error {
 		b := tx.Bucket([]byte(dataDumpBucketName))
 		v := b.Get([]byte(path))
 		if v != nil {
@@ -68,14 +68,14 @@ func (d *Database) GetDataDump(path string) (localPath string, exists bool, err 
 }
 
 func (d *Database) SetDataDump(path, localPath string) error {
-	return d.db.Update(func(tx *bbolt.Tx) error {
+	return d.Update(func(tx *bbolt.Tx) error {
 		b := tx.Bucket([]byte(dataDumpBucketName))
 		return b.Put([]byte(path), []byte(localPath))
 	})
 }
 
 func (d *Database) DeleteDataDump(path string) error {
-	return d.db.Update(func(tx *bbolt.Tx) error {
+	return d.Update(func(tx *bbolt.Tx) error {
 		b := tx.Bucket([]byte(dataDumpBucketName))
 		return b.Delete([]byte(path))
 	})
