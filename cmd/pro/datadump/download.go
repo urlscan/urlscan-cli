@@ -76,40 +76,47 @@ var downloadCmd = &cobra.Command{
 		}
 
 		for _, path := range paths {
-			out := output
-			if output == "" {
-				out = filepath.Base(path)
-			}
-
-			err := utils.DownloadWithSpinner(
-				utils.NewDownloadOptions(
-					utils.WithDownloadClient(client),
-					utils.WithDownloadOutput(out),
-					utils.WithDownloadDirectoryPrefix(directoryPrefix),
-					utils.WithDownloadForce(force),
-					utils.WithDownloadURL(api.PrefixedPath(fmt.Sprintf("/datadump/link/%s", path))),
-				))
-			if err != nil {
+			if err := download(client, db, path, output, directoryPrefix, force, extract); err != nil {
 				return err
-			}
-
-			// update the database after successful download
-			err = db.SetDataDump(path, filepath.Join(directoryPrefix, out))
-			if err != nil {
-				return fmt.Errorf("failed to update the database: %w", err)
-			}
-
-			// extract if requested
-			if extract {
-				err = utils.Extract(out, utils.NewExtractOptions(utils.WithExtractForce(force), utils.WithExtractDirectoryPrefix(directoryPrefix)))
-				if err != nil {
-					return err
-				}
 			}
 		}
 
 		return nil
 	},
+}
+
+func download(client *utils.APIClient, db *utils.Database, path, output, directoryPrefix string, force, extract bool) error {
+	if output == "" {
+		output = filepath.Base(path)
+	}
+
+	err := utils.DownloadWithSpinner(
+		utils.NewDownloadOptions(
+			utils.WithDownloadClient(client),
+			utils.WithDownloadOutput(output),
+			utils.WithDownloadDirectoryPrefix(directoryPrefix),
+			utils.WithDownloadForce(force),
+			utils.WithDownloadURL(api.PrefixedPath(fmt.Sprintf("/datadump/link/%s", path))),
+		))
+	if err != nil {
+		return err
+	}
+
+	// update the database after successful download
+	err = db.SetDataDump(path, filepath.Join(directoryPrefix, output))
+	if err != nil {
+		return fmt.Errorf("failed to update the database: %w", err)
+	}
+
+	// extract if requested
+	if extract {
+		err = utils.Extract(output, utils.NewExtractOptions(utils.WithExtractForce(force), utils.WithExtractDirectoryPrefix(directoryPrefix)))
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func findMissingPaths(db *utils.Database, client *utils.APIClient, path string, force bool) ([]string, error) {
