@@ -25,6 +25,7 @@ var downloadCmd = &cobra.Command{
 		}
 
 		output, _ := cmd.Flags().GetString("output")
+		directoryPrefix, _ := cmd.Flags().GetString("directory-prefix")
 		force, _ := cmd.Flags().GetBool("force")
 		extract, _ := cmd.Flags().GetBool("extract")
 
@@ -47,6 +48,7 @@ var downloadCmd = &cobra.Command{
 		opts := utils.NewDownloadOptions(
 			utils.WithDownloadClient(client),
 			utils.WithDownloadOutput(output),
+			utils.WithDownloadDirectoryPrefix(directoryPrefix),
 			utils.WithDownloadForce(force),
 			utils.WithDownloadURL(api.PrefixedPath(fmt.Sprintf("/datadump/link/%s", path))),
 		)
@@ -56,7 +58,13 @@ var downloadCmd = &cobra.Command{
 		}
 
 		if extract {
-			err = utils.Extract(output, utils.NewExtractOptions(utils.WithExtractForce(force)))
+			err = utils.Extract(
+				output,
+				utils.NewExtractOptions(
+					utils.WithExtractForce(force),
+					utils.WithExtractDirectoryPrefix(directoryPrefix),
+				),
+			)
 			if err != nil {
 				return err
 			}
@@ -69,6 +77,7 @@ var downloadCmd = &cobra.Command{
 func init() {
 	flags.AddOutputFlag(downloadCmd, "<path>.gz")
 	flags.AddForceFlag(downloadCmd)
+	flags.AddDirectoryPrefixFlag(downloadCmd)
 
 	downloadCmd.Flags().BoolP("extract", "x", false, "Extract the downloaded file")
 

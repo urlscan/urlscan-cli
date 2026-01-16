@@ -70,3 +70,7 @@ func AddDOMFlag(cmd *cobra.Command) {
 func AddDownloadFlag(cmd *cobra.Command) {
 	cmd.Flags().Bool("download", false, "Download screenshot and DOM contents (overrides wait/dom/screenshot)")
 }
+
+func AddDirectoryPrefixFlag(cmd *cobra.Command) {
+	cmd.Flags().StringP("directory-prefix", "P", ".", "Set directory prefix where file will be saved")
+}

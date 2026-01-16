@@ -14,15 +14,16 @@ import (
 )
 
 type scanner struct {
-	client     *utils.APIClient
-	scanOpts   []api.ScanOption
-	batchOpts  []api.BatchOption
-	wait       bool
-	maxWait    int
-	force      bool
-	screenshot bool
-	dom        bool
-	ctx        context.Context
+	client          *utils.APIClient
+	scanOpts        []api.ScanOption
+	batchOpts       []api.BatchOption
+	wait            bool
+	maxWait         int
+	force           bool
+	directoryPrefix string
+	screenshot      bool
+	dom             bool
+	ctx             context.Context
 }
 
 func (s *scanner) newBatchScanWithDownloadTask(url string) api.BatchTask[*api.Response] {
@@ -50,6 +51,7 @@ func (s *scanner) newBatchScanWithDownloadTask(url string) api.BatchTask[*api.Re
 				utils.WithDownloadOutput(fmt.Sprintf("%s.png", scanResult.UUID)),
 				utils.WithDownloadForce(s.force),
 				utils.WithDownloadSilent(true),
+				utils.WithDownloadDirectoryPrefix(s.directoryPrefix),
 			)
 			downloadErr := utils.Download(downloadOpts)
 			if downloadErr != nil {
@@ -64,6 +66,7 @@ func (s *scanner) newBatchScanWithDownloadTask(url string) api.BatchTask[*api.Re
 				utils.WithDownloadOutput(fmt.Sprintf("%s.html", scanResult.UUID)),
 				utils.WithDownloadForce(s.force),
 				utils.WithDownloadSilent(true),
+				utils.WithDownloadDirectoryPrefix(s.directoryPrefix),
 			)
 			downloadErr := utils.Download(downloadOpts)
 			if downloadErr != nil {
@@ -114,6 +117,7 @@ func newScanner(cmd *cobra.Command) (*scanner, error) {
 	screenshot := newScreenshotFlag(cmd)
 	dom := newDOMFlag(cmd)
 	force, _ := cmd.Flags().GetBool("force")
+	directoryPrefix, _ := cmd.Flags().GetString("directory-prefix")
 
 	// override wait if dom or screenshot flag is set
 	wait = wait || screenshot || dom
@@ -130,12 +134,13 @@ func newScanner(cmd *cobra.Command) (*scanner, error) {
 			api.WithBatchMaxConcurrency(maxConcurrency),
 			api.WithBatchTimeout(timeout),
 		},
-		wait:       wait,
-		maxWait:    maxWait,
-		dom:        dom,
-		screenshot: screenshot,
-		force:      force,
-		ctx:        cmd.Context(),
+		wait:            wait,
+		maxWait:         maxWait,
+		dom:             dom,
+		screenshot:      screenshot,
+		force:           force,
+		directoryPrefix: directoryPrefix,
+		ctx:             cmd.Context(),
 	}, nil
 }
 
@@ -178,6 +183,7 @@ var bulkSubmitCmd = &cobra.Command{
 func init() {
 	addScanFlags(bulkSubmitCmd)
 	flags.AddForceFlag(bulkSubmitCmd)
+	flags.AddDirectoryPrefixFlag(bulkSubmitCmd)
 
 	bulkSubmitCmd.Flags().Int("max-concurrency", 5, "Maximum number of concurrent requests for batch operation")
 	bulkSubmitCmd.Flags().Int("timeout", 60*30, "Timeout for the batch operation in seconds, 0 means no timeout")
