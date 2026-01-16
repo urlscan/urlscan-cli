@@ -3,6 +3,7 @@ module github.com/urlscan/urlscan-cli
 go 1.24.3
 
 require (
+	github.com/adrg/xdg v0.5.3
 	github.com/briandowns/spinner v1.23.2
 	github.com/h2non/gock v1.2.0
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
@@ -12,6 +13,7 @@ require (
 	github.com/spf13/pflag v1.0.10
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.11.1
+	go.etcd.io/bbolt v1.4.3
 	golang.org/x/sync v0.19.0
 )
 
