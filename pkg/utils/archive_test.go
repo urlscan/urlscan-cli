@@ -36,7 +36,7 @@ func TestExtractGzip(t *testing.T) {
 	}
 
 	// test extracting
-	err = Extract(gzFilePath, NewExtractOptions())
+	err = Extract("test.gz", NewExtractOptions(WithExtractDirectoryPrefix(tempDir)))
 	if err != nil {
 		t.Fatalf("Extract failed: %v", err)
 	}
@@ -138,7 +138,7 @@ func TestExtractTar(t *testing.T) {
 	}
 
 	// test extracting
-	err = Extract(tarFilePath, NewExtractOptions())
+	err = Extract("test.tar", NewExtractOptions(WithExtractDirectoryPrefix(tempDir)))
 	if err != nil {
 		t.Fatalf("Extract failed for tar: %v", err)
 	}
@@ -254,7 +254,7 @@ func TestExtractTarGzip(t *testing.T) {
 	}
 
 	// test extracting
-	err = Extract(tarGzFilePath, NewExtractOptions())
+	err = Extract("test.tar.gz", NewExtractOptions(WithExtractDirectoryPrefix(tempDir)))
 	if err != nil {
 		t.Fatalf("Extract failed for tar.gz: %v", err)
 	}
@@ -383,7 +383,7 @@ func TestExtractTarWithZeroBlocks(t *testing.T) {
 	}
 
 	// test extracting - should succeed with zero block skipping
-	err = Extract(tarFilePath, NewExtractOptions())
+	err = Extract("test_with_zeros.tar", NewExtractOptions(WithExtractDirectoryPrefix(tempDir)))
 	if err != nil {
 		t.Fatalf("Extract failed for tar with zero blocks: %v", err)
 	}
@@ -438,7 +438,7 @@ func TestExtractWithForceOption(t *testing.T) {
 	}
 
 	// test extraction with force=false should fail
-	err = Extract(gzFilePath, NewExtractOptions(WithExtractForce(false)))
+	err = Extract("test.gz", NewExtractOptions(WithExtractForce(false), WithExtractDirectoryPrefix(tempDir)))
 	if err == nil {
 		t.Fatal("Expected error when extracting with existing file and force=false, got nil")
 	}
@@ -453,7 +453,7 @@ func TestExtractWithForceOption(t *testing.T) {
 	}
 
 	// test extraction with force=true should succeed
-	err = Extract(gzFilePath, NewExtractOptions(WithExtractForce(true)))
+	err = Extract("test.gz", NewExtractOptions(WithExtractForce(true), WithExtractDirectoryPrefix(tempDir)))
 	if err != nil {
 		t.Fatalf("Extract failed with force=true: %v", err)
 	}
@@ -568,7 +568,7 @@ func TestExtractTarGzipWithZeroBlocks(t *testing.T) {
 	}
 
 	// test extracting - should succeed with zero block skipping
-	err = Extract(tarGzFilePath, NewExtractOptions())
+	err = Extract("test_with_zeros.tar.gz", NewExtractOptions(WithExtractDirectoryPrefix(tempDir)))
 	if err != nil {
 		t.Fatalf("Extract failed for tar.gz with zero blocks: %v", err)
 	}
