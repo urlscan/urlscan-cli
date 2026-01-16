@@ -31,15 +31,14 @@ func NewExtractOptions(opts ...ExtractOption) *ExtractOptions {
 	return &o
 }
 
-func Extract(path string, opts *ExtractOptions) error {
+func Extract(path string, opts *ExtractOptions) (err error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return fmt.Errorf("failed to open file: %w", err)
 	}
 	defer func() {
 		closeErr := file.Close()
-
-		if closeErr != nil {
+		if closeErr != nil && err == nil {
 			err = closeErr
 		}
 	}()
