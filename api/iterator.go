@@ -94,6 +94,13 @@ func IteratorDatasource(datasource string) IteratorOption {
 	}
 }
 
+func IteratorCollapse(collapse string) IteratorOption {
+	return func(it *Iterator) error {
+		it.collapse = collapse
+		return nil
+	}
+}
+
 type Iterator struct {
 	client      *Client
 	path        string
@@ -104,6 +111,7 @@ type Iterator struct {
 	q           string
 	searchAfter string
 	datasource  string
+	collapse    string
 	count       int
 	HasMore     bool
 	Total       int
@@ -120,6 +128,7 @@ func newIterator(c *Client, path string, options ...IteratorOption) (*Iterator, 
 		all:         false,
 		count:       0,
 		datasource:  "",
+		collapse:    "",
 		HasMore:     true,
 		limit:       0,
 		q:           "",
@@ -144,6 +153,10 @@ func newIterator(c *Client, path string, options ...IteratorOption) (*Iterator, 
 
 	if it.datasource != "" {
 		it.request.SetQueryParam("datasource", it.datasource)
+	}
+
+	if it.collapse != "" {
+		it.request.SetQueryParam("collapse", it.collapse)
 	}
 
 	if it.size > 0 {
