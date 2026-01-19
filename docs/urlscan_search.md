@@ -17,6 +17,7 @@ urlscan search <query> [flags]
 
 ```
       --all                   Return all results; limit is ignored if --all is specified (default false)
+  -c, --collapse string       Field to collapse results on
   -D, --datasource string     Datasources to search: scans (urlscan.io), hostnames, incidents, notifications, certificates (urlscan Pro) (default "scans")
   -h, --help                  help for search
   -l, --limit int             Maximum number of results that will be returned by the iterator (default 10000)
