@@ -28,6 +28,19 @@ func addProxyFlag(flags *pflag.FlagSet) {
 	flags.MarkHidden("proxy") //nolint:errcheck
 }
 
+func setProxyEnv(proxy string) error {
+	err := os.Setenv("HTTP_PROXY", proxy)
+	if err != nil {
+		return err
+	}
+	err = os.Setenv("HTTPS_PROXY", proxy)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 var RootCmd = &cobra.Command{
 	Use:          "urlscan",
 	Short:        "A CLI tool for interacting with urlscan.io",
@@ -46,7 +59,10 @@ var RootCmd = &cobra.Command{
 		}
 		proxy := viper.GetString("proxy")
 		if proxy != "" {
-			os.Setenv("http_proxy", proxy) //nolint:errcheck
+			err := setProxyEnv(proxy)
+			if err != nil {
+				return fmt.Errorf("failed to set proxy: %w", err)
+			}
 		}
 
 		// check API key presence
