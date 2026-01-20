@@ -81,7 +81,7 @@ func (d *Database) DeleteDataDump(path string) error {
 	})
 }
 
-func (d *Database) IsDataDumpDownloaded(path string) (bool, error) {
+func (d *Database) HasDataDumpBeenDownloaded(path string) (bool, error) {
 	localPath, exists, err := d.GetDataDump(path)
 	if err != nil {
 		return false, err
