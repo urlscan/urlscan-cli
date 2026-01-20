@@ -65,7 +65,7 @@ var downloadCmd = &cobra.Command{
 		paths := []string{path}
 		if follow {
 			if strings.HasSuffix(path, ".gz") || strings.HasSuffix(path, ".tar.gz") {
-				return fmt.Errorf("--follow option cannot be used with a specific file path")
+				return fmt.Errorf("--follow option can only be used on entire directories, not individual files")
 			}
 
 			missingPaths, err := findMissingPaths(db, client, path, force)
