@@ -127,12 +127,17 @@ func findMissingPaths(db *utils.Database, client *utils.APIClient, path string, 
 
 	paths := []string{}
 	for _, file := range list.Files {
+		// if force is set, re-download all files
+		if force {
+			paths = append(paths, file.Path)
+			continue
+		}
+
 		downloaded, err := db.IsDataDumpDownloaded(file.Path)
 		if err != nil {
 			return nil, fmt.Errorf("failed to check download status for %s: %w", file.Path, err)
 		}
-		// if force is set, re-download all files
-		if !downloaded || force {
+		if !downloaded {
 			paths = append(paths, file.Path)
 		}
 	}
