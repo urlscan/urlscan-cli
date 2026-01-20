@@ -64,7 +64,7 @@ var downloadCmd = &cobra.Command{
 		// explode paths to download
 		paths := []string{path}
 		if follow {
-			if strings.HasSuffix(path, ".gz") || strings.HasSuffix(path, ".tar.gz") {
+			if strings.HasSuffix(path, ".gz") {
 				return fmt.Errorf("--follow option can only be used on entire directories, not individual files")
 			}
 
