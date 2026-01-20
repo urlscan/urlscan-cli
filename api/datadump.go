@@ -13,8 +13,9 @@ type DataDumpList struct {
 }
 
 type DataDumpFile struct {
-	Size int64  `json:"size"`
-	Path string `json:"path"`
+	Size      int64  `json:"size"`
+	Path      string `json:"path"`
+	Timestamp string `json:"timestamp"`
 }
 
 func (r *DataDumpList) PrettyJSON() string {
