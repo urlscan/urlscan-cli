@@ -133,7 +133,7 @@ func findMissingPaths(db *utils.Database, client *utils.APIClient, path string, 
 			continue
 		}
 
-		downloaded, err := db.IsDataDumpDownloaded(file.Path)
+		downloaded, err := db.HasDataDumpBeenDownloaded(file.Path)
 		if err != nil {
 			return nil, fmt.Errorf("failed to check download status for %s: %w", file.Path, err)
 		}

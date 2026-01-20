@@ -72,7 +72,7 @@ func TestDownload(t *testing.T) {
 		assert.Equal(t, "test content", string(content))
 
 		// verify database was updated
-		downloaded, err := db.IsDataDumpDownloaded("hours/api/20260101/20260101-01.gz")
+		downloaded, err := db.HasDataDumpBeenDownloaded("hours/api/20260101/20260101-01.gz")
 		assert.NoError(t, err)
 		assert.True(t, downloaded)
 
@@ -217,11 +217,11 @@ func TestDownloadWithFollow(t *testing.T) {
 		assert.Equal(t, "content 02", string(content2))
 
 		// verify database was updated
-		downloaded1, err := db.IsDataDumpDownloaded("hours/api/20260101/20260101-01.gz")
+		downloaded1, err := db.HasDataDumpBeenDownloaded("hours/api/20260101/20260101-01.gz")
 		assert.NoError(t, err)
 		assert.True(t, downloaded1)
 
-		downloaded2, err := db.IsDataDumpDownloaded("hours/api/20260101/20260101-02.gz")
+		downloaded2, err := db.HasDataDumpBeenDownloaded("hours/api/20260101/20260101-02.gz")
 		assert.NoError(t, err)
 		assert.True(t, downloaded2)
 
