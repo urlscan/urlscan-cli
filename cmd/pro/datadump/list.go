@@ -13,9 +13,10 @@ var ListCmdExample = `  urlscan pro datadump list days/api
   echo "<path>" | urlscan pro datadump list -
 
   NOTE: path format is <time-window>/<file-type>/<date>
-        - time-window: days | hours | minutes
-        - file-type: api | search | screenshot | dom
-        - date: YYYYMMDD format date (optional if time-window is days)`
+        - time-window: days | hours | minutes. Required.
+        - file-type: api | search | screenshot | dom. Required.
+        - date: YYYYMMDD format date (optional if time-window is days). Optional.
+        if date is not provided, all the available files (files within the last 7 days) will be listed`
 
 var listCmd = &cobra.Command{
 	Use:     "list",
@@ -37,7 +38,7 @@ var listCmd = &cobra.Command{
 			return err
 		}
 
-		result, err := client.GetDataDumpList(path)
+		result, err := client.BulkGetDataDumpList(path)
 		if err != nil {
 			return err
 		}

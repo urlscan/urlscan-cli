@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/assert"
@@ -517,6 +518,35 @@ func TestFindMissingPaths(t *testing.T) {
 		paths, err := findMissingPaths(db, client, "hours/api/20260101/", false)
 		assert.NoError(t, err)
 		assert.Len(t, paths, 0)
+
+		assert.True(t, gock.IsDone())
+	})
+
+	t.Run("enumerates last 7 days when path has no date", func(t *testing.T) {
+		defer gock.Clean()
+
+		today := time.Now().UTC()
+		days := api.GetLast7Days(today)
+
+		for _, day := range days {
+			gock.New("http://testserver").
+				Get("/api/v1/datadump/list/hours/api/" + day + "/").
+				Reply(200).
+				JSON(map[string]any{
+					"files": []map[string]any{
+						{"path": "hours/api/" + day + "/" + day + ".gz", "size": 100},
+					},
+				})
+		}
+
+		db := newTestDatabase(t)
+		defer db.Close() // nolint:errcheck
+
+		client := newTestClient()
+
+		paths, err := findMissingPaths(db, client, "hours/api/", false)
+		assert.NoError(t, err)
+		assert.Len(t, paths, 7)
 
 		assert.True(t, gock.IsDone())
 	})

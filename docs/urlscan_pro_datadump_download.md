@@ -15,8 +15,10 @@ urlscan pro datadump download [flags]
 
   # use --follow option to download all files from a datadump path
   # for example, the following commands download all the files listed by 'urlscan pro datadump list hours/dom/20260101/'
+  # note: --follow memoizes downloaded files in a local database to avoid re-downloading, so it's safe to run it periodically
   urlscan pro datadump download hours/dom/20260101/ --follow
-  # note that --follow memoizes downloaded files in a local database to avoid re-downloading, so it's safe to run it periodically
+  # if date is not provided, all the available files (files within the last 7 days) will be downloaded
+  urlscan pro datadump download hours/api/ --follow
 ```
 
 ### Options
