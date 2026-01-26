@@ -12,7 +12,8 @@ import (
 )
 
 type ExtractOptions struct {
-	force bool
+	force           bool
+	directoryPrefix string
 }
 
 type ExtractOption func(*ExtractOptions)
@@ -20,6 +21,12 @@ type ExtractOption func(*ExtractOptions)
 func WithExtractForce(force bool) ExtractOption {
 	return func(opts *ExtractOptions) {
 		opts.force = force
+	}
+}
+
+func WithExtractDirectoryPrefix(directoryPrefix string) ExtractOption {
+	return func(opts *ExtractOptions) {
+		opts.directoryPrefix = directoryPrefix
 	}
 }
 
@@ -32,6 +39,8 @@ func NewExtractOptions(opts ...ExtractOption) *ExtractOptions {
 }
 
 func Extract(path string, opts *ExtractOptions) (err error) {
+	path = filepath.Join(opts.directoryPrefix, path)
+
 	file, err := os.Open(path)
 	if err != nil {
 		return fmt.Errorf("failed to open file: %w", err)
@@ -65,8 +74,7 @@ func Extract(path string, opts *ExtractOptions) (err error) {
 	}
 
 	if isTared {
-		outputDir := filepath.Dir(path)
-		err = extractTar(reader, outputDir, opts)
+		err = extractTar(reader, opts.directoryPrefix, opts)
 		if err != nil {
 			return fmt.Errorf("failed to extract tar: %w", err)
 		}
@@ -74,7 +82,7 @@ func Extract(path string, opts *ExtractOptions) (err error) {
 	}
 
 	if isGzipped {
-		outputPath := strings.TrimSuffix(path, ".gz")
+		outputPath := filepath.Join(opts.directoryPrefix, strings.TrimSuffix(filepath.Base(path), ".gz"))
 
 		// check if file exists and force is false
 		if !opts.force {

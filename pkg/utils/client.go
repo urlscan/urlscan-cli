@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/briandowns/spinner"
@@ -45,11 +46,12 @@ func NewAPIClient() (*APIClient, error) {
 }
 
 type DownloadOptions struct {
-	client *APIClient
-	path   string
-	output string
-	force  bool
-	silent bool
+	client          *APIClient
+	path            string
+	output          string
+	directoryPrefix string
+	force           bool
+	silent          bool
 }
 
 type DownloadOption = func(*DownloadOptions)
@@ -96,6 +98,12 @@ func WithDownloadSilent(silent bool) DownloadOption {
 	}
 }
 
+func WithDownloadDirectoryPrefix(directoryPrefix string) DownloadOption {
+	return func(opts *DownloadOptions) {
+		opts.directoryPrefix = directoryPrefix
+	}
+}
+
 func NewDownloadOptions(opts ...DownloadOption) *DownloadOptions {
 	var o DownloadOptions
 	for _, fn := range opts {
@@ -105,19 +113,21 @@ func NewDownloadOptions(opts ...DownloadOption) *DownloadOptions {
 }
 
 func Download(opts *DownloadOptions) error {
+	output := filepath.Join(opts.directoryPrefix, opts.output)
+
 	if !opts.force {
-		err := checkFileExists(opts.output)
+		err := checkFileExists(output)
 		if err != nil {
 			return err
 		}
 	}
 
-	_, err := opts.client.Download(opts.path, opts.output)
+	_, err := opts.client.Download(opts.path, output)
 	if err != nil {
 		return err
 	}
 
-	msg := fmt.Sprintf("Downloaded: %s from %s\n", opts.output, opts.path)
+	msg := fmt.Sprintf("Downloaded: %s from %s\n", output, opts.path)
 	if opts.silent {
 		// output it to stderr to make the rest of stdout clean (for piping with jq, etc.)
 		fmt.Fprint(os.Stderr, msg)

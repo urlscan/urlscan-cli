@@ -3,6 +3,7 @@ package datadump
 import (
 	"fmt"
 	"path/filepath"
+	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -13,20 +14,27 @@ import (
 
 var DownloadCmdExample = `  urlscan pro datadump download days/api/20260101.gz
   urlscan pro datadump download hours/api/20260101/20260101-01.gz
-  echo "<path>" | urlscan pro datadump download -`
+  echo "<path>" | urlscan pro datadump download -
+
+  # use --follow option to download all files from a datadump path
+  # for example, the following commands download all the files listed by 'urlscan pro datadump list hours/dom/20260101/'
+  urlscan pro datadump download hours/dom/20260101/ --follow
+  # note that --follow memoizes downloaded files in a local database to avoid re-downloading, so it's safe to run it periodically`
 
 var downloadCmd = &cobra.Command{
 	Use:     "download",
 	Short:   "Download the data dump file",
 	Example: DownloadCmdExample,
-	RunE: func(cmd *cobra.Command, args []string) error {
+	RunE: func(cmd *cobra.Command, args []string) (err error) {
 		if len(args) != 1 {
 			return cmd.Usage()
 		}
 
 		output, _ := cmd.Flags().GetString("output")
+		directoryPrefix, _ := cmd.Flags().GetString("directory-prefix")
 		force, _ := cmd.Flags().GetBool("force")
 		extract, _ := cmd.Flags().GetBool("extract")
+		follow, _ := cmd.Flags().GetBool("follow")
 
 		reader := utils.StringReaderFromCmdArgs(args)
 		path, err := reader.ReadString()
@@ -41,23 +49,34 @@ var downloadCmd = &cobra.Command{
 		// disable auto gzip decompression to streamline extraction process
 		client.SetDisableCompression(true)
 
-		if output == "" {
-			output = filepath.Base(path)
-		}
-		opts := utils.NewDownloadOptions(
-			utils.WithDownloadClient(client),
-			utils.WithDownloadOutput(output),
-			utils.WithDownloadForce(force),
-			utils.WithDownloadURL(api.PrefixedPath(fmt.Sprintf("/datadump/link/%s", path))),
-		)
-		err = utils.DownloadWithSpinner(opts)
+		// open the database
+		db, err := utils.NewDatabase()
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to open database: %w", err)
+		}
+		defer func() {
+			closeErr := db.Close()
+			if closeErr != nil && err == nil {
+				err = closeErr
+			}
+		}()
+
+		// explode paths to download
+		paths := []string{path}
+		if follow {
+			if strings.HasSuffix(path, ".gz") {
+				return fmt.Errorf("--follow option can only be used on entire directories, not individual files")
+			}
+
+			missingPaths, err := findMissingPaths(db, client, path, force)
+			if err != nil {
+				return err
+			}
+			paths = missingPaths
 		}
 
-		if extract {
-			err = utils.Extract(output, utils.NewExtractOptions(utils.WithExtractForce(force)))
-			if err != nil {
+		for _, path := range paths {
+			if err := download(client, db, path, output, directoryPrefix, force, extract); err != nil {
 				return err
 			}
 		}
@@ -66,11 +85,73 @@ var downloadCmd = &cobra.Command{
 	},
 }
 
+func download(client *utils.APIClient, db *utils.Database, path, output, directoryPrefix string, force, extract bool) error {
+	if output == "" {
+		output = filepath.Base(path)
+	}
+
+	err := utils.DownloadWithSpinner(
+		utils.NewDownloadOptions(
+			utils.WithDownloadClient(client),
+			utils.WithDownloadOutput(output),
+			utils.WithDownloadDirectoryPrefix(directoryPrefix),
+			utils.WithDownloadForce(force),
+			utils.WithDownloadURL(api.PrefixedPath(fmt.Sprintf("/datadump/link/%s", path))),
+		))
+	if err != nil {
+		return err
+	}
+
+	// update the database after successful download
+	err = db.SetDataDump(path, filepath.Join(directoryPrefix, output))
+	if err != nil {
+		return fmt.Errorf("failed to update the database: %w", err)
+	}
+
+	// extract if requested
+	if extract {
+		err = utils.Extract(output, utils.NewExtractOptions(utils.WithExtractForce(force), utils.WithExtractDirectoryPrefix(directoryPrefix)))
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func findMissingPaths(db *utils.Database, client *utils.APIClient, path string, force bool) ([]string, error) {
+	list, err := client.GetDataDumpList(path)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get datadump list: %w", err)
+	}
+
+	paths := []string{}
+	for _, file := range list.Files {
+		// if force is set, re-download all files
+		if force {
+			paths = append(paths, file.Path)
+			continue
+		}
+
+		downloaded, err := db.HasDataDumpBeenDownloaded(file.Path)
+		if err != nil {
+			return nil, fmt.Errorf("failed to check download status for %s: %w", file.Path, err)
+		}
+		if !downloaded {
+			paths = append(paths, file.Path)
+		}
+	}
+
+	return paths, nil
+}
+
 func init() {
 	flags.AddOutputFlag(downloadCmd, "<path>.gz")
 	flags.AddForceFlag(downloadCmd)
+	flags.AddDirectoryPrefixFlag(downloadCmd)
 
 	downloadCmd.Flags().BoolP("extract", "x", false, "Extract the downloaded file")
+	downloadCmd.Flags().BoolP("follow", "F", false, "Download missing files from the datadump path")
 
 	RootCmd.AddCommand(downloadCmd)
 }

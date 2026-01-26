@@ -16,9 +16,10 @@ urlscan scan dom <uuid> [flags]
 ### Options
 
 ```
-  -f, --force           Force overwrite an existing file
-  -h, --help            help for dom
-  -o, --output string   Output file name (default <uuid>.html)
+  -P, --directory-prefix string   Set directory prefix where file will be saved (default ".")
+  -f, --force                     Force overwrite an existing file
+  -h, --help                      help for dom
+  -o, --output string             Output file name (default <uuid>.html)
 ```
 
 ### SEE ALSO

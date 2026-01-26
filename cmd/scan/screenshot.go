@@ -22,6 +22,7 @@ var screenshotCmd = &cobra.Command{
 
 		output, _ := cmd.Flags().GetString("output")
 		force, _ := cmd.Flags().GetBool("force")
+		directoryPrefix, _ := cmd.Flags().GetString("directory-prefix")
 
 		reader := utils.StringReaderFromCmdArgs(args)
 		uuid, err := reader.ReadString()
@@ -47,6 +48,7 @@ var screenshotCmd = &cobra.Command{
 			utils.WithDownloadScreenshot(uuid),
 			utils.WithDownloadOutput(output),
 			utils.WithDownloadForce(force),
+			utils.WithDownloadDirectoryPrefix(directoryPrefix),
 		)
 		err = utils.DownloadWithSpinner(opts)
 		if err != nil {
@@ -60,6 +62,7 @@ var screenshotCmd = &cobra.Command{
 func init() {
 	flags.AddOutputFlag(screenshotCmd, "<uuid>.png")
 	flags.AddForceFlag(screenshotCmd)
+	flags.AddDirectoryPrefixFlag(screenshotCmd)
 
 	RootCmd.AddCommand(screenshotCmd)
 }

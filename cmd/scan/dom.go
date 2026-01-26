@@ -23,6 +23,7 @@ var domCmd = &cobra.Command{
 
 		output, _ := cmd.Flags().GetString("output")
 		force, _ := cmd.Flags().GetBool("force")
+		directoryPrefix, _ := cmd.Flags().GetString("directory-prefix")
 
 		reader := utils.StringReaderFromCmdArgs(args)
 		uuid, err := reader.ReadString()
@@ -48,6 +49,7 @@ var domCmd = &cobra.Command{
 			utils.WithDownloadDOM(uuid),
 			utils.WithDownloadOutput(output),
 			utils.WithDownloadForce(force),
+			utils.WithDownloadDirectoryPrefix(directoryPrefix),
 		)
 		err = utils.DownloadWithSpinner(opts)
 		if err != nil {
@@ -61,6 +63,7 @@ var domCmd = &cobra.Command{
 func init() {
 	flags.AddOutputFlag(domCmd, "<uuid>.html")
 	flags.AddForceFlag(domCmd)
+	flags.AddDirectoryPrefixFlag(domCmd)
 
 	RootCmd.AddCommand(domCmd)
 }
