@@ -13,7 +13,7 @@ urlscan pro datadump download [flags]
   urlscan pro datadump download hours/api/20260101/20260101-01.gz
   echo "<path>" | urlscan pro datadump download -
 
-  # use --follow option to download files from a datadump path
+  # use --follow option to download all files from a datadump path
   # for example, the following commands download all the files listed by 'urlscan pro datadump list hours/dom/20260101/'
   urlscan pro datadump download hours/dom/20260101/ --follow
   # note that --follow memoizes downloaded files in a local database to avoid re-downloading, so it's safe to run it periodically
