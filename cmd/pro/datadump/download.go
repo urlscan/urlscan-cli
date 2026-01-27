@@ -18,8 +18,10 @@ var DownloadCmdExample = `  urlscan pro datadump download days/api/20260101.gz
 
   # use --follow option to download all files from a datadump path
   # for example, the following commands download all the files listed by 'urlscan pro datadump list hours/dom/20260101/'
+  # note: --follow memoizes downloaded files in a local database to avoid re-downloading, so it's safe to run it periodically
   urlscan pro datadump download hours/dom/20260101/ --follow
-  # note that --follow memoizes downloaded files in a local database to avoid re-downloading, so it's safe to run it periodically`
+  # if date is not provided, all the available files (files within the last 7 days) will be downloaded
+  urlscan pro datadump download hours/api/ --follow`
 
 var downloadCmd = &cobra.Command{
 	Use:     "download",
@@ -61,13 +63,17 @@ var downloadCmd = &cobra.Command{
 			}
 		}()
 
+		isSingleFile := strings.HasSuffix(path, ".gz")
+		if follow && isSingleFile {
+			return fmt.Errorf("--follow option can only be used on entire directories, not individual files")
+		}
+		if !follow && !isSingleFile {
+			return fmt.Errorf("please use --follow option to download entire directories")
+		}
+
 		// explode paths to download
 		paths := []string{path}
 		if follow {
-			if strings.HasSuffix(path, ".gz") {
-				return fmt.Errorf("--follow option can only be used on entire directories, not individual files")
-			}
-
 			missingPaths, err := findMissingPaths(db, client, path, force)
 			if err != nil {
 				return err
@@ -120,7 +126,7 @@ func download(client *utils.APIClient, db *utils.Database, path, output, directo
 }
 
 func findMissingPaths(db *utils.Database, client *utils.APIClient, path string, force bool) ([]string, error) {
-	list, err := client.GetDataDumpList(path)
+	list, err := client.BulkGetDataDumpList(path)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get datadump list: %w", err)
 	}
