@@ -3,7 +3,7 @@ package api
 import "encoding/json"
 
 type JSONError struct {
-	Status      int             `json:"status"`
+	Status      int             `json:"status,omitempty"`
 	Message     string          `json:"message"`
 	Description string          `json:"description,omitempty"`
 	Raw         json.RawMessage `json:"-"`
