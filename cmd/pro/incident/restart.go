@@ -16,6 +16,9 @@ var restartCmd = &cobra.Command{
 	Use:     "restart",
 	Short:   "Restart an incident",
 	Example: restartCmdExample,
+	Annotations: map[string]string{
+		"args": "exact1",
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
 			return cmd.Usage()

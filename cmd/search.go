@@ -18,6 +18,9 @@ var searchCmd = &cobra.Command{
 	Use:     "search <query>",
 	Short:   "Search by a query",
 	Example: searchCmdExample,
+	Annotations: map[string]string{
+		"args": "exact1",
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
 			return cmd.Usage()

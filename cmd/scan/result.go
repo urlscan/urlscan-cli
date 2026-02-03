@@ -16,6 +16,9 @@ var resultCmd = &cobra.Command{
 	Use:     "result <uuid>",
 	Short:   "Get a result by UUID",
 	Example: resultCmdExample,
+	Annotations: map[string]string{
+		"args": "exact1",
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
 			return cmd.Usage()

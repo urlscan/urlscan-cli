@@ -15,6 +15,9 @@ var submitCmd = &cobra.Command{
 	Use:     "submit <url>",
 	Short:   "Submit a URL to scan",
 	Example: submitCmdExample,
+	Annotations: map[string]string{
+		"args": "exact1",
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
 			return cmd.Usage()

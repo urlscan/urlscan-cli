@@ -16,6 +16,9 @@ var forkCmd = &cobra.Command{
 	Use:     "fork",
 	Short:   "Fork an incident",
 	Example: forkCmdExample,
+	Annotations: map[string]string{
+		"args": "exact1",
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
 			return cmd.Usage()
