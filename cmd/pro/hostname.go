@@ -41,6 +41,10 @@ var hostnameCmd = &cobra.Command{
 	Long:    hostnameLong,
 	Example: hostnameCmdExample,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 1 {
+			return cmd.Usage()
+		}
+
 		size, _ := cmd.Flags().GetInt("size")
 		limit, _ := cmd.Flags().GetInt("limit")
 		all, _ := cmd.Flags().GetBool("all")
