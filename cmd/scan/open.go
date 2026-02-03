@@ -16,6 +16,9 @@ var openCmd = &cobra.Command{
 	Use:     "open <uuid>",
 	Short:   "Open a scan result in your browser by UUID",
 	Example: openCmdExample,
+	Annotations: map[string]string{
+		"args": "exact1",
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
 			return cmd.Usage()

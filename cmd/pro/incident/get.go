@@ -16,6 +16,9 @@ var getCmd = &cobra.Command{
 	Use:     "get",
 	Short:   "Get details for a specific incident",
 	Example: getCmdExample,
+	Annotations: map[string]string{
+		"args": "exact1",
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
 			return cmd.Usage()

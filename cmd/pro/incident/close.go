@@ -16,6 +16,9 @@ var closeCmd = &cobra.Command{
 	Use:     "close",
 	Short:   "Close an incident",
 	Example: closeCmdExample,
+	Annotations: map[string]string{
+		"args": "exact1",
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
 			return cmd.Usage()

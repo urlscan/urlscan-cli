@@ -40,7 +40,14 @@ var hostnameCmd = &cobra.Command{
 	Short:   "Get the historical observations for a specific hostname in the hostname data source",
 	Long:    hostnameLong,
 	Example: hostnameCmdExample,
+	Annotations: map[string]string{
+		"args": "exact1",
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 1 {
+			return cmd.Usage()
+		}
+
 		size, _ := cmd.Flags().GetInt("size")
 		limit, _ := cmd.Flags().GetInt("limit")
 		all, _ := cmd.Flags().GetBool("all")

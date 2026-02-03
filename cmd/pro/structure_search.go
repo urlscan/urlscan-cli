@@ -18,8 +18,14 @@ var structureSearchCmd = &cobra.Command{
 	Use:     "structure-search <uuid>",
 	Short:   "Get structurally similar results to a specific scan",
 	Example: structureSearchCmdExample,
-	Args:    cobra.ExactArgs(1),
+	Annotations: map[string]string{
+		"args": "exact1",
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 1 {
+			return cmd.Usage()
+		}
+
 		limit, _ := cmd.Flags().GetInt("limit")
 		all, _ := cmd.Flags().GetBool("all")
 
