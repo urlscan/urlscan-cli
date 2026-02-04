@@ -8,13 +8,21 @@ import (
 
 type SubscriptionOptions struct {
 	Subscription struct {
-		SearchIds      []string `json:"searchIds"`
-		Frequency      string   `json:"frequency"`
-		EmailAddresses []string `json:"emailAddresses"`
-		Name           string   `json:"name"`
-		Description    string   `json:"description,omitempty"`
-		IsActive       bool     `json:"isActive"`
-		IgnoreTime     bool     `json:"ignoreTime"`
+		SearchIds            []string `json:"searchIds"`
+		Frequency            string   `json:"frequency"`
+		EmailAddresses       []string `json:"emailAddresses"`
+		Name                 string   `json:"name"`
+		Description          string   `json:"description,omitempty"`
+		IsActive             bool     `json:"isActive"`
+		IgnoreTime           bool     `json:"ignoreTime"`
+		WeekDays             []string `json:"weekDays,omitempty"`
+		Permissions          []string `json:"permissions,omitempty"`
+		ChannelIds           []string `json:"channelIds,omitempty"`
+		IncidentChannelIds   []string `json:"incidentChannelIds,omitempty"`
+		IncidentProfileId    string   `json:"incidentProfileId,omitempty"`
+		IncidentVisibility   string   `json:"incidentVisibility,omitempty"`
+		IncidentCreationMode string   `json:"incidentCreationMode,omitempty"`
+		IncidentWatchKeys    string   `json:"incidentWatchKeys,omitempty"`
 	} `json:"subscription"`
 }
 
@@ -59,6 +67,54 @@ func WithSubscriptionIsActive(isActive bool) SubscriptionOption {
 func WithSubscriptionIgnoreTime(ignoreTime bool) SubscriptionOption {
 	return func(opts *SubscriptionOptions) {
 		opts.Subscription.IgnoreTime = ignoreTime
+	}
+}
+
+func WithSubscriptionWeekDays(weekDays []string) SubscriptionOption {
+	return func(opts *SubscriptionOptions) {
+		opts.Subscription.WeekDays = weekDays
+	}
+}
+
+func WithSubscriptionPermissions(permissions []string) SubscriptionOption {
+	return func(opts *SubscriptionOptions) {
+		opts.Subscription.Permissions = permissions
+	}
+}
+
+func WithSubscriptionChannelIds(channelIds []string) SubscriptionOption {
+	return func(opts *SubscriptionOptions) {
+		opts.Subscription.ChannelIds = channelIds
+	}
+}
+
+func WithSubscriptionIncidentChannelIds(incidentChannelIds []string) SubscriptionOption {
+	return func(opts *SubscriptionOptions) {
+		opts.Subscription.IncidentChannelIds = incidentChannelIds
+	}
+}
+
+func WithSubscriptionIncidentProfileId(incidentProfileId string) SubscriptionOption {
+	return func(opts *SubscriptionOptions) {
+		opts.Subscription.IncidentProfileId = incidentProfileId
+	}
+}
+
+func WithSubscriptionIncidentVisibility(incidentVisibility string) SubscriptionOption {
+	return func(opts *SubscriptionOptions) {
+		opts.Subscription.IncidentVisibility = incidentVisibility
+	}
+}
+
+func WithSubscriptionIncidentCreationMode(incidentCreationMode string) SubscriptionOption {
+	return func(opts *SubscriptionOptions) {
+		opts.Subscription.IncidentCreationMode = incidentCreationMode
+	}
+}
+
+func WithSubscriptionIncidentWatchKeys(incidentWatchKeys string) SubscriptionOption {
+	return func(opts *SubscriptionOptions) {
+		opts.Subscription.IncidentWatchKeys = incidentWatchKeys
 	}
 }
 
