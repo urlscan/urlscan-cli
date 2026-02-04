@@ -21,6 +21,14 @@ func setCreateOrUpdateFlags(cmd *cobra.Command) {
 
 	// optional flags
 	cmd.Flags().StringP("description", "d", "", "Description of the subscription (optional)")
+	cmd.Flags().StringSlice("week-days", []string{}, "Days of the week alerts will be generated (Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday)")
+	cmd.Flags().StringSlice("permissions", []string{}, "Permissions (team:read, team:write)")
+	cmd.Flags().StringSlice("channel-ids", []string{}, "Array of channel IDs associated with this subscription")
+	cmd.Flags().StringSlice("incident-channel-ids", []string{}, "Array of incident channel IDs associated with this subscription")
+	cmd.Flags().String("incident-profile-id", "", "Incident Profile ID associated with this subscription")
+	cmd.Flags().String("incident-visibility", "", "Incident visibility (unlisted, private)")
+	cmd.Flags().String("incident-creation-mode", "", "Incident creation rule (none, default, always, ignore-if-exists)")
+	cmd.Flags().String("incident-watch-keys", "", "Source/key to watch in the incident (scans/page.url, scans/page.domain, scans/page.ip, scans/page.apexDomain, hostnames/hostname, hostnames/ip, hostnames/domain)")
 }
 
 func mapCmdToSubscriptionOptions(cmd *cobra.Command) (opts []api.SubscriptionOption, err error) {
@@ -45,6 +53,14 @@ func mapCmdToSubscriptionOptions(cmd *cobra.Command) (opts []api.SubscriptionOpt
 	isActive, _ := cmd.Flags().GetBool("is-active")
 	ignoreTime, _ := cmd.Flags().GetBool("ignore-time")
 	description, _ := cmd.Flags().GetString("description")
+	weekDays, _ := cmd.Flags().GetStringSlice("week-days")
+	permissions, _ := cmd.Flags().GetStringSlice("permissions")
+	channelIds, _ := cmd.Flags().GetStringSlice("channel-ids")
+	incidentChannelIds, _ := cmd.Flags().GetStringSlice("incident-channel-ids")
+	incidentProfileId, _ := cmd.Flags().GetString("incident-profile-id")
+	incidentVisibility, _ := cmd.Flags().GetString("incident-visibility")
+	incidentCreationMode, _ := cmd.Flags().GetString("incident-creation-mode")
+	incidentWatchKeys, _ := cmd.Flags().GetString("incident-watch-keys")
 
 	return []api.SubscriptionOption{
 		api.WithSubscriptionSearchIds(searchIds),
@@ -54,5 +70,13 @@ func mapCmdToSubscriptionOptions(cmd *cobra.Command) (opts []api.SubscriptionOpt
 		api.WithSubscriptionDescription(description),
 		api.WithSubscriptionIsActive(isActive),
 		api.WithSubscriptionIgnoreTime(ignoreTime),
+		api.WithSubscriptionWeekDays(weekDays),
+		api.WithSubscriptionPermissions(permissions),
+		api.WithSubscriptionChannelIds(channelIds),
+		api.WithSubscriptionIncidentChannelIds(incidentChannelIds),
+		api.WithSubscriptionIncidentProfileId(incidentProfileId),
+		api.WithSubscriptionIncidentVisibility(incidentVisibility),
+		api.WithSubscriptionIncidentCreationMode(incidentCreationMode),
+		api.WithSubscriptionIncidentWatchKeys(incidentWatchKeys),
 	}, nil
 }
