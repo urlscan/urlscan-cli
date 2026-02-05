@@ -25,7 +25,7 @@ urlscan pro subscription create [flags]
       --incident-creation-mode string   Incident creation rule (none, default, always, ignore-if-exists)
       --incident-profile-id string      Incident Profile ID associated with this subscription
       --incident-visibility string      Incident visibility (unlisted, private)
-      --incident-watch-keys string      Source/key to watch in the incident (scans/page.url, scans/page.domain, scans/page.ip, scans/page.apexDomain, hostnames/hostname, hostnames/ip, hostnames/domain)
+      --incident-watch-keys string      Source/key to watch in the incident (scans/page.url, scans/page.domain, scans/page.ip, scans/page.apexDomain, hostnames/hostname, hostnames/domain)
   -a, --is-active                       Whether the subscription is active (default true)
   -n, --name string                     Name of the subscription (required)
       --permissions strings             Permissions (team:read, team:write)

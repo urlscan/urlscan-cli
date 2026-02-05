@@ -28,7 +28,7 @@ func setCreateOrUpdateFlags(cmd *cobra.Command) {
 	cmd.Flags().String("incident-profile-id", "", "Incident Profile ID associated with this subscription")
 	cmd.Flags().String("incident-visibility", "", "Incident visibility (unlisted, private)")
 	cmd.Flags().String("incident-creation-mode", "", "Incident creation rule (none, default, always, ignore-if-exists)")
-	cmd.Flags().String("incident-watch-keys", "", "Source/key to watch in the incident (scans/page.url, scans/page.domain, scans/page.ip, scans/page.apexDomain, hostnames/hostname, hostnames/ip, hostnames/domain)")
+	cmd.Flags().String("incident-watch-keys", "", "Source/key to watch in the incident (scans/page.url, scans/page.domain, scans/page.ip, scans/page.apexDomain, hostnames/hostname, hostnames/domain)")
 }
 
 func mapCmdToSubscriptionOptions(cmd *cobra.Command) (opts []api.SubscriptionOption, err error) {
