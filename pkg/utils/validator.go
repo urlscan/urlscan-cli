@@ -14,6 +14,7 @@ var (
 	re_UUID       = regexp.MustCompile(`^[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$`)
 	re_dot        = regexp.MustCompile(`\.`)
 	re_digit_only = regexp.MustCompile(`^\d+$`)
+	re_SHA256     = regexp.MustCompile(`^[a-fA-F0-9]{64}$`)
 )
 
 func ValidateULID(s string) error {
@@ -28,6 +29,14 @@ func ValidateUUID(s string) error {
 	// A UUID is a 36-character string in the format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 	if len(s) != 36 || !re_UUID.Match([]byte(s)) {
 		return fmt.Errorf("invalid UUID format: %s", s)
+	}
+	return nil
+}
+
+func ValidateSHA256(s string) error {
+	// A SHA256 hash is a 64-character hexadecimal string
+	if len(s) != 64 || !re_SHA256.Match([]byte(s)) {
+		return fmt.Errorf("invalid SHA256 format: %s", s)
 	}
 	return nil
 }

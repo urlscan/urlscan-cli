@@ -37,6 +37,39 @@ func TestValidateULID(t *testing.T) {
 	}
 }
 
+func TestValidateSHA256(t *testing.T) {
+	tests := []struct {
+		input   string
+		wantErr bool
+	}{
+		// Valid SHA256 hashes (64 hex characters)
+		{"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", false},
+		{"E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855", false},
+		{"0000000000000000000000000000000000000000000000000000000000000000", false},
+		{"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", false},
+		{"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", false},
+		{"aAbBcCdDeEfF0123456789aAbBcCdDeEfF0123456789aAbBcCdDeEfF01234567", false},
+		// Invalid length (too short)
+		{"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b85", true},
+		// Invalid length (too long)
+		{"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b8555", true},
+		// Invalid characters (non-hex)
+		{"g3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", true},
+		{"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b85z", true},
+		// Invalid characters (symbols)
+		{"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b85!", true},
+		// Empty string
+		{"", true},
+	}
+
+	for _, tt := range tests {
+		err := ValidateSHA256(tt.input)
+		if (err != nil) != tt.wantErr {
+			t.Errorf("ValidateSHA256(%q) error = %v, wantErr %v", tt.input, err, tt.wantErr)
+		}
+	}
+}
+
 func TestValidateUUID(t *testing.T) {
 	tests := []struct {
 		input   string
