@@ -1,8 +1,6 @@
 package scan
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 	"github.com/urlscan/urlscan-cli/cmd/flags"
 
@@ -45,7 +43,7 @@ var responseCmd = &cobra.Command{
 		}
 
 		if output == "" {
-			output = fmt.Sprintf("%s.html", fileHash)
+			output = fileHash
 		}
 		opts := utils.NewDownloadOptions(
 			utils.WithDownloadClient(client),
