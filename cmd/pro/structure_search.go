@@ -38,6 +38,10 @@ var structureSearchCmd = &cobra.Command{
 		if err != nil {
 			return err
 		}
+		err = utils.ValidateUUID(uuid)
+		if err != nil {
+			return err
+		}
 
 		client, err := utils.NewAPIClient()
 		if err != nil {
