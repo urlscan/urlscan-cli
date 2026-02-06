@@ -29,6 +29,11 @@ var fileCmd = &cobra.Command{
 			return err
 		}
 
+		err = utils.ValidateSHA256(hash)
+		if err != nil {
+			return err
+		}
+
 		filename, _ := cmd.Flags().GetString("filename")
 		if filename == "" {
 			filename = fmt.Sprintf("%s.zip", hash)
