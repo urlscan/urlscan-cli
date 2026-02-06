@@ -86,6 +86,12 @@ func WithDownloadDOM(uuid string) DownloadOption {
 	}
 }
 
+func WithDownloadResponse(fileHash string) DownloadOption {
+	return func(opts *DownloadOptions) {
+		opts.path = fmt.Sprintf("/responses/%s/", fileHash)
+	}
+}
+
 func WithDownloadScreenshot(uuid string) DownloadOption {
 	return func(opts *DownloadOptions) {
 		opts.path = fmt.Sprintf("/screenshots/%s.png", uuid)
