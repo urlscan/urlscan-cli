@@ -60,7 +60,6 @@ func Batch[T any](c *Client, tasks []BatchTask[T], opts ...BatchOption) ([]mo.Re
 	g, ctx := errgroup.WithContext(timeoutCtx)
 	g.SetLimit(batchOpts.MaxConcurrency)
 	for i, task := range tasks {
-
 		g.Go(func() error {
 			result := task(c, ctx)
 
