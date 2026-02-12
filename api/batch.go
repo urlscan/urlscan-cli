@@ -60,7 +60,6 @@ func Batch[T any](c *Client, tasks []BatchTask[T], opts ...BatchOption) ([]mo.Re
 	g, ctx := errgroup.WithContext(timeoutCtx)
 	g.SetLimit(batchOpts.MaxConcurrency)
 	for i, task := range tasks {
-		i, task := i, task // capture loop variables
 
 		g.Go(func() error {
 			result := task(c, ctx)
@@ -84,8 +83,8 @@ func Batch[T any](c *Client, tasks []BatchTask[T], opts ...BatchOption) ([]mo.Re
 func BatchResultToRaw(r mo.Result[*Response]) *json.RawMessage {
 	err := r.Error()
 	if err != nil {
-		var jsonErr *JSONError
-		if errors.As(err, &jsonErr) {
+		jsonErr, ok := errors.AsType[*JSONError](err)
+		if ok {
 			return &jsonErr.Raw
 		}
 		errRaw := json.RawMessage(fmt.Sprintf(`{"error": "%s"}`, err.Error()))
