@@ -29,8 +29,8 @@ func (c *Client) WaitAndGetResult(ctx context.Context, uuid string, maxWait int)
 		}
 
 		// raise an error if it's not 404 error
-		var jsonErr *JSONError
-		if errors.As(err, &jsonErr) {
+		jsonErr, ok := errors.AsType[*JSONError](err)
+		if ok {
 			if jsonErr.Status != http.StatusNotFound {
 				return nil, err
 			}
