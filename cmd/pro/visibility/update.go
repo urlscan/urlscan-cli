@@ -14,7 +14,7 @@ var updateCmdExample = `  urlscan pro visibility update <scan-id> -v private
 
 var updateCmd = &cobra.Command{
 	Use:     "update",
-	Short:   "Updated visibility of the scan result owned by you or your team",
+	Short:   "Update visibility of a scan owned by you or your team",
 	Example: updateCmdExample,
 	Annotations: map[string]string{
 		"args": "exact1",
