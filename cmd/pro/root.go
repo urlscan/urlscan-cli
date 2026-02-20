@@ -9,6 +9,7 @@ import (
 	"github.com/urlscan/urlscan-cli/cmd/pro/livescan"
 	"github.com/urlscan/urlscan-cli/cmd/pro/search"
 	"github.com/urlscan/urlscan-cli/cmd/pro/subscription"
+	"github.com/urlscan/urlscan-cli/cmd/pro/visibility"
 )
 
 var RootCmd = &cobra.Command{
@@ -24,4 +25,5 @@ func init() {
 	RootCmd.AddCommand(incident.RootCmd)
 	RootCmd.AddCommand(livescan.RootCmd)
 	RootCmd.AddCommand(datadump.RootCmd)
+	RootCmd.AddCommand(visibility.RootCmd)
 }

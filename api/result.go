@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -44,4 +45,34 @@ func (c *Client) WaitAndGetResult(ctx context.Context, uuid string, maxWait int)
 			return nil, ctx.Err()
 		}
 	}
+}
+
+type ResultVisibilityOptions struct {
+	Visibility string `json:"visibility"`
+}
+
+type ResultVisibilityOption func(*ResultVisibilityOptions)
+
+func WithResultVisibility(visibility string) ResultVisibilityOption {
+	return func(opts *ResultVisibilityOptions) {
+		if visibility != "" {
+			opts.Visibility = visibility
+		}
+	}
+}
+
+func (c *Client) UpdateResultVisibility(uuid string, opts ...ResultVisibilityOption) (*Response, error) {
+	var options ResultVisibilityOptions
+	for _, opt := range opts {
+		opt(&options)
+	}
+
+	marshalled, err := json.Marshal(options)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.NewRequest().SetBodyJSONBytes(marshalled).Put(
+		PrefixedPath(fmt.Sprintf("/result/%s/visibility/", uuid)),
+	)
 }
