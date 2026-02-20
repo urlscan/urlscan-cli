@@ -1,6 +1,6 @@
 ## urlscan pro visibility update
 
-Updated visibility of the scan result owned by you or your team
+Update visibility of a scan owned by you or your team
 
 ```
 urlscan pro visibility update [flags]
