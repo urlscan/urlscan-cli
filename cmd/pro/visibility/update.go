@@ -57,7 +57,7 @@ var updateCmd = &cobra.Command{
 }
 
 func init() {
-	updateCmd.Flags().StringP("visibility", "v", "", "The new visibility of the scan result. public, unlisted, private or deleted.")
+	updateCmd.Flags().StringP("visibility", "v", "", "The new visibility of the scan result: public, unlisted, private, deleted")
 
 	RootCmd.AddCommand(updateCmd)
 }
