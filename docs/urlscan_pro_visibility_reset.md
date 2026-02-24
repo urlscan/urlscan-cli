@@ -1,6 +1,6 @@
 ## urlscan pro visibility reset
 
-Reset the visibility of the scan result owned by you or your team to its original visibility
+Reset the visibility of a scan owned by you or your team to its original visibility
 
 ```
 urlscan pro visibility reset [flags]
