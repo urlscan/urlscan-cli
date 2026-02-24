@@ -17,7 +17,7 @@ urlscan pro visibility update [flags]
 
 ```
   -h, --help                help for update
-  -v, --visibility string   The new visibility of the scan result. public, unlisted, private or deleted.
+  -v, --visibility string   The new visibility of the scan result: public, unlisted, private, deleted
 ```
 
 ### SEE ALSO
