@@ -14,7 +14,7 @@ var resetCmdExample = `  urlscan pro visibility reset <scan-id>
 
 var resetCmd = &cobra.Command{
 	Use:     "reset",
-	Short:   "Reset the visibility of the scan result owned by you or your team to its original visibility",
+	Short:   "Reset the visibility of a scan owned by you or your team to its original visibility",
 	Example: resetCmdExample,
 	Annotations: map[string]string{
 		"args": "exact1",
