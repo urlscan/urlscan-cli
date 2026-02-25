@@ -49,7 +49,11 @@ func (t *RetryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 					"X-Rate-Limit-Scope", limitScope,
 					"X-Rate-Limit-Window", limitWindow,
 				)
-				time.Sleep(time.Duration(retryAfterInt) * time.Second)
+				select {
+				case <-time.After(time.Duration(retryAfterInt) * time.Second):
+				case <-req.Context().Done():
+					return nil, req.Context().Err()
+				}
 			}
 		}
 		res, err = t.Transport.RoundTrip(req)
