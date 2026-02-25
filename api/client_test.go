@@ -1,11 +1,13 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
 	"testing"
+	"time"
 
 	"github.com/h2non/gock"
 	"github.com/stretchr/testify/assert"
@@ -161,4 +163,22 @@ func TestNetworkError(t *testing.T) {
 	assert.Contains(t, err.Error(), "network error")
 
 	assert.Equal(t, gock.IsDone(), true)
+}
+
+func TestRetryContextTimeout(t *testing.T) {
+	defer gock.Off()
+
+	// Return 429 with a long reset-after to trigger the rate-limit wait
+	gock.New("http://testserver/").
+		Get("/bar").
+		Reply(http.StatusTooManyRequests).
+		SetHeaders(map[string]string{"X-Rate-Limit-Reset-After": "5"}).
+		JSON(map[string]string{"foo": "bar"})
+
+	ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
+	defer cancel()
+
+	c := newTestClient()
+	_, err := c.NewRequest().SetContext(ctx).Get("/bar")
+	assert.ErrorIs(t, err, context.DeadlineExceeded)
 }
