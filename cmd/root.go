@@ -79,6 +79,15 @@ func Execute() {
 	if err := RootCmd.Execute(); err != nil {
 		os.Exit(1)
 	}
+
+	// when no subcommand is given, Cobra prints help without running Run/PostRun hooks.
+	// check for updates in that case.
+	if !RootCmd.HasParent() && RootCmd.CalledAs() == RootCmd.Name() {
+		err := checkAndPrintUpdate()
+		if err != nil {
+			os.Exit(1)
+		}
+	}
 }
 
 func init() {
