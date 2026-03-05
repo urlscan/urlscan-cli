@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
@@ -15,17 +16,6 @@ const (
 	orange = "\033[38;5;208m"
 	reset  = "\033[0m"
 )
-
-func checkAndPrintUpdate() error {
-	latest, err := version.CheckLatest()
-	if err != nil {
-		return err
-	}
-	if version.IsNewer(version.Version, latest) {
-		printUpdateNotice(latest)
-	}
-	return nil
-}
 
 func printUpdateNotice(latest string) {
 	msg := fmt.Sprintf("Update available: %s", latest)
@@ -53,8 +43,34 @@ var versionCmd = &cobra.Command{
 		fmt.Printf("urlscan-cli %s\n", version.Version)
 		return nil
 	},
-	PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
-		return checkAndPrintUpdate()
+	PersistentPostRunE: func(cmd *cobra.Command, args []string) (err error) {
+		type result struct {
+			version   string
+			hasUpdate bool
+		}
+		ch := make(chan result, 1)
+
+		timeout := 5
+
+		go func() {
+			latest, err := version.CheckLatest(timeout)
+			hasUpdate := false
+			if err == nil {
+				hasUpdate = version.IsNewer(version.Version, latest)
+			}
+			ch <- result{latest, hasUpdate}
+		}()
+
+		select {
+		case r := <-ch:
+			if r.hasUpdate {
+				printUpdateNotice(r.version)
+			}
+		case <-time.After(time.Duration(timeout) * time.Second): // don't hang if GitHub is slow/unreachable
+			// silently skip
+		}
+
+		return err
 	},
 }
 

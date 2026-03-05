@@ -19,8 +19,8 @@ type githubRelease struct {
 	TagName string `json:"tag_name"`
 }
 
-func CheckLatest() (string, error) {
-	client := &http.Client{Timeout: 10 * time.Second}
+func CheckLatest(timeout int) (string, error) {
+	client := &http.Client{Timeout: time.Duration(timeout) * time.Second}
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/releases/latest", repoOwner, repoName)
 
 	resp, err := client.Get(url)
