@@ -2,35 +2,14 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-	"strings"
 	"time"
 
+	"github.com/muesli/termenv"
 	"github.com/spf13/cobra"
-	"golang.org/x/term"
 
+	"github.com/urlscan/urlscan-cli/pkg/utils"
 	"github.com/urlscan/urlscan-cli/pkg/version"
 )
-
-const (
-	orange = "\033[38;5;208m"
-	reset  = "\033[0m"
-)
-
-func printUpdateNotice(latest string) {
-	msg := fmt.Sprintf("Update available: %s", latest)
-
-	width, _, err := term.GetSize(int(os.Stderr.Fd()))
-	if err != nil || width <= 0 {
-		width = 80
-	}
-
-	if pad := width - len(msg); pad > 0 {
-		fmt.Fprintf(os.Stderr, "%s%s%s%s\n", orange, strings.Repeat(" ", pad), msg, reset)
-	} else {
-		fmt.Fprintf(os.Stderr, "%s%s%s\n", orange, msg, reset)
-	}
-}
 
 var versionCmd = &cobra.Command{
 	Use:   "version",
@@ -64,7 +43,8 @@ var versionCmd = &cobra.Command{
 		select {
 		case r := <-ch:
 			if r.hasUpdate {
-				printUpdateNotice(r.version)
+				msg := fmt.Sprintf("Update available: %s", r.version)
+				utils.Notify(msg, termenv.ANSI256Color(208))
 			}
 		case <-time.After(time.Duration(timeout) * time.Second): // don't hang if GitHub is slow/unreachable
 			// silently skip
