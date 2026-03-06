@@ -24,8 +24,11 @@ func CheckLatest(timeout int) (string, error) {
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/releases/latest", repoOwner, repoName)
 
 	resp, err := client.Get(url)
-	if err != nil || resp.StatusCode != http.StatusOK {
-		return "", nil
+	if err != nil {
+		return "", err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 	defer func() {
 		closeErr := resp.Body.Close()
