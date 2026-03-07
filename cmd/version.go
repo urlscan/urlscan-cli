@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/muesli/termenv"
 	"github.com/spf13/cobra"
 
 	"github.com/urlscan/urlscan-cli/pkg/utils"
@@ -44,7 +43,7 @@ var versionCmd = &cobra.Command{
 		case r := <-ch:
 			if r.hasUpdate {
 				msg := fmt.Sprintf("Update available: %s", r.version)
-				utils.Notify(msg, termenv.ANSI256Color(208))
+				utils.Notify(msg, utils.Orange)
 			}
 		case <-time.After(time.Duration(timeout) * time.Second): // don't hang if GitHub is slow/unreachable
 			// silently skip
