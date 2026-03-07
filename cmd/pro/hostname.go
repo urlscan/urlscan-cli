@@ -25,7 +25,8 @@ func newHostnameResults() HostnameResults {
 }
 
 var hostnameCmdExample = `  urlscan pro hostname <hostname>
-  echo "<hostname>" | urlscan pro hostname -`
+  echo "<hostname>" | urlscan pro hostname -
+  urlscan pro hostname <hostname> --params '{"limit":"100","pageState":"..."}'`
 
 var hostnameLong = `To have the same idiom with the search command, this command has the following specs:
 
@@ -48,10 +49,10 @@ var hostnameCmd = &cobra.Command{
 			return cmd.Usage()
 		}
 
-		size, _ := cmd.Flags().GetInt("size")
-		limit, _ := cmd.Flags().GetInt("limit")
-		all, _ := cmd.Flags().GetBool("all")
-		pageState, _ := cmd.Flags().GetString("page-state")
+		client, err := utils.NewAPIClient()
+		if err != nil {
+			return err
+		}
 
 		reader := utils.StringReaderFromCmdArgs(args)
 		hostname, err := reader.ReadString()
@@ -59,17 +60,32 @@ var hostnameCmd = &cobra.Command{
 			return err
 		}
 
-		client, err := utils.NewAPIClient()
+		// non query params
+		limit, _ := cmd.Flags().GetInt("limit")
+		all, _ := cmd.Flags().GetBool("all")
+
+		opts := []api.HostnameIteratorOption{
+			api.HostnameIteratorLimit(limit),
+			api.HostnameIteratorAll(all),
+		}
+
+		params, err := flags.GetParams(cmd)
 		if err != nil {
 			return err
 		}
+		if params != nil {
+			opts = append(opts, api.HostnameIteratorExtra(params))
+		} else {
+			size, _ := cmd.Flags().GetInt("size")
+			pageState, _ := cmd.Flags().GetString("page-state")
 
-		it, err := client.IterateHostname(hostname,
-			api.HostnameIteratorLimit(limit),
-			api.HostnameIteratorSize(size),
-			api.HostnameIteratorPageState(pageState),
-			api.HostnameIteratorAll(all),
-		)
+			opts = append(opts,
+				api.HostnameIteratorSize(size),
+				api.HostnameIteratorPageState(pageState),
+			)
+		}
+
+		it, err := client.IterateHostname(hostname, opts...)
 		if err != nil {
 			return err
 		}
@@ -99,6 +115,8 @@ func init() {
 	flags.AddSizeFlag(hostnameCmd, 1_000)
 	flags.AddLimitFlag(hostnameCmd)
 	flags.AddAllFlag(hostnameCmd)
+	flags.AddParamsFlag(hostnameCmd)
+
 	hostnameCmd.Flags().StringP("page-state", "p", "", "Returns additional results starting from this page state from the previous API call")
 
 	RootCmd.AddCommand(hostnameCmd)

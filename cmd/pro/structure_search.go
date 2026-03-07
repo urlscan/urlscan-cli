@@ -12,7 +12,8 @@ import (
 )
 
 var structureSearchCmdExample = `  urlscan pro structure-search <uuid>
-  echo "<uuid>" | urlscan pro structure-search -`
+  echo "<uuid>" | urlscan pro structure-search -
+  urlscan pro structure-search <uuid> --params '{"size":"100","q":"..."}'`
 
 var structureSearchCmd = &cobra.Command{
 	Use:     "structure-search <uuid>",
@@ -26,12 +27,10 @@ var structureSearchCmd = &cobra.Command{
 			return cmd.Usage()
 		}
 
-		limit, _ := cmd.Flags().GetInt("limit")
-		all, _ := cmd.Flags().GetBool("all")
-
-		size, _ := cmd.Flags().GetInt("size")
-		searchAfter, _ := cmd.Flags().GetString("search-after")
-		q, _ := cmd.Flags().GetString("query")
+		client, err := utils.NewAPIClient()
+		if err != nil {
+			return err
+		}
 
 		reader := utils.StringReaderFromCmdArgs(args)
 		uuid, err := reader.ReadString()
@@ -43,17 +42,36 @@ var structureSearchCmd = &cobra.Command{
 			return err
 		}
 
-		client, err := utils.NewAPIClient()
+		// non query params
+		limit, _ := cmd.Flags().GetInt("limit")
+		all, _ := cmd.Flags().GetBool("all")
+
+		opts := []api.IteratorOption{
+			api.IteratorLimit(limit),
+			api.IteratorAll(all),
+		}
+
+		params, err := flags.GetParams(cmd)
 		if err != nil {
 			return err
 		}
+		if params != nil {
+			opts = append(opts, api.IteratorExtra(params))
+		} else {
+			size, _ := cmd.Flags().GetInt("size")
+			searchAfter, _ := cmd.Flags().GetString("search-after")
+			q, _ := cmd.Flags().GetString("query")
+			opts = append(opts,
+				api.IteratorSize(size),
+				api.IteratorSearchAfter(searchAfter),
+				api.IteratorQuery(q),
+			)
+
+		}
+
 		it, err := client.StructureSearch(
 			uuid,
-			api.IteratorSize(size),
-			api.IteratorLimit(limit),
-			api.IteratorSearchAfter(searchAfter),
-			api.IteratorQuery(q),
-			api.IteratorAll(all),
+			opts...,
 		)
 		if err != nil {
 			return err
@@ -85,8 +103,9 @@ func init() {
 	flags.AddSizeFlag(structureSearchCmd, 1_000)
 	flags.AddLimitFlag(structureSearchCmd)
 	flags.AddAllFlag(structureSearchCmd)
-	structureSearchCmd.Flags().String("search-after", "", "For retrieving the next batch of results, value of the sort attribute of the last (oldest) result you received (comma-separated)")
+	flags.AddParamsFlag(structureSearchCmd)
 
+	structureSearchCmd.Flags().String("search-after", "", "For retrieving the next batch of results, value of the sort attribute of the last (oldest) result you received (comma-separated)")
 	structureSearchCmd.Flags().StringP("query", "q", "", "Additional query filter")
 
 	RootCmd.AddCommand(structureSearchCmd)

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"testing"
 )
 
@@ -44,5 +45,57 @@ func TestNewChannelOptions(t *testing.T) {
 				t.Errorf("newChannelOptions() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
+	}
+}
+
+func TestChannelOptionsMarshalJSON_WithExtra(t *testing.T) {
+	opts := ChannelOptions{} // nolint:exhaustruct
+	opts.Extra = map[string]any{
+		"customField": "customValue",
+	}
+	opts.Channel.Type = "webhook"
+	opts.Channel.Name = "test"
+	opts.Channel.WebhookURL = "https://example.com"
+
+	b, err := json.Marshal(opts)
+	if err != nil {
+		t.Fatalf("MarshalJSON() error = %v", err)
+	}
+
+	var m map[string]any
+	if err := json.Unmarshal(b, &m); err != nil {
+		t.Fatalf("Unmarshal() error = %v", err)
+	}
+
+	// channel field should be present
+	if _, ok := m["channel"]; !ok {
+		t.Error("expected 'channel' key in JSON output")
+	}
+
+	// extra field should be merged at top level
+	if v, ok := m["customField"]; !ok || v != "customValue" {
+		t.Errorf("expected 'customField' = 'customValue', got %v", v)
+	}
+}
+
+func TestChannelOptionsMarshalJSON_WithoutExtra(t *testing.T) {
+	opts := ChannelOptions{} // nolint:exhaustruct
+	opts.Channel.Type = "webhook"
+	opts.Channel.Name = "test"
+	opts.Channel.WebhookURL = "https://example.com"
+
+	b, err := json.Marshal(opts)
+	if err != nil {
+		t.Fatalf("MarshalJSON() error = %v", err)
+	}
+
+	var m map[string]any
+	if err := json.Unmarshal(b, &m); err != nil {
+		t.Fatalf("Unmarshal() error = %v", err)
+	}
+
+	// should only have "channel" key
+	if len(m) != 1 {
+		t.Errorf("expected 1 key, got %d: %v", len(m), m)
 	}
 }

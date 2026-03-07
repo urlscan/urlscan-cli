@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"maps"
 )
 
 type SubscriptionOptions struct {
@@ -24,6 +25,24 @@ type SubscriptionOptions struct {
 		IncidentCreationMode string   `json:"incidentCreationMode,omitempty"`
 		IncidentWatchKeys    string   `json:"incidentWatchKeys,omitempty"`
 	} `json:"subscription"`
+	Extra map[string]any `json:"-"`
+}
+
+func (o SubscriptionOptions) MarshalJSON() ([]byte, error) {
+	type plain SubscriptionOptions
+	b, err := json.Marshal(plain(o))
+	if err != nil {
+		return nil, err
+	}
+	if len(o.Extra) == 0 {
+		return b, nil
+	}
+	var m map[string]any
+	if err := json.Unmarshal(b, &m); err != nil {
+		return nil, err
+	}
+	maps.Copy(m, o.Extra)
+	return json.Marshal(m)
 }
 
 type SubscriptionOption func(*SubscriptionOptions)
@@ -115,6 +134,12 @@ func WithSubscriptionIncidentCreationMode(incidentCreationMode string) Subscript
 func WithSubscriptionIncidentWatchKeys(incidentWatchKeys string) SubscriptionOption {
 	return func(opts *SubscriptionOptions) {
 		opts.Subscription.IncidentWatchKeys = incidentWatchKeys
+	}
+}
+
+func WithSubscriptionExtra(extra map[string]any) SubscriptionOption {
+	return func(opts *SubscriptionOptions) {
+		opts.Extra = extra
 	}
 }
 

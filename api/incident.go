@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"maps"
 )
 
 type IncidentOptions struct {
@@ -30,6 +31,24 @@ type IncidentOptions struct {
 		Channels   []string `json:"channels"`
 		Observable string   `json:"observable"`
 	} `json:"incident"`
+	Extra map[string]any `json:"-"`
+}
+
+func (o IncidentOptions) MarshalJSON() ([]byte, error) {
+	type plain IncidentOptions
+	b, err := json.Marshal(plain(o))
+	if err != nil {
+		return nil, err
+	}
+	if len(o.Extra) == 0 {
+		return b, nil
+	}
+	var m map[string]any
+	if err := json.Unmarshal(b, &m); err != nil {
+		return nil, err
+	}
+	maps.Copy(m, o.Extra)
+	return json.Marshal(m)
 }
 
 type IncidentOption func(*IncidentOptions)
@@ -139,6 +158,12 @@ func WithIncidentChannels(channels []string) IncidentOption {
 func WithIncidentObservable(observable string) IncidentOption {
 	return func(opts *IncidentOptions) {
 		opts.Incident.Observable = observable
+	}
+}
+
+func WithIncidentExtra(extra map[string]any) IncidentOption {
+	return func(opts *IncidentOptions) {
+		opts.Extra = extra
 	}
 }
 

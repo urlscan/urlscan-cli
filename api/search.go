@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"maps"
 )
 
 type SavedSearchOptions struct {
@@ -19,6 +20,24 @@ type SavedSearchOptions struct {
 		Tags             []string `json:"tags,omitempty"`
 		UserTags         []string `json:"userTags,omitempty"`
 	} `json:"search"`
+	Extra map[string]any `json:"-"`
+}
+
+func (o SavedSearchOptions) MarshalJSON() ([]byte, error) {
+	type plain SavedSearchOptions
+	b, err := json.Marshal(plain(o))
+	if err != nil {
+		return nil, err
+	}
+	if len(o.Extra) == 0 {
+		return b, nil
+	}
+	var m map[string]any
+	if err := json.Unmarshal(b, &m); err != nil {
+		return nil, err
+	}
+	maps.Copy(m, o.Extra)
+	return json.Marshal(m)
 }
 
 type SavedSearchOption func(*SavedSearchOptions)
@@ -86,6 +105,12 @@ func WithSavedSearchTags(tags []string) SavedSearchOption {
 func WithSavedSearchUserTags(userTags []string) SavedSearchOption {
 	return func(opts *SavedSearchOptions) {
 		opts.Search.UserTags = userTags
+	}
+}
+
+func WithSavedSearchExtra(extra map[string]any) SavedSearchOption {
+	return func(opts *SavedSearchOptions) {
+		opts.Extra = extra
 	}
 }
 

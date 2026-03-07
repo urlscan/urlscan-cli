@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"maps"
 	"net/http"
 
 	"github.com/samber/mo"
@@ -39,13 +40,31 @@ func (r *ScanResult) UnmarshalJSON(data []byte) error {
 }
 
 type ScanOptions struct {
-	URL            string    `json:"url"`
-	CustomAgent    *string   `json:"customagent,omitempty"`
-	Referer        *string   `json:"referer,omitempty"`
-	Visibility     *string   `json:"visibility,omitempty"`
-	Tags           *[]string `json:"tags,omitempty"`
-	OverrideSafety *string   `json:"overrideSafety,omitempty"`
-	Country        *string   `json:"country,omitempty"`
+	URL            string         `json:"url"`
+	CustomAgent    string         `json:"customagent,omitempty"`
+	Referer        string         `json:"referer,omitempty"`
+	Visibility     string         `json:"visibility,omitempty"`
+	Tags           []string       `json:"tags,omitempty"`
+	OverrideSafety string         `json:"overrideSafety,omitempty"`
+	Country        string         `json:"country,omitempty"`
+	Extra          map[string]any `json:"-"`
+}
+
+func (o ScanOptions) MarshalJSON() ([]byte, error) {
+	type plain ScanOptions
+	b, err := json.Marshal(plain(o))
+	if err != nil {
+		return nil, err
+	}
+	if len(o.Extra) == 0 {
+		return b, nil
+	}
+	var m map[string]any
+	if err := json.Unmarshal(b, &m); err != nil {
+		return nil, err
+	}
+	maps.Copy(m, o.Extra)
+	return json.Marshal(m)
 }
 
 type ScanOption func(*ScanOptions)
@@ -53,7 +72,7 @@ type ScanOption func(*ScanOptions)
 func WithScanCustomAgent(customAgent string) ScanOption {
 	return func(opts *ScanOptions) {
 		if customAgent != "" {
-			opts.CustomAgent = &customAgent
+			opts.CustomAgent = customAgent
 		}
 	}
 }
@@ -61,7 +80,7 @@ func WithScanCustomAgent(customAgent string) ScanOption {
 func WithScanReferer(referer string) ScanOption {
 	return func(opts *ScanOptions) {
 		if referer != "" {
-			opts.Referer = &referer
+			opts.Referer = referer
 		}
 	}
 }
@@ -69,7 +88,7 @@ func WithScanReferer(referer string) ScanOption {
 func WithScanVisibility(visibility string) ScanOption {
 	return func(opts *ScanOptions) {
 		if visibility != "" {
-			opts.Visibility = &visibility
+			opts.Visibility = visibility
 		}
 	}
 }
@@ -77,7 +96,7 @@ func WithScanVisibility(visibility string) ScanOption {
 func WithScanTags(tags []string) ScanOption {
 	return func(opts *ScanOptions) {
 		if len(tags) > 0 {
-			opts.Tags = &tags
+			opts.Tags = tags
 		}
 	}
 }
@@ -85,7 +104,7 @@ func WithScanTags(tags []string) ScanOption {
 func WithScanOverrideSafety(overrideSafety string) ScanOption {
 	return func(opts *ScanOptions) {
 		if overrideSafety != "" {
-			opts.OverrideSafety = &overrideSafety
+			opts.OverrideSafety = overrideSafety
 		}
 	}
 }
@@ -93,20 +112,27 @@ func WithScanOverrideSafety(overrideSafety string) ScanOption {
 func WithScanCountry(country string) ScanOption {
 	return func(opts *ScanOptions) {
 		if country != "" {
-			opts.Country = &country
+			opts.Country = country
 		}
+	}
+}
+
+func WithScanExtra(extra map[string]any) ScanOption {
+	return func(opts *ScanOptions) {
+		opts.Extra = extra
 	}
 }
 
 func newScanOptions(url string, opts ...ScanOption) *ScanOptions {
 	opt := &ScanOptions{
 		URL:            url,
-		CustomAgent:    nil,
-		Referer:        nil,
-		Visibility:     nil,
+		CustomAgent:    "",
+		Referer:        "",
+		Visibility:     "",
 		Tags:           nil,
-		OverrideSafety: nil,
-		Country:        nil,
+		OverrideSafety: "",
+		Country:        "",
+		Extra:          map[string]any{},
 	}
 	for _, o := range opts {
 		o(opt)
@@ -141,6 +167,17 @@ func (c *Client) Scan(url string, options ...ScanOption) (*ScanResult, error) {
 	}
 
 	return &r, nil
+}
+
+func (c *Client) NewBatchRawPostTask(path string, jsonBody string) BatchTask[*Response] {
+	return func(c *Client, ctx context.Context) mo.Result[*Response] {
+		req := c.NewRequest().SetBodyJSONBytes([]byte(jsonBody))
+		resp, err := req.Post(path)
+		if err != nil {
+			return mo.Err[*Response](err)
+		}
+		return mo.Ok(resp)
+	}
 }
 
 func (c *Client) NewBatchScanTask(url string, opts ...ScanOption) BatchTask[*Response] {

@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"maps"
 )
 
 type LiveScanOptions struct {
@@ -17,6 +18,24 @@ type LiveScanOptions struct {
 		EnableFeatures  []string          `json:"enableFeatures,omitempty"`
 		DisableFeatures []string          `json:"disableFeatures,omitempty"`
 	} `json:"scanner"`
+	Extra map[string]any `json:"-"`
+}
+
+func (o LiveScanOptions) MarshalJSON() ([]byte, error) {
+	type plain LiveScanOptions
+	b, err := json.Marshal(plain(o))
+	if err != nil {
+		return nil, err
+	}
+	if len(o.Extra) == 0 {
+		return b, nil
+	}
+	var m map[string]any
+	if err := json.Unmarshal(b, &m); err != nil {
+		return nil, err
+	}
+	maps.Copy(m, o.Extra)
+	return json.Marshal(m)
 }
 
 type LiveScanOption func(*LiveScanOptions)
@@ -63,6 +82,12 @@ func WithLiveScanScannerDisableFeatures(features []string) LiveScanOption {
 	}
 }
 
+func WithLiveScanExtra(extra map[string]any) LiveScanOption {
+	return func(opts *LiveScanOptions) {
+		opts.Extra = extra
+	}
+}
+
 func newLiveScanOptions(opts ...LiveScanOption) *LiveScanOptions {
 	var o LiveScanOptions
 	for _, fn := range opts {
@@ -75,6 +100,24 @@ type LiveScanStoreOptions struct {
 	Task struct {
 		Visibility string `json:"visibility"`
 	} `json:"task"`
+	Extra map[string]any `json:"-"`
+}
+
+func (o LiveScanStoreOptions) MarshalJSON() ([]byte, error) {
+	type plain LiveScanStoreOptions
+	b, err := json.Marshal(plain(o))
+	if err != nil {
+		return nil, err
+	}
+	if len(o.Extra) == 0 {
+		return b, nil
+	}
+	var m map[string]any
+	if err := json.Unmarshal(b, &m); err != nil {
+		return nil, err
+	}
+	maps.Copy(m, o.Extra)
+	return json.Marshal(m)
 }
 
 type LiveScanStoreOption func(*LiveScanStoreOptions)
@@ -82,6 +125,12 @@ type LiveScanStoreOption func(*LiveScanStoreOptions)
 func WithLiveScanStoreTaskVisibility(visibility string) LiveScanStoreOption {
 	return func(opts *LiveScanStoreOptions) {
 		opts.Task.Visibility = visibility
+	}
+}
+
+func WithLiveScanStoreExtra(extra map[string]any) LiveScanStoreOption {
+	return func(opts *LiveScanStoreOptions) {
+		opts.Extra = extra
 	}
 }
 

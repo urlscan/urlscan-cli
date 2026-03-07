@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"maps"
 )
 
 type ChannelOptions struct {
@@ -20,6 +21,24 @@ type ChannelOptions struct {
 		WeekDays       []string `json:"weekDays,omitempty"`
 		Permissions    []string `json:"permissions,omitempty"`
 	} `json:"channel"`
+	Extra map[string]any `json:"-"`
+}
+
+func (o ChannelOptions) MarshalJSON() ([]byte, error) {
+	type plain ChannelOptions
+	b, err := json.Marshal(plain(o))
+	if err != nil {
+		return nil, err
+	}
+	if len(o.Extra) == 0 {
+		return b, nil
+	}
+	var m map[string]any
+	if err := json.Unmarshal(b, &m); err != nil {
+		return nil, err
+	}
+	maps.Copy(m, o.Extra)
+	return json.Marshal(m)
 }
 
 type ChannelOption func(*ChannelOptions)
@@ -87,6 +106,12 @@ func WithChannelWeekDays(weekDays []string) ChannelOption {
 func WithChannelPermissions(permissions []string) ChannelOption {
 	return func(opts *ChannelOptions) {
 		opts.Channel.Permissions = permissions
+	}
+}
+
+func WithChannelExtra(extra map[string]any) ChannelOption {
+	return func(opts *ChannelOptions) {
+		opts.Extra = extra
 	}
 }
 

@@ -101,6 +101,13 @@ func IteratorCollapse(collapse string) IteratorOption {
 	}
 }
 
+func IteratorExtra(extra map[string]any) IteratorOption {
+	return func(it *Iterator) error {
+		it.extra = extra
+		return nil
+	}
+}
+
 type Iterator struct {
 	client      *Client
 	path        string
@@ -112,6 +119,7 @@ type Iterator struct {
 	searchAfter string
 	datasource  string
 	collapse    string
+	extra       map[string]any // extra query parameters
 	count       int
 	HasMore     bool
 	Total       int
@@ -135,6 +143,7 @@ func newIterator(c *Client, path string, options ...IteratorOption) (*Iterator, 
 		searchAfter: "",
 		size:        0,
 		Total:       0,
+		extra:       map[string]any{},
 	}
 
 	for _, opt := range options {
@@ -159,8 +168,24 @@ func newIterator(c *Client, path string, options ...IteratorOption) (*Iterator, 
 		it.request.SetQueryParam("collapse", it.collapse)
 	}
 
+	// size is an important parameter for iteration
+	// so pick it up from extra if it's given
+	if sizeStr, ok := it.extra["size"].(string); ok {
+		size, err := strconv.Atoi(sizeStr)
+		if err != nil {
+			return nil, fmt.Errorf("invalid size parameter: %w", err)
+		}
+		it.size = size
+
+		delete(it.extra, "size")
+	}
+
 	if it.size > 0 {
 		it.request.SetQueryParam("size", strconv.Itoa(it.size))
+	}
+
+	for k, v := range it.extra {
+		it.request.SetQueryParam(k, fmt.Sprintf("%v", v))
 	}
 
 	return it, nil

@@ -17,4 +17,8 @@ setup() {
   assert_output 20
 }
 
+@test "structure-search with --params" {
+  run bash -c "./dist/urlscan pro structure-search $uuid --limit 5 --params '{\"size\":\"5\"}' | jq -r '.results | length'"
+  assert_output 5
+}
 
