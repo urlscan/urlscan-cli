@@ -29,21 +29,28 @@ var submitCmd = &cobra.Command{
 		dom := newDOMFlag(cmd)
 		force, _ := cmd.Flags().GetBool("force")
 
-		reader := utils.StringReaderFromCmdArgs(args)
-		url, err := reader.ReadString()
-		if err != nil {
-			return err
-		}
-
 		scanOpts := []api.ScanOption{}
 
 		json, err := flags.GetJSON(cmd)
 		if err != nil {
 			return err
 		}
+
+		var url string
 		if json != nil {
+			url, err = utils.GetURLFromMap(json)
+			if err != nil {
+				return err
+			}
+
 			scanOpts = append(scanOpts, api.WithScanExtra(json))
 		} else {
+			reader := utils.StringReaderFromCmdArgs(args)
+			url, err = reader.ReadString()
+			if err != nil {
+				return err
+			}
+
 			scanOpts = append(scanOpts, newScanOptions(cmd)...)
 		}
 

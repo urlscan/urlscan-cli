@@ -147,14 +147,6 @@ func newScanner(cmd *cobra.Command) (*scanner, error) {
 	}, nil
 }
 
-func getURL(json map[string]any) (string, error) {
-	url, ok := json["url"].(string)
-	if !ok {
-		return "", fmt.Errorf("url field is missing or not a string in JSON: %v", json)
-	}
-	return url, nil
-}
-
 var bulkSubmitCmdExample = `  urlscan scan bulk-submit <url>...
   # submit with a file containing URLs per line, space, or tab
   urlscan scan bulk-submit list_of_urls.txt
@@ -184,7 +176,7 @@ var bulkSubmitCmd = &cobra.Command{
 		scanRequests := []scanRequest{}
 		if jsonl != nil {
 			for _, json := range jsonl {
-				url, err := getURL(json)
+				url, err := utils.GetURLFromMap(json)
 				if err != nil {
 					return err
 				}
