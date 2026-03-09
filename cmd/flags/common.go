@@ -18,7 +18,7 @@ func AddParamsFlag(cmd *cobra.Command) {
 }
 
 func AddJSONLFlag(cmd *cobra.Command) {
-	cmd.Flags().String("jsonl", "", "JSONL file path (or - for stdin) where each line is a JSON payload")
+	cmd.Flags().String("jsonl", "", "JSONL payload to send as request bodies (one JSON payload per line)")
 }
 
 func JSONToMap(s string) (map[string]any, error) {
