@@ -169,17 +169,6 @@ func (c *Client) Scan(url string, options ...ScanOption) (*ScanResult, error) {
 	return &r, nil
 }
 
-func (c *Client) NewBatchRawPostTask(path string, jsonBody string) BatchTask[*Response] {
-	return func(c *Client, ctx context.Context) mo.Result[*Response] {
-		req := c.NewRequest().SetBodyJSONBytes([]byte(jsonBody))
-		resp, err := req.Post(path)
-		if err != nil {
-			return mo.Err[*Response](err)
-		}
-		return mo.Ok(resp)
-	}
-}
-
 func (c *Client) NewBatchScanTask(url string, opts ...ScanOption) BatchTask[*Response] {
 	return func(c *Client, ctx context.Context) mo.Result[*Response] {
 		req := c.NewScanRequest(url, opts...)
