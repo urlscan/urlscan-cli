@@ -10,6 +10,7 @@ urlscan pro channel create [flags]
 
 ```
   urlscan pro channel create -n <name>
+  urlscan pro channel create --json '{"channel":{"name":"...","type":"webhook","webhookURL":"https://..."}}'
 ```
 
 ### Options
@@ -21,6 +22,7 @@ urlscan pro channel create [flags]
       --ignore-time               Ignore time constraints (default false)
       --is-active                 Set channel active (default true)
       --is-default                Set channel as default (default false)
+      --json string               JSON payload to send as request body
   -n, --name string               Channel name (required)
       --permissions strings       Permissions (optional; team:read, team:write)
       --type string               Type of channel (webhook or email) (default "webhook")

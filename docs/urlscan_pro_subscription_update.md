@@ -10,6 +10,7 @@ urlscan pro subscription update [flags]
 
 ```
   urlscan pro subscription update <subscription-id> -s <search-id-1> -s <search-id-2> -f <frequency> -e <email-address-1> -e <email-address-2> -n <name>
+  urlscan pro subscription update <subscription-id> --json '{"subscription":{"searchIds":["..."],"frequency":"live","emailAddresses":["..."],"name":"my-sub"}}'
 ```
 
 ### Options
@@ -27,6 +28,7 @@ urlscan pro subscription update [flags]
       --incident-visibility string      Incident visibility (unlisted, private)
       --incident-watch-keys string      Source/key to watch in the incident (scans/page.url, scans/page.domain, scans/page.ip, scans/page.apexDomain, hostnames/hostname, hostnames/domain)
   -a, --is-active                       Whether the subscription is active (default true)
+      --json string                     JSON payload to send as request body
   -n, --name string                     Name of the subscription (required)
       --permissions strings             Permissions (team:read, team:write)
   -s, --search-ids strings              Array of search IDs associated with this subscription (required)

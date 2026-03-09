@@ -10,7 +10,8 @@ urlscan pro saved-search update [flags]
 
 ```
   urlscan pro saved-search update <search-id> -D scans -n <name> -q <query>
-  echo "<search-id>" | urlscan pro saved-search update - -D scans -n <name> -q <query> -
+  echo "<search-id>" | urlscan pro saved-search update - -D scans -n <name> -q <query>
+  urlscan pro saved-search update <search-id> --json '{"search":{"datasource":"scans","name":"my-search","query":"...","tlp":"red","pass":2}}'
 ```
 
 ### Options
@@ -19,6 +20,7 @@ urlscan pro saved-search update [flags]
   -D, --datasource string          Which data this saved search operates on (hostnames or scans) (default "scans")
   -d, --description string         Short description of the saved search (optional)
   -h, --help                       help for update
+      --json string                JSON payload to send as request body
   -l, --long-description string    Long description of the saved search (optional)
   -n, --name string                Name of the saved search (required)
   -o, --owner-description string   Owner description of the saved search (optional)
