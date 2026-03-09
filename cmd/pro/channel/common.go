@@ -22,7 +22,7 @@ func setCreateOrUpdateFlags(cmd *cobra.Command) {
 	cmd.Flags().StringSlice("permissions", []string{}, "Permissions (optional; team:read, team:write)")
 }
 
-func mapCmdToChannelOptions(cmd *cobra.Command) (opts []api.ChannelOption, err error) {
+func mapCmdToChannelOptions(cmd *cobra.Command) (opts []api.ChannelOption) {
 	name, _ := cmd.Flags().GetString("name")
 	channelType, _ := cmd.Flags().GetString("type")
 	webhookURL, _ := cmd.Flags().GetString("webhook-url")
@@ -48,5 +48,5 @@ func mapCmdToChannelOptions(cmd *cobra.Command) (opts []api.ChannelOption, err e
 		api.WithChannelWeekDays(weekDays),
 		api.WithChannelPermissions(permissions),
 	)
-	return opts, nil
+	return opts
 }

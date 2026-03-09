@@ -33,10 +33,7 @@ var createCmd = &cobra.Command{
 		if json != nil {
 			opts = append(opts, api.WithChannelExtra(json))
 		} else {
-			mapped, err := mapCmdToChannelOptions(cmd)
-			if err != nil {
-				return cmd.Usage()
-			}
+			mapped := mapCmdToChannelOptions(cmd)
 			opts = append(opts, mapped...)
 		}
 
