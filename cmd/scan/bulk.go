@@ -208,6 +208,10 @@ var bulkSubmitCmd = &cobra.Command{
 			}
 		}
 
+		if len(scanRequests) == 0 {
+			return cmd.Usage()
+		}
+
 		scanner, err := newScanner(cmd)
 		if err != nil {
 			return err
