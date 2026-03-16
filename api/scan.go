@@ -5,7 +5,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"maps"
 	"net/http"
 
 	"github.com/samber/mo"
@@ -52,19 +51,7 @@ type ScanOptions struct {
 
 func (o ScanOptions) MarshalJSON() ([]byte, error) {
 	type plain ScanOptions
-	b, err := json.Marshal(plain(o))
-	if err != nil {
-		return nil, err
-	}
-	if len(o.Extra) == 0 {
-		return b, nil
-	}
-	var m map[string]any
-	if err := json.Unmarshal(b, &m); err != nil {
-		return nil, err
-	}
-	maps.Copy(m, o.Extra)
-	return json.Marshal(m)
+	return marshalJSONWithExtra(plain(o), o.Extra)
 }
 
 type ScanOption func(*ScanOptions)

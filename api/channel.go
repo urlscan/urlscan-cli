@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"maps"
 )
 
 type ChannelOptions struct {
@@ -26,19 +25,7 @@ type ChannelOptions struct {
 
 func (o ChannelOptions) MarshalJSON() ([]byte, error) {
 	type plain ChannelOptions
-	b, err := json.Marshal(plain(o))
-	if err != nil {
-		return nil, err
-	}
-	if len(o.Extra) == 0 {
-		return b, nil
-	}
-	var m map[string]any
-	if err := json.Unmarshal(b, &m); err != nil {
-		return nil, err
-	}
-	maps.Copy(m, o.Extra)
-	return json.Marshal(m)
+	return marshalJSONWithExtra(plain(o), o.Extra)
 }
 
 type ChannelOption func(*ChannelOptions)

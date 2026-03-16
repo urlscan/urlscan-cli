@@ -3,7 +3,6 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"maps"
 )
 
 type LiveScanOptions struct {
@@ -23,19 +22,7 @@ type LiveScanOptions struct {
 
 func (o LiveScanOptions) MarshalJSON() ([]byte, error) {
 	type plain LiveScanOptions
-	b, err := json.Marshal(plain(o))
-	if err != nil {
-		return nil, err
-	}
-	if len(o.Extra) == 0 {
-		return b, nil
-	}
-	var m map[string]any
-	if err := json.Unmarshal(b, &m); err != nil {
-		return nil, err
-	}
-	maps.Copy(m, o.Extra)
-	return json.Marshal(m)
+	return marshalJSONWithExtra(plain(o), o.Extra)
 }
 
 type LiveScanOption func(*LiveScanOptions)
@@ -105,19 +92,7 @@ type LiveScanStoreOptions struct {
 
 func (o LiveScanStoreOptions) MarshalJSON() ([]byte, error) {
 	type plain LiveScanStoreOptions
-	b, err := json.Marshal(plain(o))
-	if err != nil {
-		return nil, err
-	}
-	if len(o.Extra) == 0 {
-		return b, nil
-	}
-	var m map[string]any
-	if err := json.Unmarshal(b, &m); err != nil {
-		return nil, err
-	}
-	maps.Copy(m, o.Extra)
-	return json.Marshal(m)
+	return marshalJSONWithExtra(plain(o), o.Extra)
 }
 
 type LiveScanStoreOption func(*LiveScanStoreOptions)

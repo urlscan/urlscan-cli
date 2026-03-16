@@ -21,6 +21,9 @@ var searchCmd = &cobra.Command{
 	Use:     "search <query>",
 	Short:   "Search by a query",
 	Example: searchCmdExample,
+	Annotations: map[string]string{
+		"operationId": "search",
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := utils.NewAPIClient()
 		if err != nil {
