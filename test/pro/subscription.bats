@@ -16,3 +16,17 @@ load ../test_helper
   assert_success
 }
 
+@test "create, update and delete with --json" {
+  search_id="$(./dist/urlscan pro saved-search create -q "page.domain:example.com" -n "bats json test" | jq -r ".search._id")"
+  subscription_id="$(./dist/urlscan pro subscription create --json "{\"subscription\":{\"searchIds\":[\"$search_id\"],\"frequency\":\"daily\",\"emailAddresses\":[\"test@example.com\"],\"name\":\"bats json test\"}}" | jq -r ".subscription._id")"
+
+  run ./dist/urlscan pro subscription get "$subscription_id"
+  assert_success
+
+  run ./dist/urlscan pro subscription update "$subscription_id" --json '{"subscription":{"frequency":"weekly","emailAddresses":["test@example.com"],"name":"bats json test updated"}}'
+  assert_success
+
+  run ./dist/urlscan pro subscription delete "$subscription_id"
+  assert_success
+}
+

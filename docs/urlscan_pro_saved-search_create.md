@@ -10,6 +10,7 @@ urlscan pro saved-search create [flags]
 
 ```
   urlscan pro saved-search create -D scans -n <name> -q <query>
+  urlscan pro saved-search create --json '{"search":{"datasource":"scans","name":"...","query":"...","tlp":"red"}}'
 ```
 
 ### Options
@@ -18,6 +19,7 @@ urlscan pro saved-search create [flags]
   -D, --datasource string          Which data this saved search operates on (hostnames or scans) (default "scans")
   -d, --description string         Short description of the saved search (optional)
   -h, --help                       help for create
+      --json string                JSON payload to send as request body
   -l, --long-description string    Long description of the saved search (optional)
   -n, --name string                Name of the saved search (required)
   -o, --owner-description string   Owner description of the saved search (optional)

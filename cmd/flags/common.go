@@ -1,11 +1,67 @@
 package flags
 
 import (
+	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/urlscan/urlscan-cli/api"
 )
+
+func AddJSONFlag(cmd *cobra.Command) {
+	cmd.Flags().String("json", "", "JSON payload to send as request body")
+}
+
+func AddParamsFlag(cmd *cobra.Command) {
+	cmd.Flags().String("params", "", "Query string parameters as JSON (e.g. '{\"key\":\"value\"}')")
+}
+
+func AddJSONLFlag(cmd *cobra.Command) {
+	cmd.Flags().String("jsonl", "", "JSONL payload to send as request bodies (one JSON payload per line)")
+}
+
+func JSONToMap(s string) (map[string]any, error) {
+	var m map[string]any
+	err := json.Unmarshal([]byte(s), &m)
+	return m, err
+}
+
+func GetJSONL(cmd *cobra.Command) ([]map[string]any, error) {
+	s, _ := cmd.Flags().GetString("jsonl")
+	if s == "" {
+		return nil, nil
+	}
+	lines := strings.Split(s, "\n")
+	var result []map[string]any
+	for _, line := range lines {
+		if line == "" {
+			continue
+		}
+		m, err := JSONToMap(line)
+		if err != nil {
+			return nil, fmt.Errorf("invalid JSONL line: %w", err)
+		}
+		result = append(result, m)
+	}
+	return result, nil
+}
+
+func GetParams(cmd *cobra.Command) (map[string]any, error) {
+	s, _ := cmd.Flags().GetString("params")
+	if s != "" {
+		return JSONToMap(s)
+	}
+	return nil, nil
+}
+
+func GetJSON(cmd *cobra.Command) (map[string]any, error) {
+	s, _ := cmd.Flags().GetString("json")
+	if s != "" {
+		return JSONToMap(s)
+	}
+	return nil, nil
+}
 
 func AddForceFlag(cmd *cobra.Command) {
 	cmd.Flags().BoolP("force", "f", false, "Force overwrite an existing file")

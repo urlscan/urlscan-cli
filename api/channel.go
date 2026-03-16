@@ -20,6 +20,12 @@ type ChannelOptions struct {
 		WeekDays       []string `json:"weekDays,omitempty"`
 		Permissions    []string `json:"permissions,omitempty"`
 	} `json:"channel"`
+	Extra map[string]any `json:"-"`
+}
+
+func (o ChannelOptions) MarshalJSON() ([]byte, error) {
+	type plain ChannelOptions
+	return marshalJSONWithExtra(plain(o), o.Extra)
 }
 
 type ChannelOption func(*ChannelOptions)
@@ -87,6 +93,12 @@ func WithChannelWeekDays(weekDays []string) ChannelOption {
 func WithChannelPermissions(permissions []string) ChannelOption {
 	return func(opts *ChannelOptions) {
 		opts.Channel.Permissions = permissions
+	}
+}
+
+func WithChannelExtra(extra map[string]any) ChannelOption {
+	return func(opts *ChannelOptions) {
+		opts.Extra = extra
 	}
 }
 

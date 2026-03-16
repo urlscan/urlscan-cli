@@ -24,6 +24,12 @@ type SubscriptionOptions struct {
 		IncidentCreationMode string   `json:"incidentCreationMode,omitempty"`
 		IncidentWatchKeys    string   `json:"incidentWatchKeys,omitempty"`
 	} `json:"subscription"`
+	Extra map[string]any `json:"-"`
+}
+
+func (o SubscriptionOptions) MarshalJSON() ([]byte, error) {
+	type plain SubscriptionOptions
+	return marshalJSONWithExtra(plain(o), o.Extra)
 }
 
 type SubscriptionOption func(*SubscriptionOptions)
@@ -115,6 +121,12 @@ func WithSubscriptionIncidentCreationMode(incidentCreationMode string) Subscript
 func WithSubscriptionIncidentWatchKeys(incidentWatchKeys string) SubscriptionOption {
 	return func(opts *SubscriptionOptions) {
 		opts.Subscription.IncidentWatchKeys = incidentWatchKeys
+	}
+}
+
+func WithSubscriptionExtra(extra map[string]any) SubscriptionOption {
+	return func(opts *SubscriptionOptions) {
+		opts.Extra = extra
 	}
 }
 

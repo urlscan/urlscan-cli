@@ -4,43 +4,54 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	"github.com/urlscan/urlscan-cli/api"
 	"github.com/urlscan/urlscan-cli/cmd/flags"
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
 var submitCmdExample = `  urlscan scan submit <url>...
-  echo "<url>" | urlscan scan submit -`
+  echo "<url>" | urlscan scan submit -
+  urlscan scan submit --json '{"url":"...","visibility":"public"}'`
 
 var submitCmd = &cobra.Command{
 	Use:     "submit <url>",
 	Short:   "Submit a URL to scan",
 	Example: submitCmdExample,
-	Annotations: map[string]string{
-		"args": "exact1",
-	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 1 {
-			return cmd.Usage()
+		client, err := utils.NewAPIClient()
+		if err != nil {
+			return err
 		}
-
-		scanOpts := newScanOptions(cmd)
 
 		wait := newWaitFlag(cmd)
 		maxWait, _ := cmd.Flags().GetInt("max-wait")
-
 		screenshot := newScreenshotFlag(cmd)
 		dom := newDOMFlag(cmd)
 		force, _ := cmd.Flags().GetBool("force")
 
-		reader := utils.StringReaderFromCmdArgs(args)
-		url, err := reader.ReadString()
+		scanOpts := []api.ScanOption{}
+
+		json, err := flags.GetJSON(cmd)
 		if err != nil {
 			return err
 		}
 
-		client, err := utils.NewAPIClient()
-		if err != nil {
-			return err
+		var url string
+		if json != nil {
+			url, err = utils.GetURLFromMap(json)
+			if err != nil {
+				return err
+			}
+
+			scanOpts = append(scanOpts, api.WithScanExtra(json))
+		} else {
+			reader := utils.StringReaderFromCmdArgs(args)
+			url, err = reader.ReadString()
+			if err != nil {
+				return err
+			}
+
+			scanOpts = append(scanOpts, newScanOptions(cmd)...)
 		}
 
 		scanResult, err := client.Scan(url, scanOpts...)
@@ -96,6 +107,7 @@ var submitCmd = &cobra.Command{
 func init() {
 	addScanFlags(submitCmd)
 	flags.AddForceFlag(submitCmd)
+	flags.AddJSONFlag(submitCmd)
 
 	RootCmd.AddCommand(submitCmd)
 }

@@ -6,16 +6,21 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/urlscan/urlscan-cli/api"
+	"github.com/urlscan/urlscan-cli/cmd/flags"
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
 var updateCmdExample = `  urlscan pro saved-search update <search-id> -D scans -n <name> -q <query>
-  echo "<search-id>" | urlscan pro saved-search update - -D scans -n <name> -q <query> -`
+  echo "<search-id>" | urlscan pro saved-search update - -D scans -n <name> -q <query>
+  urlscan pro saved-search update <search-id> --json '{"search":{"datasource":"scans","name":"my-search","query":"...","tlp":"red","pass":2}}'`
 
 var updateCmd = &cobra.Command{
 	Use:     "update",
 	Short:   "Update a saved search",
 	Example: updateCmdExample,
+	Annotations: map[string]string{
+		"args": "exact1",
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
 			return cmd.Usage()
@@ -32,60 +37,74 @@ var updateCmd = &cobra.Command{
 			return err
 		}
 
-		// required flags (show usage if any are missing)
-		datasource, _ := cmd.Flags().GetString("datasource")
-		if datasource == "" {
-			return cmd.Usage()
-		}
-		name, _ := cmd.Flags().GetString("name")
-		if name == "" {
-			return cmd.Usage()
-		}
-		query, _ := cmd.Flags().GetString("query")
-		if query == "" {
-			return cmd.Usage()
-		}
-		tlp, _ := cmd.Flags().GetString("tlp")
-		if tlp == "" {
-			return cmd.Usage()
-		}
-		pass, _ := cmd.Flags().GetInt("pass")
-		if pass == 0 {
-			return cmd.Usage()
-		}
-
-		// optional flags
-		permissions, _ := cmd.Flags().GetStringSlice("permissions")
-		description, _ := cmd.Flags().GetString("description")
-		longDescription, _ := cmd.Flags().GetString("long-description")
-		ownerDescription, _ := cmd.Flags().GetString("owner-description")
-		tags, _ := cmd.Flags().GetStringSlice("tags")
-		userTags, _ := cmd.Flags().GetStringSlice("user-tags")
-
 		client, err := utils.NewAPIClient()
 		if err != nil {
 			return err
 		}
 
-		resp, err := client.UpdateSavedSearch(
+		opts := []api.SavedSearchOption{}
+
+		json, err := flags.GetJSON(cmd)
+		if err != nil {
+			return err
+		}
+		if json != nil {
+			opts = append(opts, api.WithSavedSearchExtra(json))
+		} else {
+			// required flags (show usage if any are missing)
+			datasource, _ := cmd.Flags().GetString("datasource")
+			if datasource == "" {
+				return cmd.Usage()
+			}
+			name, _ := cmd.Flags().GetString("name")
+			if name == "" {
+				return cmd.Usage()
+			}
+			query, _ := cmd.Flags().GetString("query")
+			if query == "" {
+				return cmd.Usage()
+			}
+			tlp, _ := cmd.Flags().GetString("tlp")
+			if tlp == "" {
+				return cmd.Usage()
+			}
+			pass, _ := cmd.Flags().GetInt("pass")
+			if pass == 0 {
+				return cmd.Usage()
+			}
+
+			// optional flags
+			permissions, _ := cmd.Flags().GetStringSlice("permissions")
+			description, _ := cmd.Flags().GetString("description")
+			longDescription, _ := cmd.Flags().GetString("long-description")
+			ownerDescription, _ := cmd.Flags().GetString("owner-description")
+			tags, _ := cmd.Flags().GetStringSlice("tags")
+			userTags, _ := cmd.Flags().GetStringSlice("user-tags")
+
+			opts = append(opts,
+				api.WithSavedSearchDatasource(datasource),
+				api.WithSavedSearchName(name),
+				api.WithSavedSearchQuery(query),
+				api.WithSavedSearchTLP(tlp),
+				api.WithSavedSearchPass(pass),
+				api.WithSavedSearchPermissions(permissions),
+				api.WithSavedSearchDescription(description),
+				api.WithSavedSearchLongDescription(longDescription),
+				api.WithSavedSearchOwnerDescription(ownerDescription),
+				api.WithSavedSearchTags(tags),
+				api.WithSavedSearchUserTags(userTags),
+			)
+		}
+
+		result, err := client.UpdateSavedSearch(
 			id,
-			api.WithSavedSearchDatasource(datasource),
-			api.WithSavedSearchName(name),
-			api.WithSavedSearchQuery(query),
-			api.WithSavedSearchTLP(tlp),
-			api.WithSavedSearchPass(pass),
-			api.WithSavedSearchPermissions(permissions),
-			api.WithSavedSearchDescription(description),
-			api.WithSavedSearchLongDescription(longDescription),
-			api.WithSavedSearchOwnerDescription(ownerDescription),
-			api.WithSavedSearchTags(tags),
-			api.WithSavedSearchUserTags(userTags),
+			opts...,
 		)
 		if err != nil {
 			return err
 		}
 
-		fmt.Print(resp.PrettyJSON())
+		fmt.Print(result.PrettyJSON())
 
 		return nil
 	},
@@ -93,6 +112,7 @@ var updateCmd = &cobra.Command{
 
 func init() {
 	setCreateOrUpdateFlags(updateCmd)
+	flags.AddJSONFlag(updateCmd)
 
 	RootCmd.AddCommand(updateCmd)
 }

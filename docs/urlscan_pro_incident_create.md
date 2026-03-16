@@ -10,6 +10,7 @@ urlscan pro incident create [flags]
 
 ```
   urlscan pro incident create -o <observable>
+  urlscan pro incident create --json '{"incident":{"observable":"..."}}'
 ```
 
 ### Options
@@ -22,6 +23,7 @@ urlscan pro incident create [flags]
       --expire-at string                    Expire at (optional)
   -h, --help                                help for create
       --incident-profile string             Incident profile (optional)
+      --json string                         JSON payload to send as request body
   -o, --observable string                   Observable (hostname, domain, IP or URL) (required)
       --scan-interval int                   Scan interval in seconds (default 0)
       --scan-interval-after-malicious int   Scan interval after malicious in seconds (default 0)

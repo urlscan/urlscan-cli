@@ -31,6 +31,20 @@ setup() {
   assert_success
 }
 
+@test "update with --json" {
+  name=$(./dist/urlscan pro channel get $channel_id | jq -r '.channel.name')
+
+  run ./dist/urlscan pro channel update $channel_id --json '{"channel":{"name":"bats-json-test"}}'
+  assert_success
+
+  updated=$(./dist/urlscan pro channel get $channel_id | jq -r '.channel.name')
+  assert_equal "bats-json-test" "$updated"
+
+  # revert the change
+  run ./dist/urlscan pro channel update $channel_id -n "$name"
+  assert_success
+}
+
 @test "list" {
   run ./dist/urlscan pro channel list
   assert_success

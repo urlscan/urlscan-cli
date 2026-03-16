@@ -60,6 +60,13 @@ func HostnameIteratorPageState(pageState string) HostnameIteratorOption {
 	}
 }
 
+func HostnameIteratorExtra(extra map[string]any) HostnameIteratorOption {
+	return func(it *HostnameIterator) error {
+		it.extra = extra
+		return nil
+	}
+}
+
 type HostnameIterator struct {
 	client    *Client
 	path      string
@@ -67,6 +74,7 @@ type HostnameIterator struct {
 	limit     int
 	all       bool
 	size      int
+	extra     map[string]any // extra query parameters
 	count     int
 	PageState string
 	HasMore   bool
@@ -86,6 +94,7 @@ func newHostnameIterator(c *Client, path string, options ...HostnameIteratorOpti
 		limit:     0,
 		PageState: "",
 		size:      0,
+		extra:     map[string]any{},
 	}
 
 	for _, opt := range options {
@@ -95,12 +104,28 @@ func newHostnameIterator(c *Client, path string, options ...HostnameIteratorOpti
 	}
 
 	// size (number of results per batch) is "limit" in this API endpoint
+	// size is an important parameter for iteration
+	// so pick it up from extra if it's given
+	if sizeStr, ok := it.extra["limit"].(string); ok {
+		size, err := strconv.Atoi(sizeStr)
+		if err != nil {
+			return nil, fmt.Errorf("invalid size parameter: %w", err)
+		}
+		it.size = size
+
+		delete(it.extra, "limit")
+	}
+
 	if it.size > 0 {
 		it.request.SetQueryParam("limit", strconv.Itoa(it.size))
 	}
 
 	if it.PageState != "" {
 		it.request.SetQueryParam("pageState", it.PageState)
+	}
+
+	for k, v := range it.extra {
+		it.request.SetQueryParam(k, fmt.Sprintf("%v", v))
 	}
 
 	return it, nil

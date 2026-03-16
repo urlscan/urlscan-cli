@@ -15,6 +15,19 @@ load ../test_helper
   assert_success
 }
 
+@test "create, update and delete with --json" {
+  search_id="$(./dist/urlscan pro saved-search create --json '{"search":{"datasource":"scans","name":"bats json test","query":"page.domain:example.com","tlp":"white","pass":1}}' | jq -r ".search._id")"
+
+  run ./dist/urlscan pro saved-search get "$search_id"
+  assert_success
+
+  run ./dist/urlscan pro saved-search update "$search_id" --json '{"search":{"datasource":"scans","name":"bats json test updated","query":"page.domain:example.net","tlp":"white","pass":1}}'
+  assert_success
+
+  run ./dist/urlscan pro saved-search delete "$search_id"
+  assert_success
+}
+
 @test "list" {
   run ./dist/urlscan pro saved-search list
   assert_success

@@ -30,6 +30,12 @@ type IncidentOptions struct {
 		Channels   []string `json:"channels"`
 		Observable string   `json:"observable"`
 	} `json:"incident"`
+	Extra map[string]any `json:"-"`
+}
+
+func (o IncidentOptions) MarshalJSON() ([]byte, error) {
+	type plain IncidentOptions
+	return marshalJSONWithExtra(plain(o), o.Extra)
 }
 
 type IncidentOption func(*IncidentOptions)
@@ -139,6 +145,12 @@ func WithIncidentChannels(channels []string) IncidentOption {
 func WithIncidentObservable(observable string) IncidentOption {
 	return func(opts *IncidentOptions) {
 		opts.Incident.Observable = observable
+	}
+}
+
+func WithIncidentExtra(extra map[string]any) IncidentOption {
+	return func(opts *IncidentOptions) {
+		opts.Extra = extra
 	}
 }
 

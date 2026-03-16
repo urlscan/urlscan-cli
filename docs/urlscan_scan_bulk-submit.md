@@ -21,6 +21,10 @@ urlscan scan bulk-submit <url>... [flags]
   urlscan scan bulk-submit list_of_urls.txt
   # combine the file input and the URL input
   urlscan scan bulk-submit list_of_urls.txt <url>
+  # submit with JSONL file where each line is a JSON payload
+  urlscan scan bulk-submit --jsonl payloads.jsonl
+  # read JSONL from stdin
+  echo '{"url":"...","visibility":"public"}' | urlscan scan bulk-submit --jsonl -
 ```
 
 ### Options
@@ -33,6 +37,7 @@ urlscan scan bulk-submit <url>... [flags]
       --download                  Download screenshot and DOM contents (overrides wait/dom/screenshot)
   -f, --force                     Force overwrite an existing file
   -h, --help                      help for bulk-submit
+      --jsonl string              JSONL payload to send as request bodies (one JSON payload per line)
       --max-concurrency int       Maximum number of concurrent requests for batch operation (default 5)
   -m, --max-wait int              Maximum wait time per scan in seconds (default 60)
   -o, --overrideSafety string     If set to any value, this will disable reclassification of URLs with potential PII in them

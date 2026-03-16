@@ -21,6 +21,7 @@ urlscan pro hostname [flags]
 ```
   urlscan pro hostname <hostname>
   echo "<hostname>" | urlscan pro hostname -
+  urlscan pro hostname <hostname> --params '{"limit":"100","pageState":"..."}'
 ```
 
 ### Options
@@ -30,6 +31,7 @@ urlscan pro hostname [flags]
   -h, --help                help for hostname
   -l, --limit int           Maximum number of results that will be returned by the iterator (default 10000)
   -p, --page-state string   Returns additional results starting from this page state from the previous API call
+      --params string       Query string parameters as JSON (e.g. '{"key":"value"}')
   -s, --size int            Number of results returned by the iterator in each batch (default 1000)
 ```
 

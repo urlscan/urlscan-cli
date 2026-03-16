@@ -11,6 +11,7 @@ urlscan scan submit <url> [flags]
 ```
   urlscan scan submit <url>...
   echo "<url>" | urlscan scan submit -
+  urlscan scan submit --json '{"url":"...","visibility":"public"}'
 ```
 
 ### Options
@@ -22,6 +23,7 @@ urlscan scan submit <url> [flags]
       --download                Download screenshot and DOM contents (overrides wait/dom/screenshot)
   -f, --force                   Force overwrite an existing file
   -h, --help                    help for submit
+      --json string             JSON payload to send as request body
   -m, --max-wait int            Maximum wait time per scan in seconds (default 60)
   -o, --overrideSafety string   If set to any value, this will disable reclassification of URLs with potential PII in them
   -r, --referer string          Override HTTP referer for this scan

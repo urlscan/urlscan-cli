@@ -11,6 +11,7 @@ urlscan pro livescan scan [flags]
 ```
   urlscan pro livescan scan <url>
   echo <url> | urlscan pro livescan scan
+  urlscan pro livescan scan -s <scanner-id> --json '{"task":{"url":"...","visibility":"private"},"scanner":{"pageTimeout":10000}}'
 ```
 
 ### Options
@@ -22,6 +23,7 @@ urlscan pro livescan scan [flags]
   -e, --enable-features strings        Features to enable (bannerBypass, downloadWait, fullscreen)
   -H, --extra-headers stringToString   Extra headers to send with the request (e.g., User-Agent: urlscan-cli) (default [])
   -h, --help                           help for scan
+      --json string                    JSON payload to send as request body
   -p, --page-timeout int               Time to wait for the whole scan process (in ms) (default 10000)
   -s, --scanner-id string              ID of the scanner (required)
   -v, --visibility string              Visibility of the scan (public, unlisted or private) (default "private")

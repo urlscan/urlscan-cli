@@ -13,9 +13,13 @@ import (
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
+type scanRequest = struct {
+	url  string
+	opts []api.ScanOption
+}
+
 type scanner struct {
 	client          *utils.APIClient
-	scanOpts        []api.ScanOption
 	batchOpts       []api.BatchOption
 	wait            bool
 	maxWait         int
@@ -26,9 +30,9 @@ type scanner struct {
 	ctx             context.Context
 }
 
-func (s *scanner) newBatchScanWithDownloadTask(url string) api.BatchTask[*api.Response] {
+func (s *scanner) newBatchScanWithDownloadTask(scanRequest scanRequest) api.BatchTask[*api.Response] {
 	return func(c *api.Client, ctx context.Context) mo.Result[*api.Response] {
-		req := c.NewScanRequest(url, s.scanOpts...)
+		req := c.NewScanRequest(scanRequest.url, scanRequest.opts...)
 		resp, err := req.Do()
 		if err != nil {
 			return mo.Err[*api.Response](err)
@@ -78,13 +82,15 @@ func (s *scanner) newBatchScanWithDownloadTask(url string) api.BatchTask[*api.Re
 	}
 }
 
-func (s *scanner) do(urls []string) error {
-	tasks := make([]api.BatchTask[*api.Response], len(urls))
-	for i, url := range urls {
+func (s *scanner) do(scanRequests []scanRequest) error {
+	urls := make([]string, len(scanRequests))
+	tasks := make([]api.BatchTask[*api.Response], len(scanRequests))
+
+	for i, req := range scanRequests {
 		if s.wait {
-			tasks[i] = s.newBatchScanWithDownloadTask(url)
+			tasks[i] = s.newBatchScanWithDownloadTask(req)
 		} else {
-			tasks[i] = s.client.NewBatchScanTask(url, s.scanOpts...)
+			tasks[i] = s.client.NewBatchScanTask(req.url, req.opts...)
 		}
 	}
 
@@ -106,8 +112,6 @@ func (s *scanner) do(urls []string) error {
 }
 
 func newScanner(cmd *cobra.Command) (*scanner, error) {
-	scanOpts := newScanOptions(cmd)
-
 	maxConcurrency, _ := cmd.Flags().GetInt("max-concurrency")
 	timeout, _ := cmd.Flags().GetInt("timeout")
 
@@ -128,8 +132,7 @@ func newScanner(cmd *cobra.Command) (*scanner, error) {
 	}
 
 	return &scanner{
-		client:   client,
-		scanOpts: scanOpts,
+		client: client,
 		batchOpts: []api.BatchOption{
 			api.WithBatchMaxConcurrency(maxConcurrency),
 			api.WithBatchTimeout(timeout),
@@ -148,7 +151,11 @@ var bulkSubmitCmdExample = `  urlscan scan bulk-submit <url>...
   # submit with a file containing URLs per line, space, or tab
   urlscan scan bulk-submit list_of_urls.txt
   # combine the file input and the URL input
-  urlscan scan bulk-submit list_of_urls.txt <url>`
+  urlscan scan bulk-submit list_of_urls.txt <url>
+  # submit with JSONL file where each line is a JSON payload
+  urlscan scan bulk-submit --jsonl payloads.jsonl
+  # read JSONL from stdin
+  echo '{"url":"...","visibility":"public"}' | urlscan scan bulk-submit --jsonl -`
 
 var bulkSubmitCmdLong = `Submit multiple URLs to scan in bulk.
 
@@ -161,14 +168,40 @@ var bulkSubmitCmd = &cobra.Command{
 	Long:    bulkSubmitCmdLong,
 	Example: bulkSubmitCmdExample,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 {
-			return cmd.Usage()
-		}
-
-		reader := utils.NewFilteredStringReader(utils.NewMappedStringReader(utils.StringReaderFromCmdArgs(args), utils.ResolveFileOrValue), utils.ValidateNetworkIndicator)
-		urls, err := utils.ReadAllFromReader(reader)
+		jsonl, err := flags.GetJSONL(cmd)
 		if err != nil {
 			return err
+		}
+
+		scanRequests := []scanRequest{}
+		if jsonl != nil {
+			for _, json := range jsonl {
+				url, err := utils.GetURLFromMap(json)
+				if err != nil {
+					return err
+				}
+				scanRequests = append(scanRequests, scanRequest{
+					url:  url,
+					opts: []api.ScanOption{api.WithScanExtra(json)},
+				})
+			}
+		} else {
+			reader := utils.NewFilteredStringReader(utils.NewMappedStringReader(utils.StringReaderFromCmdArgs(args), utils.ResolveFileOrValue), utils.ValidateNetworkIndicator)
+			urls, err := utils.ReadAllFromReader(reader)
+			if err != nil {
+				return err
+			}
+			opts := newScanOptions(cmd)
+			for _, url := range urls {
+				scanRequests = append(scanRequests, scanRequest{
+					url:  url,
+					opts: opts,
+				})
+			}
+		}
+
+		if len(scanRequests) == 0 {
+			return cmd.Usage()
 		}
 
 		scanner, err := newScanner(cmd)
@@ -176,7 +209,7 @@ var bulkSubmitCmd = &cobra.Command{
 			return err
 		}
 
-		return scanner.do(urls)
+		return scanner.do(scanRequests)
 	},
 }
 
@@ -184,6 +217,7 @@ func init() {
 	addScanFlags(bulkSubmitCmd)
 	flags.AddForceFlag(bulkSubmitCmd)
 	flags.AddDirectoryPrefixFlag(bulkSubmitCmd)
+	flags.AddJSONLFlag(bulkSubmitCmd)
 
 	bulkSubmitCmd.Flags().Int("max-concurrency", 5, "Maximum number of concurrent requests for batch operation")
 	bulkSubmitCmd.Flags().Int("timeout", 60*30, "Timeout for the batch operation in seconds, 0 means no timeout")

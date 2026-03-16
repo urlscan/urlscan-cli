@@ -46,6 +46,17 @@ setup() {
   assert_success
 }
 
+@test "create and close with --json" {
+  incident_id="$(./dist/urlscan pro incident create --json "{\"incident\":{\"observable\":\"example.com\",\"expireAt\":\"$expire_at\"}}" | jq -r ".incident._id")"
+
+  run ./dist/urlscan pro incident get "$incident_id"
+  assert_success
+
+  # clean up
+  run ./dist/urlscan pro incident close "$incident_id"
+  assert_success
+}
+
 @test "fork" {
   incident_id="$(./dist/urlscan pro incident create -o "example.com" --expire-at "$expire_at" | jq -r ".incident._id")"
   forked_id="$(./dist/urlscan pro incident fork "$incident_id" | jq -r ".incidents._id")"

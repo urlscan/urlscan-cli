@@ -11,6 +11,7 @@ urlscan pro channel update [flags]
 ```
   urlscan pro channel update <channel-id> -n <name>
   echo <channel-id> | urlscan pro channel update - -n <name>
+  urlscan pro channel update <channel-id> --json '{"channel":{"name":"..."}}'
 ```
 
 ### Options
@@ -22,6 +23,7 @@ urlscan pro channel update [flags]
       --ignore-time               Ignore time constraints (default false)
       --is-active                 Set channel active (default true)
       --is-default                Set channel as default (default false)
+      --json string               JSON payload to send as request body
   -n, --name string               Channel name (required)
       --permissions strings       Permissions (optional; team:read, team:write)
       --type string               Type of channel (webhook or email) (default "webhook")
