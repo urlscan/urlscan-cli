@@ -38,6 +38,11 @@ var submitCmd = &cobra.Command{
 			return err
 		}
 
+		refang, _ := cmd.Flags().GetBool("refang")
+		if refang {
+			url = utils.Refang(url)
+		}
+
 		client, err := utils.NewAPIClient()
 		if err != nil {
 			return err

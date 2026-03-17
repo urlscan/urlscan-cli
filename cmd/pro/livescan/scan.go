@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/urlscan/urlscan-cli/api"
+	"github.com/urlscan/urlscan-cli/cmd/flags"
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
@@ -25,6 +26,11 @@ var scanCmd = &cobra.Command{
 		url, err := reader.ReadString()
 		if err != nil {
 			return err
+		}
+
+		refang, _ := cmd.Flags().GetBool("refang")
+		if refang {
+			url = utils.Refang(url)
 		}
 
 		scannerId, _ := cmd.Flags().GetString("scanner-id")
@@ -81,10 +87,12 @@ func init() {
 	scanCmd.Flags().StringToStringP("extra-headers", "H", map[string]string{}, "Extra headers to send with the request (e.g., User-Agent: urlscan-cli)")
 	scanCmd.Flags().StringSliceP("enable-features", "e", []string{}, "Features to enable (bannerBypass, downloadWait, fullscreen)")
 	scanCmd.Flags().StringSliceP("disable-features", "d", []string{}, "Features to disable (annotation, dom, downloads, hideheadless, pageInformation, responses, screenshot, screenshotCompression, stealth)")
+	scanCmd.Flags().BoolP("blocking", "b", true, "Whether to do a blocking scan or not")
+
 	addVisibilityFlag(scanCmd)
 	addScannerIdFlag(scanCmd)
 
-	scanCmd.Flags().BoolP("blocking", "b", true, "Whether to do a blocking scan or not")
+	flags.AddRefangFlag(scanCmd)
 
 	RootCmd.AddCommand(scanCmd)
 }

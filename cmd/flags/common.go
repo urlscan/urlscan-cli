@@ -74,3 +74,7 @@ func AddDownloadFlag(cmd *cobra.Command) {
 func AddDirectoryPrefixFlag(cmd *cobra.Command) {
 	cmd.Flags().StringP("directory-prefix", "P", ".", "Set directory prefix where file will be saved")
 }
+
+func AddRefangFlag(cmd *cobra.Command) {
+	cmd.Flags().Bool("refang", false, "Refang an input (convert '[.]' back to '.' and so on)")
+}
