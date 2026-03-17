@@ -15,6 +15,8 @@ func TestRefang(t *testing.T) {
 		{"HXXPS://EVIL[.]EXAMPLE[.]COM", "HTTPS://EVIL.EXAMPLE.COM"},
 		{"hXXp://evil[.]example[.]com", "http://evil.example.com"},
 		{"HXXP://EVIL[.]EXAMPLE[.]COM", "HTTP://EVIL.EXAMPLE.COM"},
+		// Port in URI
+		{"https[:]//evil[.]example[.]com[:]8443/path", "https://evil.example.com:8443/path"},
 		// Email addresses
 		{"user[@]phishing[.]example[.]com", "user@phishing.example.com"},
 		// Credentials in URI
