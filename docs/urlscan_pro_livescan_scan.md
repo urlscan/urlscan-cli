@@ -23,6 +23,7 @@ urlscan pro livescan scan [flags]
   -H, --extra-headers stringToString   Extra headers to send with the request (e.g., User-Agent: urlscan-cli) (default [])
   -h, --help                           help for scan
   -p, --page-timeout int               Time to wait for the whole scan process (in ms) (default 10000)
+      --refang                         Refang an input (convert '[.]' back to '.' and so on)
   -s, --scanner-id string              ID of the scanner (required)
   -v, --visibility string              Visibility of the scan (public, unlisted or private) (default "private")
 ```
