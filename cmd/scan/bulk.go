@@ -165,7 +165,24 @@ var bulkSubmitCmd = &cobra.Command{
 			return cmd.Usage()
 		}
 
-		reader := utils.NewFilteredStringReader(utils.NewMappedStringReader(utils.StringReaderFromCmdArgs(args), utils.ResolveFileOrValue), utils.ValidateNetworkIndicator)
+		refang, _ := cmd.Flags().GetBool("refang")
+		var mapFn func(string) ([]string, error)
+		if refang {
+			mapFn = func(s string) ([]string, error) {
+				got, err := utils.ResolveFileOrValue(s)
+				if err != nil {
+					return nil, err
+				}
+				for i, item := range got {
+					got[i] = utils.Refang(item)
+				}
+				return got, nil
+			}
+		} else {
+			mapFn = utils.ResolveFileOrValue
+		}
+
+		reader := utils.NewFilteredStringReader(utils.NewMappedStringReader(utils.StringReaderFromCmdArgs(args), mapFn), utils.ValidateNetworkIndicator)
 		urls, err := utils.ReadAllFromReader(reader)
 		if err != nil {
 			return err

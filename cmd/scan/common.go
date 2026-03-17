@@ -19,6 +19,7 @@ func addScanFlags(cmd *cobra.Command) {
 	flags.AddScreenshotFlag(cmd)
 	flags.AddDOMFlag(cmd)
 	flags.AddDownloadFlag(cmd)
+	flags.AddRefangFlag(cmd)
 }
 
 func newScanOptions(cmd *cobra.Command) (opts []api.ScanOption) {
