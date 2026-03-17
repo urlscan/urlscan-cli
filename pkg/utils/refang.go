@@ -13,8 +13,6 @@ func Refang(s string) string {
 		"hXXp://", "http://",
 		"hXXP://", "http://",
 		"HXXP://", "HTTP://",
-		"fxp://", "ftp://",
-		"FXP://", "FTP://",
 		"[.]", ".",
 		"[@]", "@",
 		"[:]", ":",

@@ -15,9 +15,6 @@ func TestRefang(t *testing.T) {
 		{"HXXPS://EVIL[.]EXAMPLE[.]COM", "HTTPS://EVIL.EXAMPLE.COM"},
 		{"hXXp://evil[.]example[.]com", "http://evil.example.com"},
 		{"HXXP://EVIL[.]EXAMPLE[.]COM", "HTTP://EVIL.EXAMPLE.COM"},
-		// FTP
-		{"fxp://files[.]example[.]com", "ftp://files.example.com"},
-		{"FXP://FILES[.]EXAMPLE[.]COM", "FTP://FILES.EXAMPLE.COM"},
 		// Email addresses
 		{"user[@]phishing[.]example[.]com", "user@phishing.example.com"},
 		// Credentials in URI
