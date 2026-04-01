@@ -159,7 +159,7 @@ func newIterator(c *Client, path string, options ...IteratorOption) (*Iterator, 
 		it.request.SetQueryParam("collapse", it.collapse)
 	}
 
-	if it.size > 0 {
+	if it.size >= 0 {
 		it.request.SetQueryParam("size", strconv.Itoa(it.size))
 	}
 
