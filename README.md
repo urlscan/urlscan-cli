@@ -20,6 +20,14 @@ The built binaries can be found on [the releases page](https://github.com/urlsca
 brew install --cask urlscan/tap/urlscan-cli
 ```
 
+> [!NOTE]
+> Installing will require explicit trust after [Tap Trust](https://docs.brew.sh/Tap-Trust) becomes the default in Homebrew 6.0.0 or 5.2.0:
+>
+> ```bash
+> brew trust --cask urlscan/tap/urlscan-cli
+> ```
+>
+
 ### Windows
 
 > [!NOTE]
