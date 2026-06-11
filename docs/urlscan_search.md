@@ -20,7 +20,7 @@ urlscan search <query> [flags]
   -c, --collapse string       Field to collapse results on
   -D, --datasource string     Datasources to search: scans (urlscan.io), hostnames, incidents, notifications, certificates (urlscan Pro) (default "scans")
   -h, --help                  help for search
-  -l, --limit int             Maximum number of results that will be returned by the iterator (default 10000)
+  -l, --limit int             Maximum number of results that will be returned by the iterator (default to --size, i.e. one page)
       --search-after string   For retrieving the next batch of results, value of the sort attribute of the last (oldest) result you received (comma-separated)
   -s, --size int              Number of results returned by the iterator in each batch (default 100)
 ```

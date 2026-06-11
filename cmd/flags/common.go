@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/urlscan/urlscan-cli/api"
 )
 
 func AddForceFlag(cmd *cobra.Command) {
@@ -16,7 +15,7 @@ func AddAllFlag(cmd *cobra.Command) {
 }
 
 func AddLimitFlag(cmd *cobra.Command) {
-	cmd.Flags().IntP("limit", "l", api.MaxTotal, "Maximum number of results that will be returned by the iterator")
+	cmd.Flags().IntP("limit", "l", 0, "Maximum number of results that will be returned by the iterator (default to --size, i.e. one page)")
 }
 
 func AddSizeFlag(cmd *cobra.Command, value int) {

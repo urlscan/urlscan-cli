@@ -51,6 +51,9 @@ var hostnameCmd = &cobra.Command{
 		size, _ := cmd.Flags().GetInt("size")
 		limit, _ := cmd.Flags().GetInt("limit")
 		all, _ := cmd.Flags().GetBool("all")
+		if limit == 0 {
+			limit = size
+		}
 		pageState, _ := cmd.Flags().GetString("page-state")
 
 		reader := utils.StringReaderFromCmdArgs(args)
