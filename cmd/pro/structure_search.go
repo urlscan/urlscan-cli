@@ -30,6 +30,9 @@ var structureSearchCmd = &cobra.Command{
 		all, _ := cmd.Flags().GetBool("all")
 
 		size, _ := cmd.Flags().GetInt("size")
+		if limit == 0 {
+			limit = size
+		}
 		searchAfter, _ := cmd.Flags().GetString("search-after")
 		q, _ := cmd.Flags().GetString("query")
 

@@ -29,6 +29,9 @@ var searchCmd = &cobra.Command{
 		limit, _ := cmd.Flags().GetInt("limit")
 		all, _ := cmd.Flags().GetBool("all")
 		size, _ := cmd.Flags().GetInt("size")
+		if limit == 0 {
+			limit = size
+		}
 		searchAfter, _ := cmd.Flags().GetString("search-after")
 		datasource, _ := cmd.Flags().GetString("datasource")
 		collapse, _ := cmd.Flags().GetString("collapse")
