@@ -16,7 +16,6 @@ func setCreateOrUpdateFlags(cmd *cobra.Command) {
 	cmd.Flags().StringSliceP("permissions", "p", []string{}, "Permissions of the saved search (optional)")
 	cmd.Flags().StringP("description", "d", "", "Short description of the saved search (optional)")
 	cmd.Flags().StringP("long-description", "l", "", "Long description of the saved search (optional)")
-	cmd.Flags().StringP("owner-description", "o", "", "Owner description of the saved search (optional)")
 	cmd.Flags().StringSliceP("tags", "T", []string{}, "Tags of the saved search (optional)")
 	cmd.Flags().StringSliceP("user-tags", "u", []string{}, "User tags of the saved search (optional)")
 }

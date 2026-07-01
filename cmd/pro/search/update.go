@@ -58,7 +58,6 @@ var updateCmd = &cobra.Command{
 		permissions, _ := cmd.Flags().GetStringSlice("permissions")
 		description, _ := cmd.Flags().GetString("description")
 		longDescription, _ := cmd.Flags().GetString("long-description")
-		ownerDescription, _ := cmd.Flags().GetString("owner-description")
 		tags, _ := cmd.Flags().GetStringSlice("tags")
 		userTags, _ := cmd.Flags().GetStringSlice("user-tags")
 
@@ -77,7 +76,6 @@ var updateCmd = &cobra.Command{
 			api.WithSavedSearchPermissions(permissions),
 			api.WithSavedSearchDescription(description),
 			api.WithSavedSearchLongDescription(longDescription),
-			api.WithSavedSearchOwnerDescription(ownerDescription),
 			api.WithSavedSearchTags(tags),
 			api.WithSavedSearchUserTags(userTags),
 		)
