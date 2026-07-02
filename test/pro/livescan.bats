@@ -30,6 +30,12 @@ setup() {
   run ./dist/urlscan pro livescan response "$hash" -s "$scanner_id"
   assert_success
   assert [ -f "./${hash}" ]
+  rm -f "./${hash}"
+
+  run ./dist/urlscan pro livescan fetch "$hash" -s "$scanner_id"
+  assert_success
+  assert [ -f "./${hash}" ]
+  rm -f "./${hash}"
 
   run ./dist/urlscan pro livescan purge "$uuid" -s "$scanner_id"
   assert_success

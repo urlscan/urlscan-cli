@@ -173,7 +173,7 @@ func (c *Client) Do(r *Request) (resp *Response, err error) {
 
 	url, err := c.URL(r.Path)
 	if err != nil {
-		return nil, fmt.Errorf("error formatting URL: %w", err)
+		return resp, fmt.Errorf("error formatting URL: %w", err)
 	}
 
 	var reqBody io.ReadCloser
@@ -186,7 +186,7 @@ func (c *Client) Do(r *Request) (resp *Response, err error) {
 
 	req, err := http.NewRequest(r.Method, url.String(), reqBody)
 	if err != nil {
-		return nil, fmt.Errorf("error creating HTTP request: %w", err)
+		return resp, fmt.Errorf("error creating HTTP request: %w", err)
 	}
 
 	// set headers
@@ -218,7 +218,7 @@ func (c *Client) Do(r *Request) (resp *Response, err error) {
 		// set resp.body
 		_, err = resp.ToBytes()
 		if err != nil {
-			return nil, err
+			return resp, err
 		}
 		// restore body for re-reading
 		resp.Body = io.NopCloser(bytes.NewReader(resp.body))
