@@ -26,7 +26,6 @@ func setCreateOrUpdateFlags(cmd *cobra.Command) {
 
 	// optional flags
 	cmd.Flags().String("incident-profile", "", "Incident profile (optional)")
-	cmd.Flags().String("expire-at", "", "Expire at (optional)")
 	cmd.Flags().StringSlice("channels", []string{}, "Channels")
 	cmd.Flags().StringSlice("countries", []string{}, "Countries")
 	cmd.Flags().StringSlice("user-agents", []string{}, "User agents")
@@ -43,7 +42,6 @@ func mapCmdToIncidentOptions(cmd *cobra.Command) (opts []api.IncidentOption, err
 	countries, _ := cmd.Flags().GetStringSlice("countries")
 	countriesPerInterval, _ := cmd.Flags().GetInt("countries-per-interval")
 	expireAfter, _ := cmd.Flags().GetInt("expire-after")
-	expireAt, _ := cmd.Flags().GetString("expire-at")
 	incidentProfile, _ := cmd.Flags().GetString("incident-profile")
 	scanInterval, _ := cmd.Flags().GetInt("scan-interval")
 	scanIntervalAfterMalicious, _ := cmd.Flags().GetInt("scan-interval-after-malicious")
@@ -73,7 +71,6 @@ func mapCmdToIncidentOptions(cmd *cobra.Command) (opts []api.IncidentOption, err
 		api.WithIncidentScanIntervalAfterSuspended(scanIntervalAfterSuspended),
 		api.WithIncidentScanIntervalAfterMalicious(scanIntervalAfterMalicious),
 		api.WithIncidentVisibility(visibility),
-		api.WithIncidentExpireAt(expireAt),
 		api.WithIncidentProfile(incidentProfile),
 		api.WithIncidentObservable(observable),
 	)

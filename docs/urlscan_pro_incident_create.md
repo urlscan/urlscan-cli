@@ -19,7 +19,6 @@ urlscan pro incident create [flags]
       --countries strings                   Countries
       --countries-per-interval int          Countries per interval (default 1)
       --expire-after int                    Expire after in seconds (default 0)
-      --expire-at string                    Expire at (optional)
   -h, --help                                help for create
       --incident-profile string             Incident profile (optional)
   -o, --observable string                   Observable (hostname, domain, IP or URL) (required)

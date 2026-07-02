@@ -25,7 +25,6 @@ type IncidentOptions struct {
 		// common fields
 		Visibility      string `json:"visibility"`
 		IncidentProfile string `json:"incidentProfile,omitempty"`
-		ExpireAt        string `json:"expireAt,omitempty"`
 		// create & updated fields
 		Channels   []string `json:"channels"`
 		Observable string   `json:"observable"`
@@ -121,12 +120,6 @@ func WithIncidentVisibility(visibility string) IncidentOption {
 func WithIncidentProfile(incidentProfile string) IncidentOption {
 	return func(opts *IncidentOptions) {
 		opts.Incident.IncidentProfile = incidentProfile
-	}
-}
-
-func WithIncidentExpireAt(expireAt string) IncidentOption {
-	return func(opts *IncidentOptions) {
-		opts.Incident.ExpireAt = expireAt
 	}
 }
 

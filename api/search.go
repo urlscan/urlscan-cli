@@ -7,17 +7,16 @@ import (
 
 type SavedSearchOptions struct {
 	Search struct {
-		Datasource       string   `json:"datasource"`
-		Name             string   `json:"name"`
-		Query            string   `json:"query"`
-		TLP              string   `json:"tlp"`
-		Permissions      []string `json:"permissions"`
-		Pass             int      `json:"pass"`
-		Description      string   `json:"description,omitempty"`
-		LongDescription  string   `json:"longDescription,omitempty"`
-		OwnerDescription string   `json:"ownerDescription,omitempty"`
-		Tags             []string `json:"tags,omitempty"`
-		UserTags         []string `json:"userTags,omitempty"`
+		Datasource      string   `json:"datasource"`
+		Name            string   `json:"name"`
+		Query           string   `json:"query"`
+		TLP             string   `json:"tlp"`
+		Permissions     []string `json:"permissions"`
+		Pass            int      `json:"pass"`
+		Description     string   `json:"description,omitempty"`
+		LongDescription string   `json:"longDescription,omitempty"`
+		Tags            []string `json:"tags,omitempty"`
+		UserTags        []string `json:"userTags,omitempty"`
 	} `json:"search"`
 }
 
@@ -68,12 +67,6 @@ func WithSavedSearchDescription(description string) SavedSearchOption {
 func WithSavedSearchLongDescription(longDescription string) SavedSearchOption {
 	return func(opts *SavedSearchOptions) {
 		opts.Search.LongDescription = longDescription
-	}
-}
-
-func WithSavedSearchOwnerDescription(ownerDescription string) SavedSearchOption {
-	return func(opts *SavedSearchOptions) {
-		opts.Search.OwnerDescription = ownerDescription
 	}
 }
 
