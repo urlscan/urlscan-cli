@@ -114,6 +114,10 @@ func (r *Request) Get(path string) (*Response, error) {
 	return r.Send(http.MethodGet, path)
 }
 
+func (r *Request) Head(path string) (*Response, error) {
+	return r.Send(http.MethodHead, path)
+}
+
 func (r *Request) Post(path string) (*Response, error) {
 	return r.Send(http.MethodPost, path)
 }
