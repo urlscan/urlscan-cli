@@ -52,18 +52,18 @@ var fetchCmd = &cobra.Command{
 		responseURL := api.PrefixedPath(fmt.Sprintf("/livescan/%s/response/%s/", scannerId, fileHash))
 		downloadURL := api.PrefixedPath(fmt.Sprintf("/livescan/%s/download/%s/", scannerId, fileHash))
 
-		resp, err := client.NewRequest().Get(responseURL)
+		resp, err := client.NewRequest().Head(downloadURL)
 		var url string
 		switch {
-		case err == nil && resp.IsSuccess():
-			url = responseURL
-		case resp != nil && resp.Response != nil && resp.StatusCode == http.StatusNotFound:
+		case resp != nil && resp.Response != nil && resp.IsSuccess():
 			url = downloadURL
+		case resp != nil && resp.Response != nil && resp.StatusCode == http.StatusNotFound:
+			url = responseURL
 		default:
 			if err != nil {
 				return err
 			}
-			return fmt.Errorf("unexpected error fetching %q", responseURL)
+			return fmt.Errorf("unexpected error fetching %q", downloadURL)
 		}
 
 		opts := utils.NewDownloadOptions(
