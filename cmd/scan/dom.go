@@ -1,8 +1,6 @@
 package scan
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 	"github.com/urlscan/urlscan-cli/cmd/flags"
 
@@ -45,7 +43,7 @@ var domCmd = &cobra.Command{
 		}
 
 		if output == "" {
-			output = fmt.Sprintf("%s.html", uuid)
+			output = uuid
 		}
 		opts := utils.NewDownloadOptions(
 			utils.WithDownloadClient(client),
@@ -64,7 +62,7 @@ var domCmd = &cobra.Command{
 }
 
 func init() {
-	flags.AddOutputFlag(domCmd, "<uuid>.html")
+	flags.AddOutputFlag(domCmd, "<uuid>")
 	flags.AddForceFlag(domCmd)
 	flags.AddDirectoryPrefixFlag(domCmd)
 

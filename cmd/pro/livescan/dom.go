@@ -39,7 +39,7 @@ var domCmd = &cobra.Command{
 
 		output, _ := cmd.Flags().GetString("output")
 		if output == "" {
-			output = fmt.Sprintf("%s.html", scanId)
+			output = scanId
 		}
 		force, _ := cmd.Flags().GetBool("force")
 
@@ -67,7 +67,7 @@ var domCmd = &cobra.Command{
 func init() {
 	addScannerIdFlag(domCmd)
 	flags.AddForceFlag(domCmd)
-	flags.AddOutputFlag(domCmd, "<uuid>.html")
+	flags.AddOutputFlag(domCmd, "<uuid>")
 
 	RootCmd.AddCommand(domCmd)
 }
