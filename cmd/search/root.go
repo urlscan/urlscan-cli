@@ -1,4 +1,4 @@
-package cmd
+package search
 
 import (
 	"encoding/json"
@@ -11,13 +11,20 @@ import (
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
-var searchCmdExample = `  urlscan search <query>
+var rootCmdExample = `  urlscan search <query>
   echo "<query>" | urlscan search -`
 
-var searchCmd = &cobra.Command{
+var rootCmdLong = `Search by a query.
+
+A query uses Elasticsearch query string syntax, For example, page.domain:example.com AND date:>now-1h
+
+To discover which fields you can use in a query, list your API key's queryable fields by "search fields"`
+
+var RootCmd = &cobra.Command{
 	Use:     "search <query>",
 	Short:   "Search by a query",
-	Example: searchCmdExample,
+	Long:    rootCmdLong,
+	Example: rootCmdExample,
 	Annotations: map[string]string{
 		"args": "exact1",
 	},
@@ -81,12 +88,10 @@ var searchCmd = &cobra.Command{
 }
 
 func init() {
-	flags.AddSizeFlag(searchCmd, 100) // non-pro user's max size is 100
-	flags.AddLimitFlag(searchCmd)
-	flags.AddAllFlag(searchCmd)
-	searchCmd.Flags().String("search-after", "", "For retrieving the next batch of results, value of the sort attribute of the last (oldest) result you received (comma-separated)")
-	searchCmd.Flags().StringP("datasource", "D", "scans", "Datasources to search: scans (urlscan.io), hostnames, incidents, notifications, certificates (urlscan Pro)")
-	searchCmd.Flags().StringP("collapse", "c", "", "Field to collapse results on")
-
-	RootCmd.AddCommand(searchCmd)
+	flags.AddSizeFlag(RootCmd, 100) // non-pro user's max size is 100
+	flags.AddLimitFlag(RootCmd)
+	flags.AddAllFlag(RootCmd)
+	RootCmd.Flags().String("search-after", "", "For retrieving the next batch of results, value of the sort attribute of the last (oldest) result you received (comma-separated)")
+	RootCmd.Flags().StringP("datasource", "D", "scans", "Datasources to search: scans (urlscan.io), hostnames, incidents, notifications, certificates (urlscan Pro)")
+	RootCmd.Flags().StringP("collapse", "c", "", "Field to collapse results on")
 }
