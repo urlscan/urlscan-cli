@@ -45,3 +45,30 @@ func TestSearch(t *testing.T) {
 	}
 	assert.Equal(t, 2, count)
 }
+
+func TestSearchWithSizeZero(t *testing.T) {
+	defer gock.Off()
+
+	gock.New("http://testserver/").
+		Get("/api/v1/search").
+		MatchParam("q", "test").
+		MatchParam("size", "0").
+		Reply(200).
+		SetHeader("Content-Type", "application/json").
+		BodyString(`{"results":[], "total": 42, "has_more": true}`)
+
+	c := newTestClient()
+	it, err := c.Search("test", IteratorSize(0))
+	assert.NoError(t, err)
+
+	count := 0
+	for result, err := range it.Iterate() {
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+		count++
+	}
+
+	assert.Equal(t, 0, count)
+	assert.Equal(t, 42, it.Total)
+	assert.True(t, gock.IsDone())
+}
