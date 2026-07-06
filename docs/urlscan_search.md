@@ -2,6 +2,14 @@
 
 Search by a query
 
+### Synopsis
+
+Search by a query.
+
+A query uses Elasticsearch query string syntax, For example, page.domain:example.com AND date:>now-1h.
+
+To discover which fields you can use in a query, list your API key's queryable fields by "search fields".
+
 ```
 urlscan search <query> [flags]
 ```
@@ -28,4 +36,5 @@ urlscan search <query> [flags]
 ### SEE ALSO
 
 * [urlscan](urlscan.md)	 - A CLI tool for interacting with urlscan.io
+* [urlscan search fields](urlscan_search_fields.md)	 - List the queryable fields available for search
 

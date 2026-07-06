@@ -16,9 +16,9 @@ var rootCmdExample = `  urlscan search <query>
 
 var rootCmdLong = `Search by a query.
 
-A query uses Elasticsearch query string syntax, For example, page.domain:example.com AND date:>now-1h
+A query uses Elasticsearch query string syntax, For example, page.domain:example.com AND date:>now-1h.
 
-To discover which fields you can use in a query, list your API key's queryable fields by "search fields"`
+To discover which fields you can use in a query, list your API key's queryable fields by "search fields".`
 
 var RootCmd = &cobra.Command{
 	Use:     "search <query>",
