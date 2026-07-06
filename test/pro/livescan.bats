@@ -18,8 +18,8 @@ setup() {
 
   run ./dist/urlscan pro livescan dom "$uuid" -s "$scanner_id"
   assert_success
-  assert [ -f "./${uuid}.html" ]
-  rm -f "./${uuid}.html"
+  assert [ -f "./${uuid}" ]
+  rm -f "./${uuid}"
 
   run ./dist/urlscan pro livescan screenshot "$uuid" -s "$scanner_id"
   assert_success

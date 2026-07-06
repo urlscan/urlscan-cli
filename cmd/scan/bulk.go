@@ -63,7 +63,7 @@ func (s *scanner) newBatchScanWithDownloadTask(url string) api.BatchTask[*api.Re
 			downloadOpts := utils.NewDownloadOptions(
 				utils.WithDownloadClient(s.client),
 				utils.WithDownloadDOM(scanResult.UUID),
-				utils.WithDownloadOutput(fmt.Sprintf("%s.html", scanResult.UUID)),
+				utils.WithDownloadOutput(scanResult.UUID),
 				utils.WithDownloadForce(s.force),
 				utils.WithDownloadSilent(true),
 				utils.WithDownloadDirectoryPrefix(s.directoryPrefix),
