@@ -35,8 +35,7 @@ var countCmd = &cobra.Command{
 			return err
 		}
 
-		// size=0 so the API returns only the total, without any results to iterate over
-		it, err := client.Search(q, api.IteratorSize(0), api.IteratorLimit(1))
+		it, err := client.Search(q, api.IteratorSize(0))
 		if err != nil {
 			return err
 		}
