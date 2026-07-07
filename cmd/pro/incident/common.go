@@ -26,6 +26,7 @@ func setCreateOrUpdateFlags(cmd *cobra.Command) {
 
 	// optional flags
 	cmd.Flags().String("incident-profile", "", "Incident profile (optional)")
+	cmd.Flags().String("extra-path", "", "Optional path appended to hostname type incidents")
 	cmd.Flags().StringSlice("channels", []string{}, "Channels")
 	cmd.Flags().StringSlice("countries", []string{}, "Countries")
 	cmd.Flags().StringSlice("user-agents", []string{}, "User agents")
@@ -40,6 +41,7 @@ func mapCmdToIncidentOptions(cmd *cobra.Command) (opts []api.IncidentOption, err
 
 	channels, _ := cmd.Flags().GetStringSlice("channels")
 	countries, _ := cmd.Flags().GetStringSlice("countries")
+	extraPath, _ := cmd.Flags().GetString("extra-path")
 	countriesPerInterval, _ := cmd.Flags().GetInt("countries-per-interval")
 	expireAfter, _ := cmd.Flags().GetInt("expire-after")
 	incidentProfile, _ := cmd.Flags().GetString("incident-profile")
@@ -72,6 +74,7 @@ func mapCmdToIncidentOptions(cmd *cobra.Command) (opts []api.IncidentOption, err
 		api.WithIncidentScanIntervalAfterMalicious(scanIntervalAfterMalicious),
 		api.WithIncidentVisibility(visibility),
 		api.WithIncidentProfile(incidentProfile),
+		api.WithIncidentExtraPath(extraPath),
 		api.WithIncidentObservable(observable),
 	)
 
