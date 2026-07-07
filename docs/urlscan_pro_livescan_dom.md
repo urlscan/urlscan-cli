@@ -18,7 +18,7 @@ urlscan pro livescan dom [flags]
 ```
   -f, --force               Force overwrite an existing file
   -h, --help                help for dom
-  -o, --output string       Output file name (default <uuid>.html)
+  -o, --output string       Output file name (default <uuid>)
   -s, --scanner-id string   ID of the scanner (required)
 ```
 

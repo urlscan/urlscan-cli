@@ -218,7 +218,8 @@ func (it *Iterator) getMoreResults() (results []*SearchResult, err error) {
 
 func (it *Iterator) Iterate() iter.Seq2[*SearchResult, error] {
 	return func(yield func(*SearchResult, error) bool) {
-		for it.count < it.limit || it.all {
+		// always make at least one request so Total and HasMore are populated,
+		for first := true; first || it.count < it.limit || it.all; first = false {
 			results, err := it.getMoreResults()
 			if err != nil {
 				yield(nil, err)

@@ -84,7 +84,7 @@ var submitCmd = &cobra.Command{
 			downloadOpts := utils.NewDownloadOptions(
 				utils.WithDownloadClient(client),
 				utils.WithDownloadDOM(scanResult.UUID),
-				utils.WithDownloadOutput(fmt.Sprintf("%s.html", scanResult.UUID)),
+				utils.WithDownloadOutput(scanResult.UUID),
 				utils.WithDownloadForce(force),
 				utils.WithDownloadSilent(true),
 			)
