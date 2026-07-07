@@ -2,6 +2,18 @@
 
 Search by a query
 
+### Synopsis
+
+Search by a query.
+
+A query uses Elasticsearch query string syntax, For example, page.domain:example.com AND date:>now-1h.
+
+To discover which fields you can use in a query, use "search fields".
+
+To only count the number of results, use "search count <query>".
+
+See https://docs.urlscan.io/pages/search-api-reference for more details.
+
 ```
 urlscan search <query> [flags]
 ```
@@ -28,4 +40,6 @@ urlscan search <query> [flags]
 ### SEE ALSO
 
 * [urlscan](urlscan.md)	 - A CLI tool for interacting with urlscan.io
+* [urlscan search count](urlscan_search_count.md)	 - Count the number of results matching a query
+* [urlscan search fields](urlscan_search_fields.md)	 - List the queryable fields available for search
 

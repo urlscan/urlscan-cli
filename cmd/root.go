@@ -11,6 +11,7 @@ import (
 	"github.com/urlscan/urlscan-cli/api"
 	"github.com/urlscan/urlscan-cli/cmd/pro"
 	"github.com/urlscan/urlscan-cli/cmd/scan"
+	"github.com/urlscan/urlscan-cli/cmd/search"
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
@@ -87,4 +88,5 @@ func init() {
 
 	RootCmd.AddCommand(scan.RootCmd)
 	RootCmd.AddCommand(pro.RootCmd)
+	RootCmd.AddCommand(search.RootCmd)
 }
