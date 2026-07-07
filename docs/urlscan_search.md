@@ -12,6 +12,8 @@ To discover which fields you can use in a query, use "search fields".
 
 To only count the number of results, use "search count <query>".
 
+See https://docs.urlscan.io/pages/search-api-reference for more details.
+
 ```
 urlscan search <query> [flags]
 ```
