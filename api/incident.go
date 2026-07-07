@@ -25,6 +25,7 @@ type IncidentOptions struct {
 		// common fields
 		Visibility      string `json:"visibility"`
 		IncidentProfile string `json:"incidentProfile,omitempty"`
+		ExtraPath       string `json:"extraPath,omitempty"`
 		// create & updated fields
 		Channels   []string `json:"channels"`
 		Observable string   `json:"observable"`
@@ -120,6 +121,12 @@ func WithIncidentVisibility(visibility string) IncidentOption {
 func WithIncidentProfile(incidentProfile string) IncidentOption {
 	return func(opts *IncidentOptions) {
 		opts.Incident.IncidentProfile = incidentProfile
+	}
+}
+
+func WithIncidentExtraPath(extraPath string) IncidentOption {
+	return func(opts *IncidentOptions) {
+		opts.Incident.ExtraPath = extraPath
 	}
 }
 
