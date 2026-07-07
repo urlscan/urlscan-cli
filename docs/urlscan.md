@@ -12,6 +12,7 @@ A CLI tool for interacting with urlscan.io
 
 * [urlscan completion](urlscan_completion.md)	 - Output shell completion code for the specified shell (bash, zsh, fish)
 * [urlscan key](urlscan_key.md)	 - Manage API key
+* [urlscan mcp](urlscan_mcp.md)	 - MCP server management
 * [urlscan pro](urlscan_pro.md)	 - Pro sub-commands
 * [urlscan quotas](urlscan_quotas.md)	 - Get API quotas
 * [urlscan scan](urlscan_scan.md)	 - Scan sub-commands
