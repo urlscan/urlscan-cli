@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
 )
 
 type LiveScanOptions struct {
@@ -17,6 +18,10 @@ type LiveScanOptions struct {
 		EnableFeatures  []string          `json:"enableFeatures,omitempty"`
 		DisableFeatures []string          `json:"disableFeatures,omitempty"`
 	} `json:"scanner"`
+}
+
+var DisabledFeatures = []string{
+	"stealth",
 }
 
 type LiveScanOption func(*LiveScanOptions)
@@ -59,6 +64,11 @@ func WithLiveScanScannerEnableFeatures(features []string) LiveScanOption {
 
 func WithLiveScanScannerDisableFeatures(features []string) LiveScanOption {
 	return func(opts *LiveScanOptions) {
+		for _, feature := range features {
+			if slices.Contains(DisabledFeatures, feature) {
+				log.Warn(fmt.Sprintf("The feature '%s' is deprecated", feature))
+			}
+		}
 		opts.Scanner.DisableFeatures = features
 	}
 }
