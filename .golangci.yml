@@ -9,6 +9,7 @@ linters:
         - '.+/cobra\.Command$'
         - '.+/http\.Client$'
         - '.+/url\.URL$'
+        - '.+/tar\.Header$'
 formatters:
   enable:
     - gofmt
