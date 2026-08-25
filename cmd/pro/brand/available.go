@@ -21,7 +21,7 @@ var availableCmd = &cobra.Command{
 			return err
 		}
 
-		resp, err := client.NewRequest().Get(api.PrefixedPath(("/pro/availableBrands")))
+		resp, err := client.NewRequest().Get(api.PrefixedPath("/pro/availableBrands"))
 		if err != nil {
 			return err
 		}

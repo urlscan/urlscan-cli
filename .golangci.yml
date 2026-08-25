@@ -2,13 +2,14 @@ version: "2"
 linters:
   default: standard
   enable:
-    - exhaustruct
+    - exhaustruct_v5
   settings:
-    exhaustruct:
-      exclude:
+    exhaustruct_v5:
+      ignore-patterns:
         - '.+/cobra\.Command$'
         - '.+/http\.Client$'
         - '.+/url\.URL$'
+        - '.+/tar\.Header$'
 formatters:
   enable:
     - gofmt

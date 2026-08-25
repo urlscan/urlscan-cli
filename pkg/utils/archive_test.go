@@ -6,7 +6,6 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
-	"time"
 )
 
 func TestExtractGzip(t *testing.T) {
@@ -75,23 +74,10 @@ func TestExtractTar(t *testing.T) {
 	for filename, content := range testFiles {
 		if dir := filepath.Dir(filename); dir != "." {
 			header := &tar.Header{
-				Name:       dir + "/",
-				Mode:       0o755,
-				Typeflag:   tar.TypeDir,
-				Format:     tar.FormatPAX,
-				Linkname:   "",
-				Size:       0,
-				Uid:        0,
-				Gid:        0,
-				Uname:      "",
-				Gname:      "",
-				ModTime:    time.Time{},
-				AccessTime: time.Time{},
-				ChangeTime: time.Time{},
-				Devmajor:   0,
-				Devminor:   0,
-				PAXRecords: nil,
-				Xattrs:     nil,
+				Name:     dir + "/",
+				Mode:     0o755,
+				Typeflag: tar.TypeDir,
+				Format:   tar.FormatPAX,
 			}
 			err := tarWriter.WriteHeader(header)
 			if err != nil {
@@ -100,23 +86,11 @@ func TestExtractTar(t *testing.T) {
 		}
 
 		header := &tar.Header{
-			Name:       filename,
-			Mode:       0o644,
-			Size:       int64(len(content)),
-			Typeflag:   tar.TypeReg,
-			Format:     tar.FormatPAX,
-			Linkname:   "",
-			Uid:        0,
-			Gid:        0,
-			Uname:      "",
-			Gname:      "",
-			ModTime:    time.Time{},
-			AccessTime: time.Time{},
-			ChangeTime: time.Time{},
-			Devmajor:   0,
-			Devminor:   0,
-			PAXRecords: nil,
-			Xattrs:     nil,
+			Name:     filename,
+			Mode:     0o644,
+			Size:     int64(len(content)),
+			Typeflag: tar.TypeReg,
+			Format:   tar.FormatPAX,
 		}
 		err = tarWriter.WriteHeader(header)
 		if err != nil {
@@ -190,23 +164,10 @@ func TestExtractTarGzip(t *testing.T) {
 	for filename, content := range testFiles {
 		if dir := filepath.Dir(filename); dir != "." {
 			header := &tar.Header{
-				Name:       dir + "/",
-				Mode:       0o755,
-				Typeflag:   tar.TypeDir,
-				Format:     tar.FormatPAX,
-				Linkname:   "",
-				Size:       0,
-				Uid:        0,
-				Gid:        0,
-				Uname:      "",
-				Gname:      "",
-				ModTime:    time.Time{},
-				AccessTime: time.Time{},
-				ChangeTime: time.Time{},
-				Devmajor:   0,
-				Devminor:   0,
-				PAXRecords: nil,
-				Xattrs:     nil,
+				Name:     dir + "/",
+				Mode:     0o755,
+				Typeflag: tar.TypeDir,
+				Format:   tar.FormatPAX,
 			}
 			if err := tarWriter.WriteHeader(header); err != nil {
 				t.Fatalf("Failed to write dir header: %v", err)
@@ -214,23 +175,11 @@ func TestExtractTarGzip(t *testing.T) {
 		}
 
 		header := &tar.Header{
-			Name:       filename,
-			Mode:       0o644,
-			Size:       int64(len(content)),
-			Typeflag:   tar.TypeReg,
-			Format:     tar.FormatPAX,
-			Linkname:   "",
-			Uid:        0,
-			Gid:        0,
-			Uname:      "",
-			Gname:      "",
-			ModTime:    time.Time{},
-			AccessTime: time.Time{},
-			ChangeTime: time.Time{},
-			Devmajor:   0,
-			Devminor:   0,
-			PAXRecords: nil,
-			Xattrs:     nil,
+			Name:     filename,
+			Mode:     0o644,
+			Size:     int64(len(content)),
+			Typeflag: tar.TypeReg,
+			Format:   tar.FormatPAX,
 		}
 		if err := tarWriter.WriteHeader(header); err != nil {
 			t.Fatalf("Failed to write file header: %v", err)
@@ -303,23 +252,11 @@ func TestExtractTarWithZeroBlocks(t *testing.T) {
 
 	// write first file
 	header1 := &tar.Header{
-		Name:       "file1.txt",
-		Mode:       0o644,
-		Size:       int64(len(testFiles["file1.txt"])),
-		Typeflag:   tar.TypeReg,
-		Format:     tar.FormatPAX,
-		Linkname:   "",
-		Uid:        0,
-		Gid:        0,
-		Uname:      "",
-		Gname:      "",
-		ModTime:    time.Time{},
-		AccessTime: time.Time{},
-		ChangeTime: time.Time{},
-		Devmajor:   0,
-		Devminor:   0,
-		PAXRecords: nil,
-		Xattrs:     nil,
+		Name:     "file1.txt",
+		Mode:     0o644,
+		Size:     int64(len(testFiles["file1.txt"])),
+		Typeflag: tar.TypeReg,
+		Format:   tar.FormatPAX,
 	}
 	if err := tarWriter.WriteHeader(header1); err != nil {
 		t.Fatalf("Failed to write file1 header: %v", err)
@@ -345,23 +282,11 @@ func TestExtractTarWithZeroBlocks(t *testing.T) {
 	// now write second file by creating a new tar writer
 	tarWriter2 := tar.NewWriter(tarFile)
 	header2 := &tar.Header{
-		Name:       "file2.txt",
-		Mode:       0o644,
-		Size:       int64(len(testFiles["file2.txt"])),
-		Typeflag:   tar.TypeReg,
-		Format:     tar.FormatPAX,
-		Linkname:   "",
-		Uid:        0,
-		Gid:        0,
-		Uname:      "",
-		Gname:      "",
-		ModTime:    time.Time{},
-		AccessTime: time.Time{},
-		ChangeTime: time.Time{},
-		Devmajor:   0,
-		Devminor:   0,
-		PAXRecords: nil,
-		Xattrs:     nil,
+		Name:     "file2.txt",
+		Mode:     0o644,
+		Size:     int64(len(testFiles["file2.txt"])),
+		Typeflag: tar.TypeReg,
+		Format:   tar.FormatPAX,
 	}
 	err = tarWriter2.WriteHeader(header2)
 	if err != nil {
@@ -489,23 +414,11 @@ func TestExtractTarGzipWithZeroBlocks(t *testing.T) {
 
 	// write first file
 	header1 := &tar.Header{
-		Name:       "file1.txt",
-		Mode:       0o644,
-		Size:       int64(len(testFiles["file1.txt"])),
-		Typeflag:   tar.TypeReg,
-		Format:     tar.FormatPAX,
-		Linkname:   "",
-		Uid:        0,
-		Gid:        0,
-		Uname:      "",
-		Gname:      "",
-		ModTime:    time.Time{},
-		AccessTime: time.Time{},
-		ChangeTime: time.Time{},
-		Devmajor:   0,
-		Devminor:   0,
-		PAXRecords: nil,
-		Xattrs:     nil,
+		Name:     "file1.txt",
+		Mode:     0o644,
+		Size:     int64(len(testFiles["file1.txt"])),
+		Typeflag: tar.TypeReg,
+		Format:   tar.FormatPAX,
 	}
 	if err := tarWriter.WriteHeader(header1); err != nil {
 		t.Fatalf("Failed to write file1 header: %v", err)
@@ -530,23 +443,11 @@ func TestExtractTarGzipWithZeroBlocks(t *testing.T) {
 	// write second file with a new tar writer
 	tarWriter2 := tar.NewWriter(gzWriter)
 	header2 := &tar.Header{
-		Name:       "file2.txt",
-		Mode:       0o644,
-		Size:       int64(len(testFiles["file2.txt"])),
-		Typeflag:   tar.TypeReg,
-		Format:     tar.FormatPAX,
-		Linkname:   "",
-		Uid:        0,
-		Gid:        0,
-		Uname:      "",
-		Gname:      "",
-		ModTime:    time.Time{},
-		AccessTime: time.Time{},
-		ChangeTime: time.Time{},
-		Devmajor:   0,
-		Devminor:   0,
-		PAXRecords: nil,
-		Xattrs:     nil,
+		Name:     "file2.txt",
+		Mode:     0o644,
+		Size:     int64(len(testFiles["file2.txt"])),
+		Typeflag: tar.TypeReg,
+		Format:   tar.FormatPAX,
 	}
 	if err := tarWriter2.WriteHeader(header2); err != nil {
 		t.Fatalf("Failed to write file2 header: %v", err)
