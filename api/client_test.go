@@ -32,6 +32,31 @@ func (c *Counter) Count() int {
 	return original
 }
 
+func TestSetHost(t *testing.T) {
+	saved := baseURL
+	defer func() { baseURL = saved }()
+
+	tests := []struct {
+		name       string
+		host       string
+		wantScheme string
+		wantHost   string
+	}{
+		{name: "bare host", host: "urlscan.io", wantScheme: "https", wantHost: "urlscan.io"},
+		{name: "explicit https", host: "https://urlscan.io", wantScheme: "https", wantHost: "urlscan.io"},
+		{name: "explicit http localhost", host: "http://localhost:8080", wantScheme: "http", wantHost: "localhost:8080"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			baseURL = url.URL{Scheme: "https", Host: "urlscan.io"}
+			SetHost(tt.host)
+			assert.Equal(t, tt.wantScheme, baseURL.Scheme)
+			assert.Equal(t, tt.wantHost, baseURL.Host)
+		})
+	}
+}
+
 func TestRetry(t *testing.T) {
 	defer gock.Off()
 

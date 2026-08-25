@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -70,6 +71,14 @@ type Client struct {
 }
 
 func SetHost(host string) {
+	switch {
+	case strings.HasPrefix(host, "https://"):
+		baseURL.Scheme = "https"
+		host = strings.TrimPrefix(host, "https://")
+	case strings.HasPrefix(host, "http://"):
+		baseURL.Scheme = "http"
+		host = strings.TrimPrefix(host, "http://")
+	}
 	baseURL.Host = host
 }
 

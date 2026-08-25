@@ -18,7 +18,7 @@ import (
 func addHostFlag(flags *pflag.FlagSet) {
 	flags.String(
 		"host", "urlscan.io",
-		"API host name")
+		"API host name or full base URL")
 	flags.MarkHidden("host") //nolint:errcheck
 }
 
