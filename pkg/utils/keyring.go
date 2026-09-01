@@ -51,7 +51,7 @@ func (tm *KeyManager) CheckService() error {
 		if errors.Is(err, keyring.ErrNotFound) {
 			return nil // Keyring service is available but no key is set
 		}
-		return errors.Join(fmt.Errorf("keyring service is unavialable, check your keyring configuration"), err)
+		return errors.Join(fmt.Errorf("keyring service is unavailable, check your keyring configuration"), err)
 	}
 	return nil // Keyring service is available and a key exists
 }
