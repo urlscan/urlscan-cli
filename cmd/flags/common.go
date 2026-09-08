@@ -77,3 +77,7 @@ func AddDirectoryPrefixFlag(cmd *cobra.Command) {
 func AddRefangFlag(cmd *cobra.Command) {
 	cmd.Flags().Bool("refang", false, "Refang an input (convert '[.]' back to '.' and so on)")
 }
+
+func AddDatasourceFlag(cmd *cobra.Command) {
+	cmd.Flags().StringP("datasource", "D", "scans", "Datasources to search: scans (urlscan.io), hostnames, incidents, notifications, certificates (urlscan Pro)")
+}

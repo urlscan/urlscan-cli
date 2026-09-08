@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/urlscan/urlscan-cli/api"
+	"github.com/urlscan/urlscan-cli/cmd/flags"
 	"github.com/urlscan/urlscan-cli/pkg/utils"
 )
 
@@ -24,6 +25,8 @@ var countCmd = &cobra.Command{
 			return cmd.Usage()
 		}
 
+		datasource, _ := cmd.Flags().GetString("datasource")
+
 		reader := utils.StringReaderFromCmdArgs(args)
 		q, err := reader.ReadString()
 		if err != nil {
@@ -35,7 +38,7 @@ var countCmd = &cobra.Command{
 			return err
 		}
 
-		it, err := client.Search(q, api.IteratorSize(0))
+		it, err := client.Search(q, api.IteratorSize(0), api.IteratorDatasource(datasource))
 		if err != nil {
 			return err
 		}
@@ -53,5 +56,6 @@ var countCmd = &cobra.Command{
 }
 
 func init() {
+	flags.AddDatasourceFlag(countCmd)
 	RootCmd.AddCommand(countCmd)
 }

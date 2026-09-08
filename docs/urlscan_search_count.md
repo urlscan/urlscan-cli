@@ -16,7 +16,8 @@ urlscan search count <query> [flags]
 ### Options
 
 ```
-  -h, --help   help for count
+  -D, --datasource string   Datasources to search: scans (urlscan.io), hostnames, incidents, notifications, certificates (urlscan Pro) (default "scans")
+  -h, --help                help for count
 ```
 
 ### SEE ALSO

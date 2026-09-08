@@ -95,7 +95,7 @@ func init() {
 	flags.AddSizeFlag(RootCmd, 100) // non-pro user's max size is 100
 	flags.AddLimitFlag(RootCmd)
 	flags.AddAllFlag(RootCmd)
+	flags.AddDatasourceFlag(RootCmd)
 	RootCmd.Flags().String("search-after", "", "For retrieving the next batch of results, value of the sort attribute of the last (oldest) result you received (comma-separated)")
-	RootCmd.Flags().StringP("datasource", "D", "scans", "Datasources to search: scans (urlscan.io), hostnames, incidents, notifications, certificates (urlscan Pro)")
 	RootCmd.Flags().StringP("collapse", "c", "", "Field to collapse results on")
 }
