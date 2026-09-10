@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"sync"
 	"time"
 
@@ -79,6 +78,19 @@ func Batch[T any](c *Client, tasks []BatchTask[T], opts ...BatchOption) ([]mo.Re
 	return results, nil
 }
 
+// errorRaw builds a JSON object {"error": "<msg>"} with the message properly
+// escaped. Interpolating err.Error() directly produced invalid JSON whenever the
+// error string contained quotes (e.g. *url.Error: `Get "http://host": ...`),
+// breaking the marshal of the whole batch.
+func errorRaw(msg string) *json.RawMessage {
+	b, err := json.Marshal(map[string]string{"error": msg})
+	if err != nil {
+		b = []byte(`{"error": "failed to marshal error message"}`)
+	}
+	raw := json.RawMessage(b)
+	return &raw
+}
+
 func BatchResultToRaw(r mo.Result[*Response]) *json.RawMessage {
 	err := r.Error()
 	if err != nil {
@@ -86,14 +98,12 @@ func BatchResultToRaw(r mo.Result[*Response]) *json.RawMessage {
 		if ok {
 			return &jsonErr.Raw
 		}
-		errRaw := json.RawMessage(fmt.Sprintf(`{"error": "%s"}`, err.Error()))
-		return &errRaw
+		return errorRaw(err.Error())
 	}
 	resp := r.MustGet()
 	raw, err := resp.ToJSON()
 	if err != nil {
-		errRaw := json.RawMessage(fmt.Sprintf(`{"error": "%s"}`, err.Error()))
-		return &errRaw
+		return errorRaw(err.Error())
 	}
 	return raw
 }
