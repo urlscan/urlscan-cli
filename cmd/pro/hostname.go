@@ -2,7 +2,6 @@ package pro
 
 import (
 	"encoding/json/jsontext"
-	"encoding/json/v2"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -88,7 +87,7 @@ var hostnameCmd = &cobra.Command{
 
 		results.HasMore = it.HasMore
 
-		b, err := json.Marshal(results, jsontext.WithIndent("  "))
+		b, err := utils.MarshalIndent(results)
 		if err != nil {
 			return err
 		}
