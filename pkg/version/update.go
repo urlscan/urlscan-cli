@@ -1,7 +1,7 @@
 package version
 
 import (
-	"encoding/json"
+	"encoding/json/v2"
 	"fmt"
 	"net/http"
 	"strings"
@@ -38,7 +38,7 @@ func CheckLatest(timeout int) (string, error) {
 	}()
 
 	var release githubRelease
-	err = json.NewDecoder(resp.Body).Decode(&release)
+	err = json.UnmarshalRead(resp.Body, &release)
 	if err != nil {
 		return "", err
 	}

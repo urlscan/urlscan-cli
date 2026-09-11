@@ -1,8 +1,8 @@
 package api
 
 import (
-	"bytes"
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"fmt"
 	"io"
 	"net/http"
@@ -101,7 +101,7 @@ func (r *Response) GetContentType() string {
 	return r.Header.Get("Content-Type")
 }
 
-func (r *Response) ToJSON() (*json.RawMessage, error) {
+func (r *Response) ToJSON() (*jsontext.Value, error) {
 	body, err := r.ToBytes()
 	if err != nil {
 		return nil, err
@@ -111,16 +111,15 @@ func (r *Response) ToJSON() (*json.RawMessage, error) {
 	if !strings.Contains(contentType, "application/json") {
 		return nil, fmt.Errorf("response is not JSON, content-type: %s", contentType)
 	}
-	raw := json.RawMessage(body)
+	raw := jsontext.Value(body)
 	return &raw, nil
 }
 
 func (r *Response) PrettyJSON() string {
-	var jsonBody bytes.Buffer
-	err := json.Indent(&jsonBody, r.body, "", "  ")
-	if err != nil {
+	raw := jsontext.Value(r.body).Clone()
+	if err := raw.Indent(jsontext.WithIndent("  ")); err != nil {
 		log.Info("error formatting JSON response, fallback to the original", "error", err)
 		return string(r.body)
 	}
-	return jsonBody.String()
+	return raw.String()
 }

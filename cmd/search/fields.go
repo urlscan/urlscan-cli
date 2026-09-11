@@ -1,7 +1,8 @@
 package search
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -35,7 +36,7 @@ var fieldsCmd = &cobra.Command{
 			return err
 		}
 
-		b, err := json.MarshalIndent(user.Limits.QueryableFields, "", "  ")
+		b, err := json.Marshal(user.Limits.QueryableFields, jsontext.WithIndent("  "))
 		if err != nil {
 			return err
 		}

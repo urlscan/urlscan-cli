@@ -2,7 +2,7 @@ package api
 
 import (
 	"context"
-	"encoding/json"
+	"encoding/json/jsontext"
 	"errors"
 	"fmt"
 	"sync"
@@ -79,20 +79,20 @@ func Batch[T any](c *Client, tasks []BatchTask[T], opts ...BatchOption) ([]mo.Re
 	return results, nil
 }
 
-func BatchResultToRaw(r mo.Result[*Response]) *json.RawMessage {
+func BatchResultToRaw(r mo.Result[*Response]) *jsontext.Value {
 	err := r.Error()
 	if err != nil {
 		jsonErr, ok := errors.AsType[*JSONError](err)
 		if ok {
 			return &jsonErr.Raw
 		}
-		errRaw := json.RawMessage(fmt.Sprintf(`{"error": "%s"}`, err.Error()))
+		errRaw := jsontext.Value(fmt.Sprintf(`{"error": "%s"}`, err.Error()))
 		return &errRaw
 	}
 	resp := r.MustGet()
 	raw, err := resp.ToJSON()
 	if err != nil {
-		errRaw := json.RawMessage(fmt.Sprintf(`{"error": "%s"}`, err.Error()))
+		errRaw := jsontext.Value(fmt.Sprintf(`{"error": "%s"}`, err.Error()))
 		return &errRaw
 	}
 	return raw

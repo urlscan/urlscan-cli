@@ -1,7 +1,8 @@
 package api
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"fmt"
 	"iter"
 	"strconv"
@@ -10,15 +11,15 @@ import (
 const MaxTotal = 10_000
 
 type SearchResult struct {
-	Sort []any           `json:"sort"`
-	Raw  json.RawMessage `json:"-"`
+	Sort []any          `json:"sort"`
+	Raw  jsontext.Value `json:"-"`
 }
 
 type SearchResults struct {
-	Results []SearchResult  `json:"results"`
-	HasMore bool            `json:"has_more"`
-	Total   int             `json:"total"`
-	Raw     json.RawMessage `json:"-"`
+	Results []SearchResult `json:"results"`
+	HasMore bool           `json:"has_more"`
+	Total   int            `json:"total"`
+	Raw     jsontext.Value `json:"-"`
 }
 
 func (r *SearchResult) UnmarshalJSON(data []byte) error {

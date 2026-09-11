@@ -2,7 +2,8 @@ package scan
 
 import (
 	"context"
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"fmt"
 	"os"
 
@@ -95,7 +96,7 @@ func (s *scanner) do(urls []string) error {
 
 	pairs := utils.NewBatchJSONResultPairs(urls, results)
 
-	b, err := json.MarshalIndent(pairs, "", "  ")
+	b, err := json.Marshal(pairs, jsontext.WithIndent("  "))
 	if err != nil {
 		return err
 	}

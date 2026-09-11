@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -158,8 +158,8 @@ func DownloadWithSpinner(opts *DownloadOptions) error {
 }
 
 type BatchJSONResultPair struct {
-	Key    string          `json:"key"`
-	Result json.RawMessage `json:"result"`
+	Key    string         `json:"key"`
+	Result jsontext.Value `json:"result"`
 }
 
 func NewBatchJSONResultPairs(keys []string, results []mo.Result[*api.Response]) []*BatchJSONResultPair {

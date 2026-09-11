@@ -1,7 +1,8 @@
 package pro
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -73,7 +74,7 @@ var structureSearchCmd = &cobra.Command{
 		results.HasMore = it.HasMore
 		results.Total = it.Total
 
-		b, err := json.MarshalIndent(results, "", "  ")
+		b, err := json.Marshal(results, jsontext.WithIndent("  "))
 		if err != nil {
 			return err
 		}
