@@ -20,11 +20,13 @@ urlscan pro livescan scan [flags]
   -c, --capture-delay int              Delay after page has finished loading before capturing page content (in ms) (default 10000)
   -d, --disable-features strings       Features to disable (annotation, dom, downloads, hideheadless, pageInformation, responses, screenshot)
   -e, --enable-features strings        Features to enable (bannerBypass, downloadWait, fullscreen)
+  -J, --eval-script string             Javascript snippet to execute as the first item in the main page context
   -H, --extra-headers stringToString   Extra headers to send with the request (e.g., User-Agent: urlscan-cli) (default [])
   -h, --help                           help for scan
   -p, --page-timeout int               Time to wait for the whole scan process (in ms) (default 10000)
       --refang                         Refang an input (convert '[.]' back to '.' and so on)
   -s, --scanner-id string              ID of the scanner (required)
+  -A, --user-agent string              Custom User-Agent to use for the scan
   -v, --visibility string              Visibility of the scan (public, unlisted or private) (default "private")
 ```
 

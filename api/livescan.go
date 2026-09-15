@@ -17,6 +17,8 @@ type LiveScanOptions struct {
 		ExtraHeaders    map[string]string `json:"extraHeaders,omitempty"`
 		EnableFeatures  []string          `json:"enableFeatures,omitempty"`
 		DisableFeatures []string          `json:"disableFeatures,omitempty"`
+		EvalScript      string            `json:"evalScript,omitempty"`
+		UserAgent       string            `json:"userAgent,omitempty"`
 	} `json:"scanner"`
 }
 
@@ -70,6 +72,18 @@ func WithLiveScanScannerDisableFeatures(features []string) LiveScanOption {
 			}
 		}
 		opts.Scanner.DisableFeatures = features
+	}
+}
+
+func WithLiveScanScannerEvalScript(script string) LiveScanOption {
+	return func(opts *LiveScanOptions) {
+		opts.Scanner.EvalScript = script
+	}
+}
+
+func WithLiveScanScannerUserAgent(userAgent string) LiveScanOption {
+	return func(opts *LiveScanOptions) {
+		opts.Scanner.UserAgent = userAgent
 	}
 }
 

@@ -44,6 +44,8 @@ var scanCmd = &cobra.Command{
 		extraHeaders, _ := cmd.Flags().GetStringToString("extra-headers")
 		enableFeatures, _ := cmd.Flags().GetStringSlice("enable-features")
 		disableFeatures, _ := cmd.Flags().GetStringSlice("disable-features")
+		evalScript, _ := cmd.Flags().GetString("eval-script")
+		userAgent, _ := cmd.Flags().GetString("user-agent")
 
 		blocking, _ := cmd.Flags().GetBool("blocking")
 
@@ -55,6 +57,8 @@ var scanCmd = &cobra.Command{
 			api.WithLiveScanScannerExtraHeaders(extraHeaders),
 			api.WithLiveScanScannerEnableFeatures(enableFeatures),
 			api.WithLiveScanScannerDisableFeatures(disableFeatures),
+			api.WithLiveScanScannerEvalScript(evalScript),
+			api.WithLiveScanScannerUserAgent(userAgent),
 		}
 
 		client, err := utils.NewAPIClient()
@@ -87,6 +91,8 @@ func init() {
 	scanCmd.Flags().StringToStringP("extra-headers", "H", map[string]string{}, "Extra headers to send with the request (e.g., User-Agent: urlscan-cli)")
 	scanCmd.Flags().StringSliceP("enable-features", "e", []string{}, "Features to enable (bannerBypass, downloadWait, fullscreen)")
 	scanCmd.Flags().StringSliceP("disable-features", "d", []string{}, "Features to disable (annotation, dom, downloads, hideheadless, pageInformation, responses, screenshot)")
+	scanCmd.Flags().StringP("eval-script", "J", "", "Javascript snippet to execute as the first item in the main page context")
+	scanCmd.Flags().StringP("user-agent", "A", "", "Custom User-Agent to use for the scan")
 	scanCmd.Flags().BoolP("blocking", "b", true, "Whether to do a blocking scan or not")
 
 	addVisibilityFlag(scanCmd)
