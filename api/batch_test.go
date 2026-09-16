@@ -2,6 +2,8 @@ package api
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
 	"net/http"
 	"testing"
 
@@ -39,4 +41,17 @@ func TestBatch(t *testing.T) {
 
 	assert.Equal(t, results[0].MustGet().StatusCode, http.StatusOK)
 	assert.Equal(t, results[1].MustGet().StatusCode, http.StatusOK)
+}
+
+func TestBatchResultToRawEscapesQuotesInError(t *testing.T) {
+	// *url.Error-style messages contain quotes; they must not break the JSON.
+	err := errors.New(`Get "http://example.com/": context deadline exceeded`)
+	raw := BatchResultToRaw(mo.Err[*Response](err))
+
+	_, jsonErr := json.Marshal(raw)
+	assert.NoError(t, jsonErr)
+
+	var obj map[string]string
+	assert.NoError(t, json.Unmarshal(*raw, &obj))
+	assert.Equal(t, err.Error(), obj["error"])
 }
