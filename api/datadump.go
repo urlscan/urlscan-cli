@@ -1,8 +1,8 @@
 package api
 
 import (
-	"bytes"
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"fmt"
 	"net/url"
 	"path/filepath"
@@ -46,8 +46,8 @@ func expandPath(path string) ([]string, error) {
 }
 
 type DataDumpList struct {
-	Files []DataDumpFile  `json:"files"`
-	Raw   json.RawMessage `json:"-"`
+	Files []DataDumpFile `json:"files"`
+	Raw   jsontext.Value `json:"-"`
 }
 
 type DataDumpFile struct {
@@ -57,13 +57,12 @@ type DataDumpFile struct {
 }
 
 func (r *DataDumpList) PrettyJSON() string {
-	var jsonBody bytes.Buffer
-	err := json.Indent(&jsonBody, r.Raw, "", "  ")
-	if err != nil {
+	raw := r.Raw.Clone()
+	if err := raw.Indent(jsontext.WithIndent("  ")); err != nil {
 		msg := fmt.Sprintf("error formatting JSON response: %s", err)
 		panic(msg)
 	}
-	return jsonBody.String()
+	return raw.String()
 }
 
 func (r *DataDumpList) UnmarshalJSON(data []byte) error {

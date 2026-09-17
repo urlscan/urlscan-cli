@@ -2,7 +2,8 @@ package api
 
 import (
 	"context"
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"errors"
 	"sync"
 	"time"
@@ -82,16 +83,16 @@ func Batch[T any](c *Client, tasks []BatchTask[T], opts ...BatchOption) ([]mo.Re
 // escaped. Interpolating err.Error() directly produced invalid JSON whenever the
 // error string contained quotes (e.g. *url.Error: `Get "http://host": ...`),
 // breaking the marshal of the whole batch.
-func errorRaw(msg string) *json.RawMessage {
+func errorRaw(msg string) *jsontext.Value {
 	b, err := json.Marshal(map[string]string{"error": msg})
 	if err != nil {
 		b = []byte(`{"error": "failed to marshal error message"}`)
 	}
-	raw := json.RawMessage(b)
+	raw := jsontext.Value(b)
 	return &raw
 }
 
-func BatchResultToRaw(r mo.Result[*Response]) *json.RawMessage {
+func BatchResultToRaw(r mo.Result[*Response]) *jsontext.Value {
 	err := r.Error()
 	if err != nil {
 		jsonErr, ok := errors.AsType[*JSONError](err)

@@ -1,7 +1,7 @@
 package pro
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -11,14 +11,14 @@ import (
 )
 
 type HostnameResults struct {
-	Results   []json.RawMessage `json:"results"`
-	PageState string            `json:"pageState"`
-	HasMore   bool              `json:"has_more"`
+	Results   []jsontext.Value `json:"results"`
+	PageState string           `json:"pageState"`
+	HasMore   bool             `json:"has_more"`
 }
 
 func newHostnameResults() HostnameResults {
 	return HostnameResults{
-		Results:   make([]json.RawMessage, 0),
+		Results:   make([]jsontext.Value, 0),
 		PageState: "",
 		HasMore:   false,
 	}
@@ -87,7 +87,7 @@ var hostnameCmd = &cobra.Command{
 
 		results.HasMore = it.HasMore
 
-		b, err := json.MarshalIndent(results, "", "  ")
+		b, err := utils.MarshalIndent(results)
 		if err != nil {
 			return err
 		}

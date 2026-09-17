@@ -1,17 +1,18 @@
 package api
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"fmt"
 	"iter"
 	"strconv"
 )
 
 type HostnameResults struct {
-	Item      string            `json:"item"`
-	Results   []json.RawMessage `json:"results"`
-	PageState string            `json:"pageState"`
-	Raw       json.RawMessage   `json:"-"`
+	Item      string           `json:"item"`
+	Results   []jsontext.Value `json:"results"`
+	PageState string           `json:"pageState"`
+	Raw       jsontext.Value   `json:"-"`
 }
 
 func (r *HostnameResults) UnmarshalJSON(data []byte) error {
@@ -106,7 +107,7 @@ func newHostnameIterator(c *Client, path string, options ...HostnameIteratorOpti
 	return it, nil
 }
 
-func (it *HostnameIterator) getMoreResults() (results []*json.RawMessage, err error) {
+func (it *HostnameIterator) getMoreResults() (results []*jsontext.Value, err error) {
 	resp, err := it.request.Get(it.path)
 	if err != nil {
 		return nil, err
@@ -131,8 +132,8 @@ func (it *HostnameIterator) getMoreResults() (results []*json.RawMessage, err er
 	return results, nil
 }
 
-func (it *HostnameIterator) Iterate() iter.Seq2[*json.RawMessage, error] {
-	return func(yield func(*json.RawMessage, error) bool) {
+func (it *HostnameIterator) Iterate() iter.Seq2[*jsontext.Value, error] {
+	return func(yield func(*jsontext.Value, error) bool) {
 		for it.count < it.limit || it.all {
 			results, err := it.getMoreResults()
 			if err != nil {

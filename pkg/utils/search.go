@@ -1,19 +1,19 @@
 package utils
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
 )
 
 type SearchResults struct {
-	Results []json.RawMessage `json:"results"`
-	HasMore bool              `json:"has_more"`
-	Total   int               `json:"total"`
+	Results []jsontext.Value `json:"results"`
+	HasMore bool             `json:"has_more"`
+	Total   int              `json:"total"`
 }
 
 func NewSearchResults() SearchResults {
 	return SearchResults{
 		Total:   0,
-		Results: make([]json.RawMessage, 0),
+		Results: make([]jsontext.Value, 0),
 		HasMore: false,
 	}
 }

@@ -1,12 +1,15 @@
 package api
 
-import "encoding/json"
+import (
+	"encoding/json/jsontext"
+	"encoding/json/v2"
+)
 
 type JSONError struct {
-	Status      int             `json:"status,omitempty"`
-	Message     string          `json:"message"`
-	Description string          `json:"description,omitempty"`
-	Raw         json.RawMessage `json:"-"`
+	Status      int            `json:"status,omitempty"`
+	Message     string         `json:"message"`
+	Description string         `json:"description,omitempty"`
+	Raw         jsontext.Value `json:"-"`
 }
 
 func (r *JSONError) UnmarshalJSON(data []byte) error {

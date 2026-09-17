@@ -1,7 +1,8 @@
 package api
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"fmt"
 	"iter"
 	"strconv"
@@ -10,38 +11,37 @@ import (
 const MaxTotal = 10_000
 
 type SearchResult struct {
-	Sort []any           `json:"sort"`
-	Raw  json.RawMessage `json:"-"`
+	Raw jsontext.Value `json:"-"`
 }
 
 type SearchResults struct {
-	Results []SearchResult  `json:"results"`
-	HasMore bool            `json:"has_more"`
-	Total   int             `json:"total"`
-	Raw     json.RawMessage `json:"-"`
+	Results []SearchResult `json:"results"`
+	HasMore bool           `json:"has_more"`
+	Total   int            `json:"total"`
+	Raw     jsontext.Value `json:"-"`
 }
 
 func (r *SearchResult) UnmarshalJSON(data []byte) error {
-	// a hack to prevent infinite UnmarshalJSON recursion loop
-	// ref. https://biscuit.ninja/posts/go-avoid-an-infitine-loop-with-custom-json-unmarshallers/
-	//      https://github.com/stripe/stripe-go/blob/f1847e5d06c4d13389d10629c6827dc375bfd015/event.go#L79-L91
-	type result SearchResult
-	var dst result
-
-	err := json.Unmarshal(data, &dst)
-	if err != nil {
-		return err
-	}
-	*r = SearchResult(dst)
 	r.Raw = data
-	return err
+	return nil
+}
+
+func (r *SearchResult) Sort() ([]any, error) {
+	var v struct {
+		Sort []any `json:"sort"`
+	}
+	err := json.Unmarshal(r.Raw, &v, jsontext.AllowDuplicateNames(true))
+	if err != nil {
+		return nil, err
+	}
+	return v.Sort, nil
 }
 
 func (r *SearchResults) UnmarshalJSON(data []byte) error {
 	type results SearchResults
 	var dst results
 
-	err := json.Unmarshal(data, &dst)
+	err := json.Unmarshal(data, &dst, jsontext.AllowDuplicateNames(true))
 	if err != nil {
 		return err
 	}
@@ -190,13 +190,18 @@ func (it *Iterator) getMoreResults() (results []*SearchResult, err error) {
 	if len(r.Results) > 0 {
 		last := r.Results[len(r.Results)-1]
 
-		if len(last.Sort) >= 2 {
-			timestamp, ok := last.Sort[0].(float64)
+		sort, err := last.Sort()
+		if err != nil {
+			return nil, err
+		}
+
+		if len(sort) >= 2 {
+			timestamp, ok := sort[0].(float64)
 			if !ok {
 				return nil, fmt.Errorf("invalid result sort format")
 			}
 
-			uuid, ok := last.Sort[1].(string)
+			uuid, ok := sort[1].(string)
 			if !ok {
 				return nil, fmt.Errorf("invalid result sort format")
 			}
