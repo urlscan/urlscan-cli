@@ -3,12 +3,11 @@
 load ../test_helper
 
 setup() {
-  # 1h after with ISO 8601 format
-  expire_at="$(date -u -v+1H +%Y-%m-%dT%H:%M:%SZ)"
+  expire_after=3600
 }
 
 @test "create, get, states, update, close and restart" {
-  incident_id="$(./dist/urlscan pro incident create -o "example.com" --expire-at "$expire_at" | jq -r ".incident._id")"
+  incident_id="$(./dist/urlscan pro incident create -o "example.com" --expire-after "$expire_after" | jq -r ".incident._id")"
 
   run ./dist/urlscan pro incident get "$incident_id"
   assert_success
@@ -32,7 +31,7 @@ setup() {
 
 
 @test "copy" {
-  incident_id="$(./dist/urlscan pro incident create -o "example.com" --expire-at "$expire_at" | jq -r ".incident._id")"
+  incident_id="$(./dist/urlscan pro incident create -o "example.com" --expire-after "$expire_after" | jq -r ".incident._id")"
   copied_id="$(./dist/urlscan pro incident copy "$incident_id" | jq -r ".incidents._id")"
 
   run ./dist/urlscan pro incident get "$copied_id"
@@ -47,7 +46,7 @@ setup() {
 }
 
 @test "fork" {
-  incident_id="$(./dist/urlscan pro incident create -o "example.com" --expire-at "$expire_at" | jq -r ".incident._id")"
+  incident_id="$(./dist/urlscan pro incident create -o "example.com" --expire-after "$expire_after" | jq -r ".incident._id")"
   forked_id="$(./dist/urlscan pro incident fork "$incident_id" | jq -r ".incidents._id")"
 
   run ./dist/urlscan pro incident get "$forked_id"
