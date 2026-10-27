@@ -16,7 +16,8 @@ jobs:
       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version-file: go.mod
-          cache: true
+      - name: install dependencies
+        run: go mod download
       - name: golangci-lint
         run: go tool golangci-lint run
       - name: goreleaser-check
