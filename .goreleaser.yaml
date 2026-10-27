@@ -56,7 +56,7 @@ homebrew_casks:
     # ref. https://goreleaser.com/customization/homebrew_casks/#signing-and-notarizing
     hooks:
       post:
-        install: |
-          if OS.mac?
-            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/urlscan"]
+        install_steps: |
+          on_macos do
+            run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "{{ .StagedPath }}/urlscan"]
           end
