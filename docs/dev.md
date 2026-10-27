@@ -45,7 +45,7 @@ bats test
 ## Lint
 
 ```bash
-golangci-lint run --fix
+go tool golangci-lint run --fix
 ```
 
 ## Build
@@ -56,7 +56,7 @@ make build
 
 ```bash
 # build binaries for releasing (without publishing)
-goreleaser release --snapshot --clean
+go tool goreleaser release --snapshot --clean
 ```
 
 ## Adding a New Command
@@ -64,5 +64,5 @@ goreleaser release --snapshot --clean
 Use [cobra-cli](https://github.com/spf13/cobra-cli).
 
 ```bash
-cobra-cli add ...
+go tool cobra-cli add ...
 ```
