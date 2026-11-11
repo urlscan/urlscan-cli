@@ -53,6 +53,12 @@ homebrew_casks:
       owner: urlscan
       name: homebrew-tap
       token: "{{ .Env.TAP_GITHUB_TOKEN }}"
+      pull_request:
+        enabled: true
+        base:
+          owner: urlscan
+          name: homebrew-tap
+          branch: main
     # ref. https://goreleaser.com/customization/homebrew_casks/#signing-and-notarizing
     hooks:
       post:
